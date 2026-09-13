@@ -1,0 +1,8 @@
+# Compiled output
+dist/
+
+# Emit that once landed beside the sources; a bare `tsc` in this directory
+# would write here again, and a stray .js next to a .ts shadows the source.
+src/*.js
+src/*.js.map
+src/*.d.ts

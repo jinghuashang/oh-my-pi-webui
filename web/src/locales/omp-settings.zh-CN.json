@@ -1,0 +1,1558 @@
+{
+ "theme.dark": {
+  "title": "深色终端配色主题",
+  "desc": "设置终端背景为深色时所使用的界面配色方案"
+ },
+ "theme.light": {
+  "title": "浅色终端配色主题",
+  "desc": "设置终端背景为浅色时所使用的界面配色方案"
+ },
+ "symbolPreset": {
+  "title": "图标与符号字符预设",
+  "desc": "设置图标与指示符号的字符集，可选 unicode、nerd 或 ascii"
+ },
+ "colorBlindMode": {
+  "title": "色弱友好高亮模式",
+  "desc": "开启后在代码差异对比中以蓝色代替绿色高亮新增内容，关闭则恢复默认绿色显示"
+ },
+ "composer.shape": {
+  "title": "输入框与状态栏布局外观",
+  "desc": "配置输入编辑器与状态栏的外观轮廓及排版布局样式"
+ },
+ "statusLine.preset": {
+  "title": "状态栏预设样式方案",
+  "desc": "设置状态栏预设布局，可选 default 默认、minimal 极简、compact 紧凑、full 完整、nerd 图标、ascii 纯文本或 custom 自定义"
+ },
+ "statusLine.separator": {
+  "title": "状态栏分段分隔符样式",
+  "desc": "设置状态栏分段间的分隔符，可选 powerline 粗箭头、powerline-thin 细箭头、slash 斜线、pipe 竖线、block 色块、none 无或 ascii 字符"
+ },
+ "statusLine.contextLine": {
+  "title": "上下文用量连接线样式",
+  "desc": "仅在方框输入框生效，设置状态栏连接线如何展示上下文用量，可选 off 关闭、percentage 百分比、annotated 标注或 embedded 嵌入进度"
+ },
+ "statusLine.sessionAccent": {
+  "title": "会话专属强调色边框",
+  "desc": "开启后使用当前会话名称的主题强调色渲染输入框边框与状态栏间隙，关闭则使用默认边框颜色"
+ },
+ "statusLine.transparent": {
+  "title": "状态栏终端透明背景",
+  "desc": "开启后状态栏使用终端默认背景色且省略 Powerline 端盖，关闭则使用主题背景色"
+ },
+ "statusLine.compactThinkingLevel": {
+  "title": "紧凑型思考等级图标展示",
+  "desc": "开启后在模型名称旁以单图标紧凑展示思考等级，关闭则显示独立后缀文本"
+ },
+ "statusLine.showHookStatus": {
+  "title": "状态栏下方显示钩子状态",
+  "desc": "开启后在状态栏下方实时显示钩子执行状态消息，关闭则隐藏该提示"
+ },
+ "terminal.showImages": {
+  "title": "终端内嵌图像原生渲染",
+  "desc": "开启后允许在终端内部通过内联图形协议直接渲染图像，关闭则仅显示图像占位信息"
+ },
+ "images.autoResize": {
+  "title": "超大图像尺寸自动压缩",
+  "desc": "开启后自动将大图等比压缩至最大 2000x2000 像素以提升大模型兼容性，关闭则保持原图尺寸发送"
+ },
+ "images.blockImages": {
+  "title": "拦截发送图像至模型服务",
+  "desc": "开启后完全阻止向大语言模型服务商发送任何图片数据，关闭则正常发送允许的图片"
+ },
+ "tui.resizeScrollback": {
+  "title": "窗口缩放历史回滚刷新策略",
+  "desc": "设置终端调整大小时历史回滚区的刷新策略，可选 append 追加新行、rebuild 重新构建或 preserve 保持原样"
+ },
+ "terminal.showProgress": {
+  "title": "终端OSC任务进度通知",
+  "desc": "开启后在智能体工作或维护上下文时发送 OSC 9;4 协议让终端显示进度条，关闭则不发送进度通知"
+ },
+ "tui.textSizing": {
+  "title": "Kitty终端一级标题双倍放大",
+  "desc": "开启后在 Kitty 终端通过 OSC 66 协议以双倍字号渲染 Markdown 一级标题，关闭或在其他终端则按常规字号渲染"
+ },
+ "tui.renderMermaid": {
+  "title": "Mermaid图表转为ASCII渲染",
+  "desc": "开启后自动将 Markdown 中的 Mermaid 代码块转译渲染为 ASCII 字符图形，关闭则保留原始代码块文本"
+ },
+ "tui.reactions": {
+  "title": "智能体表情气泡互动反馈",
+  "desc": "开启后允许智能体在消息气泡角落添加表情符号徽章作为即时反馈，关闭则不展示表情回应"
+ },
+ "tui.codexResetFireworks": {
+  "title": "Codex额度重置烟花特效",
+  "desc": "开启后在 Codex 用量重置或存入额度时在终端上部展示烟花动画直至按 Escape 键退出，关闭则不显示烟花"
+ },
+ "tui.titleState": {
+  "title": "终端标题栏运行状态标识",
+  "desc": "开启后在终端窗口标题中实时展示智能体状态符号，关闭则保持静态标题"
+ },
+ "tui.hyperlinks": {
+  "title": "终端OSC可点击超链接模式",
+  "desc": "将文件路径与 URL 包装为 OSC 8 超链接，可选 auto 自动检测终端支持、off 禁用或 always 强制启用"
+ },
+ "tui.mouse": {
+  "title": "终端鼠标交互与焦点捕获",
+  "desc": "开启后捕获鼠标点击以聚焦子任务卡片并高亮悬停目标，关闭则保留终端原生文本选择与滚动交互"
+ },
+ "tui.tight": {
+  "title": "紧凑无边距终端排版模式",
+  "desc": "开启后去除终端输出左右两侧各 1 个字符宽度的内边距以紧凑排列，关闭则保留内边距"
+ },
+ "display.shimmer": {
+  "title": "任务处理微光动画效果",
+  "desc": "设置等待响应时的微光动画风格，可选 classic 经典微光、kitt 扫描光效或 disabled 关闭动画"
+ },
+ "display.pinnedAgents": {
+  "title": "置顶活动智能体跳转列表",
+  "desc": "设置输入框上方常驻子任务列表的呈现方式，可选 off 完全隐藏、collapsed 折叠显示或 full 展开全部"
+ },
+ "display.smoothStreaming": {
+  "title": "流式输出平滑渐进渲染",
+  "desc": "开启后在文本分块到达时平滑渐进渲染助手回复与工具输入，关闭则直接输出到达的数据块"
+ },
+ "display.hideToolActivity": {
+  "title": "隐藏工具调用与执行结果",
+  "desc": "开启后从对话流中隐藏模型发起的工具调用详细过程与执行结果，关闭则完整显示工具调用细节"
+ },
+ "display.showTokenUsage": {
+  "title": "显示每轮对话Token消耗",
+  "desc": "开启后在每条助手回复消息底部展示该轮交互消耗的 Token 数量，关闭则隐藏消耗统计"
+ },
+ "display.showTurnTime": {
+  "title": "显示单轮交互总耗时统计",
+  "desc": "开启后在消息用量行显示从提交提示词到产出结果的完整耗时，关闭则隐藏耗时信息"
+ },
+ "display.cacheMissMarker": {
+  "title": "缓存未命中视觉分隔标记",
+  "desc": "开启后当助手某轮请求未命中提示词缓存时在消息下方绘制分割线提示，关闭则不显示标记"
+ },
+ "display.collapseCompacted": {
+  "title": "自动折叠压缩前历史记录",
+  "desc": "开启后将压缩前的历史对话折叠收纳在摘要分隔线内，关闭则在对话流中保留完整历史记录"
+ },
+ "showHardwareCursor": {
+  "title": "显示硬件光标适配输入法",
+  "desc": "开启后显示终端硬件光标以支持输入法候选框的正确定位跟随，关闭则隐藏硬件光标"
+ },
+ "tui.imeSafeCursor": {
+  "title": "输入法候选防位移保护模式",
+  "desc": "开启后将输入框底边框移至独立行以防止 macOS 输入法候选导致界面抖动错位，关闭则保持原边框位置"
+ },
+ "task.showResolvedModelBadge": {
+  "title": "子任务模型标识徽章显示",
+  "desc": "开启后在任务状态栏中显示每个子智能体实际运行的模型标识徽章，关闭则隐藏该徽章"
+ },
+ "workspace.additionalDirectories": {
+  "title": "多根工作区附加目录列表",
+  "desc": "配置会话额外挂载的根目录路径列表，智能体可对其执行读取、检索与搜索操作"
+ },
+ "contextPromotion.enabled": {
+  "title": "上下文超限自动升级长窗模型",
+  "desc": "开启后在上下文溢出时自动升级切换为更大窗口的模型，关闭则执行常规上下文压缩"
+ },
+ "extendedContext": {
+  "title": "启用高阶超长上下文窗口",
+  "desc": "开启后在支持的模型上启用更长上下文窗口但可能产生额外费用，关闭则使用标准窗口"
+ },
+ "compaction.enabled": {
+  "title": "上下文超限自动摘要压缩",
+  "desc": "开启后当对话上下文过长达到阈值时自动触发内容摘要与压缩，关闭则不自动压缩"
+ },
+ "compaction.experimentalContextManagement": {
+  "title": "实验性跨窗口上下文记忆管理",
+  "desc": "开启后跨窗口保留持久化笔记并支持检索原始历史（需重启更新可用工具），关闭则仅保留标准窗口上下文"
+ },
+ "compaction.midTurnEnabled": {
+  "title": "轮次中途工具边界阈值检查",
+  "desc": "开启后在下一次模型请求前于工具调用循环的安全边界提前检查上下文阈值，关闭则仅在轮次结束时检查"
+ },
+ "compaction.methodOrder": {
+  "title": "上下文维护策略降级顺序",
+  "desc": "配置自动维护上下文时的策略优先级列表，当前方法不可用或失败时依次向下回退"
+ },
+ "compaction.thresholdPercent": {
+  "title": "上下文维护百分比触发阈值",
+  "desc": "设置触发上下文维护的窗口占用百分比（单位为百分比，取值范围 0-100，设为 -1 即 Default 则沿用传统预留策略）"
+ },
+ "compaction.thresholdTokens": {
+  "title": "上下文维护固定Token阈值",
+  "desc": "设置触发上下文维护的固定 Token 数量阈值（单位为 Token，正整数生效，设为 -1 则由百分比阈值决定）"
+ },
+ "compaction.handoffSaveToDisk": {
+  "title": "交接文档持久化保存到磁盘",
+  "desc": "开启后将自动交接流程生成的交接文档保存为本地 Markdown 文件，关闭则不落盘保存"
+ },
+ "compaction.remoteStreamingV2Enabled": {
+  "title": "远程流式上下文压缩支持",
+  "desc": "开启后对兼容的远程压缩模型使用 Responses 流式传输协议进行快速压缩，关闭则使用标准传输"
+ },
+ "compaction.asyncEnabled": {
+  "title": "后台推测性异步上下文压缩",
+  "desc": "开启后在上下文接近阈值时于后台预先推测性生成摘要并在跨越阈值时无缝接入，关闭则同步执行压缩"
+ },
+ "compaction.idleEnabled": {
+  "title": "空闲阶段自动压缩上下文",
+  "desc": "开启后在系统处于空闲且 Token 计数超过阈值时自动在后台执行上下文压缩，关闭则空闲时不触发压缩"
+ },
+ "compaction.idleThresholdTokens": {
+  "title": "空闲上下文压缩Token阈值",
+  "desc": "单位为 Token 数，会话空闲且累计上下文 Token 超过该值时触发压缩"
+ },
+ "compaction.idleTimeoutSeconds": {
+  "title": "空闲压缩等待超时秒数",
+  "desc": "单位为秒，会话无交互且处于空闲状态达到该等待时长后开始执行压缩"
+ },
+ "compaction.supersedeReads": {
+  "title": "同文件重复读取历史修剪",
+  "desc": "开启后在每次轮次中若重复读取同一文件则自动清理较旧的读取结果以节省上下文，关闭则完整保留所有历史读取记录"
+ },
+ "compaction.dropUseless": {
+  "title": "无效工具结果自动清理",
+  "desc": "开启后在工具结果被消费完毕后自动修剪未匹配或超时的无效输出，关闭则保留这些无实际效果的工具记录"
+ },
+ "snapcompact.systemPrompt": {
+  "title": "系统提示词PNG图像化压缩",
+  "desc": "仅限视觉模型，可选 none（不转为图像）、agents-md（仅转换 agent 说明文档）或 all（转换全部系统提示词），将其渲染为高密 PNG 图像附加至首条消息以节省 Token 但会失去文本缓存"
+ },
+ "snapcompact.toolResults": {
+  "title": "工具历史结果图像化压缩",
+  "desc": "开启后将累积的大体积读取和搜索等历史工具结果渲染为高密 PNG 图像以节省上下文 Token（仅限视觉模型），关闭则始终以纯文本形式保留工具输出"
+ },
+ "tools.format": {
+  "title": "工具调用协议与方言格式",
+  "desc": "控制向模型暴露工具的方式，可选 auto（优先服务商原生并在不支持时降级至 GLM 方言）、native（强制原生工具调用）或指定 glm、xml、anthropic 等专属方言格式"
+ },
+ "snapcompact.shape": {
+  "title": "图像化压缩文字排版规格",
+  "desc": "指定快照压缩渲染文字时的字体点阵排版规格，可选 auto（根据当前模型自动匹配最优规格）或具体的点阵网格预设（如 8x8、6x6 等）"
+ },
+ "branchSummary.enabled": {
+  "title": "离开分支时提示生成摘要",
+  "desc": "开启后在离开或切换当前分支时主动提示生成上下文摘要，关闭则直接退出分支不作摘要提示"
+ },
+ "ttsr.enabled": {
+  "title": "流式输出规则匹配实时中断",
+  "desc": "开启后当流式输出命中预设规则模式时立即中断智能体生成（时间旅行流式规则），关闭则允许模型继续输出直到轮次结束"
+ },
+ "ttsr.contextMode": {
+  "title": "规则触发后残缺输出处理模式",
+  "desc": "控制流式规则中断触发后对已生成残缺文本的处理方式，可选 discard（丢弃已生成的部分内容）或 keep（保留已生成的部分输出并记录到上下文）"
+ },
+ "ttsr.interruptMode": {
+  "title": "规则拦截中断时机策略",
+  "desc": "控制规则命中的中断时机，可选 never（流中不中断，完成后注入警告）、prose-only（仅纯文本生成时中断）、tool-only（仅工具调用生成时中断）与 always（任何阶段均立即中断）"
+ },
+ "ttsr.repeatMode": {
+  "title": "规则重复触发模式设置",
+  "desc": "决定同一条规则的复发机制，可选 once（单次会话内仅触发一次）或 after-gap（在间隔指定条消息后允许再次触发）"
+ },
+ "ttsr.repeatGap": {
+  "title": "规则再次触发消息间隔数",
+  "desc": "单位为消息条数，指定在 after-gap 模式下一条已触发的规则需要等待多少条新消息之后才能被再次激活"
+ },
+ "ttsr.builtinRules": {
+  "title": "加载系统内置流式规则",
+  "desc": "开启后会自动载入智能体随附的内置流式规则集（可通过禁用列表单独关闭），关闭则完全不加载任何内置规则"
+ },
+ "ttsr.disabledRules": {
+  "title": "全局禁用的流式规则列表",
+  "desc": "指定要完全忽略的规则名称数组，所列出的内置默认规则或自定义规则均不会生效"
+ },
+ "edit.mode": {
+  "title": "代码编辑工具变体模式",
+  "desc": "选择文件编辑工具的具体实现模式，可选 hashline（行哈希锚定）、patch（标准补丁）、replace（区间替换）、apply_patch（结构化补丁）与 sloppy（宽松匹配替换）"
+ },
+ "edit.fuzzyMatch": {
+  "title": "空白字符差异模糊匹配",
+  "desc": "开启后在代码行仅存在缩进或空格等空白差异时接受高置信度模糊匹配以提高补丁成功率，关闭则要求字符完全严格一致"
+ },
+ "edit.fuzzyThreshold": {
+  "title": "模糊匹配相似度阈值",
+  "desc": "取值范围为 0 到 1 之间的浮点数，指定接受模糊匹配所需的最低代码相似度阈值"
+ },
+ "edit.streamingAbort": {
+  "title": "补丁预览失败时终止生成",
+  "desc": "开启后若编辑流式传输过程中的补丁预览发生校验失败则立即中断工具调用，关闭则允许模型继续生成完整内容后再报错"
+ },
+ "edit.recoverInlineEdits": {
+  "title": "纯文本补丁自动转为编辑工具",
+  "desc": "开启后若模型以纯文本形式输出了编辑补丁内容会自动将其转换为规范的 edit 工具调用并执行，关闭则仅将其当作普通文本输出而不执行文件修改"
+ },
+ "edit.blockAutoGenerated": {
+  "title": "拦截自动生成文件的直接编辑",
+  "desc": "开启后将自动识别并禁止编辑由 protoc、sqlc、swagger 等工具自动生成的文件以防代码被意外覆盖，关闭则允许编辑任意受管文件"
+ },
+ "edit.enforceSeenLines": {
+  "title": "严格校验编辑锚点行是否已读",
+  "desc": "开启后若编辑操作锚定的行从未在先前的读取或搜索中完整显示则拒绝该编辑，关闭则允许基于未完整呈现的行号或上下文进行修改"
+ },
+ "edit.blackbox.enabled": {
+  "title": "AST解析失败时追加完整源码",
+  "desc": "开启后当编辑导致代码出现 AST 语法解析失败时自动在工具返回中附带修改前后的完整源码以辅助排查，关闭则仅返回简短报错信息"
+ },
+ "edit.autoRepair.enabled": {
+  "title": "AST语法损坏自动轻量修复",
+  "desc": "开启后当编辑导致文件 AST 解析失败时会自动调度轻量模型修复损坏区域并通过二次解析验证，关闭则直接输出语法解析警告"
+ },
+ "readLineNumbers": {
+  "title": "读取文件工具默认前置行号",
+  "desc": "开启后使用 read 工具读取文件内容时会在每行开头默认输出行号，关闭则仅输出纯文本文件内容"
+ },
+ "read.defaultLimit": {
+  "title": "读取文件默认返回最大行数",
+  "desc": "单位为行数，智能体调用 read 工具未显式指定限制行数时单次读取返回的默认最大行数"
+ },
+ "read.renderMarkdown": {
+  "title": "Markdown读取结果终端渲染",
+  "desc": "开启后读取 Markdown 文件时将在终端中渲染格式化排版预览，关闭则直接显示原始源码文本"
+ },
+ "read.summarize.enabled": {
+  "title": "读取代码默认返回结构化大纲",
+  "desc": "开启后在未指定具体行号选择器调用 read 时默认返回代码文件的语法声明大纲摘要以节省上下文，关闭则完整返回全部原始代码内容"
+ },
+ "read.summarize.prose": {
+  "title": "纯文本与Markdown结构大纲",
+  "desc": "开启后对 Markdown 及纯文本文件读取也生成大纲摘要并折叠冗长正文，关闭则对非代码文件始终返回完整纯文本"
+ },
+ "read.summarize.minBodyLines": {
+  "title": "结构大纲折叠实现体最小行数",
+  "desc": "单位为行数，函数体、类主体或多行字面量超过该行数阈值时才会被结构化大纲折叠隐藏"
+ },
+ "read.summarize.minCommentLines": {
+  "title": "结构大纲折叠块注释最小行数",
+  "desc": "单位为行数，多行块级注释超过该行数阈值时才会被大纲折叠为简要注释"
+ },
+ "read.summarize.minTotalLines": {
+  "title": "启用大纲摘要的文件最小行数",
+  "desc": "单位为行数，总行数小于该阈值的文件将直接全文输出逐行代码而不触发结构化折叠"
+ },
+ "read.summarize.unfoldUntil": {
+  "title": "结构大纲逐层展开目标行数",
+  "desc": "单位为行数，使用广度优先搜索逐层展开可折叠代码块直到大纲至少达到该可见行数，设为 0 则仅保留最外层折叠"
+ },
+ "read.summarize.unfoldLimit": {
+  "title": "逐层展开大纲最大行数上限",
+  "desc": "单位为行数，逐层展开代码大纲时的硬性行数上限，展开后会导致总行数超过此值的代码跨度将被跳过并保持折叠"
+ },
+ "read.toolResultPreview": {
+  "title": "读取工具结果会话内联渲染",
+  "desc": "开启后在对话记录中直接以完整内联卡片展示文件读取结果，关闭则以紧凑的摘要行折叠显示以减少会话占用空间"
+ },
+ "lsp.enabled": {
+  "title": "启用LSP语言服务代码智能",
+  "desc": "开启后允许智能体调用 LSP 工具获取跳转定义、查找引用、诊断信息和符号重命名等代码智能功能，关闭则禁用语言服务工具"
+ },
+ "lsp.lazy": {
+  "title": "LSP语言服务按需延迟启动",
+  "desc": "开启后在首次调用工具或编辑匹配文件时才按需启动语言服务器以提升启动速度，关闭则在会话启动时立即预热所有 LSP 服务"
+ },
+ "lsp.shared": {
+  "title": "跨实例共享LSP服务守护进程",
+  "desc": "开启后同一项目的多个 omp 实例将通过后台代理共享同一个语言服务器以节省内存，关闭则每个实例各自运行私有 LSP 服务"
+ },
+ "lsp.formatOnWrite": {
+  "title": "写入代码文件后自动LSP格式化",
+  "desc": "开启后在写入或覆盖代码文件后自动调用 LSP 进行代码格式化，关闭则保持写入的原始内容不变"
+ },
+ "lsp.diagnosticsOnWrite": {
+  "title": "写入代码文件后返回LSP诊断",
+  "desc": "开启后在写入代码文件时立即执行语言检查并将 LSP 错误和警告诊断返回给模型，关闭则不在写入时反馈诊断信息"
+ },
+ "lsp.diagnosticsOnEdit": {
+  "title": "编辑代码文件后返回LSP诊断",
+  "desc": "开启后在编辑修改代码文件后立即获取并将 LSP 诊断信息返回给模型以便即时纠错，关闭则不在编辑后主动提供诊断"
+ },
+ "lsp.diagnosticsDeduplicate": {
+  "title": "编辑后LSP诊断信息去重过滤",
+  "desc": "开启后自动抑制已显示过的历史诊断并仅向模型呈现新增或变动的 LSP 问题，关闭则在每次编辑后报告文件的全量诊断"
+ },
+ "autoResume": {
+  "title": "自动恢复当前目录最近会话",
+  "desc": "开启后启动时自动加载并恢复当前工作目录中最近一次的历史会话，关闭则每次启动均开启全新的空白会话"
+ },
+ "power.sleepPrevention": {
+  "title": "活跃会话期间系统防休眠策略",
+  "desc": "防止智能体处理任务时系统进入休眠（各级别向下兼容累加），可选 off（允许休眠）、idle（阻止空闲挂起）、display（保持显示器常亮）或 system（完全禁止系统睡眠）"
+ },
+ "git.enabled": {
+  "title": "TUI界面集成Git仓库状态",
+  "desc": "开启后在 TUI 界面中展示 Git 分支、工作区状态和 PR 信息并实时监控仓库元数据变更，关闭则禁用 Git 状态展示与监控"
+ },
+ "steeringMode": {
+  "title": "工作中排队指导消息处理策略",
+  "desc": "控制智能体执行任务期间如何处理用户发送的排队指导消息，可选 all（合并批量处理全部积压消息）或 one-at-a-time（逐条顺序摄入并处理）"
+ },
+ "followUpMode": {
+  "title": "轮次结束后跟进消息摄入策略",
+  "desc": "决定当一个轮次执行完毕后如何摄入队列中的后续跟进消息，可选 all（一次性提取并处理所有排队跟进消息）或 one-at-a-time（每次仅摄入单条消息）"
+ },
+ "interruptMode": {
+  "title": "指导消息中断工具执行时机",
+  "desc": "控制指导消息何时打断正在运行的工具调用，可选 immediate（收到新消息后立即终止当前正在执行的工具）或 wait（等待当前工具执行完成后再响应新消息）"
+ },
+ "tui.vimMode": {
+  "title": "启用Vim模态编辑模式",
+  "desc": "开启后在输入框启用Vim模态编辑并支持Normal与Visual模式，关闭则使用标准输入方式"
+ },
+ "tui.vimModeDisplay": {
+  "title": "Vim模式状态栏显示风格",
+  "desc": "设置状态栏中当前所处Vim编辑模式的呈现形式与徽标样式"
+ },
+ "loop.mode": {
+  "title": "循环指令迭代过渡方式",
+  "desc": "设置/loop循环命令在各轮迭代重新提交Prompt之间的等待与过渡模式"
+ },
+ "loop.conditionTimeoutMs": {
+  "title": "循环条件命令超时时间",
+  "desc": "单位为毫秒，设置/loop条件判定命令的最大等待时间，超时则终止循环，设为0表示无限等待"
+ },
+ "composer.recallClearedDrafts": {
+  "title": "历史记录保留清空草稿",
+  "desc": "开启后使用Ctrl+C清空的草稿仍保留在上下键历史中直至退出，关闭则不保留"
+ },
+ "doubleEscapeAction": {
+  "title": "双击Escape按键操作",
+  "desc": "设置输入框为空时连按两次Escape的行为，可选打开回滚选择器、打开会话树或无动作"
+ },
+ "treeFilterMode": {
+  "title": "会话树默认筛选模式",
+  "desc": "设置打开会话历史树视图时默认应用的条目筛选过滤模式"
+ },
+ "autocompleteMaxVisible": {
+  "title": "自动补全最大显示条数",
+  "desc": "限制补全下拉候选菜单的最大同时显示条数，有效范围为3至20项"
+ },
+ "spelling.typoDetection": {
+  "title": "macOS词典拼写检查",
+  "desc": "开启后使用macOS系统词典标记输入中的拼写错误，关闭则不进行拼写检查"
+ },
+ "spelling.autocomplete": {
+  "title": "macOS词典行内补全",
+  "desc": "开启后以行内灰色提示展示macOS词典单词补全并支持Tab采纳，关闭则不提示"
+ },
+ "spelling.autocorrect": {
+  "title": "macOS词典自动纠错",
+  "desc": "开启后在单词输入完成时自动应用macOS高置信度拼写纠正，关闭则不纠正"
+ },
+ "emojiAutocomplete": {
+  "title": "Emoji表情自动补全",
+  "desc": "开启后支持通过短代码建议Emoji表情并将字符表情转为图形，关闭则禁用"
+ },
+ "paste.largeMenuThreshold": {
+  "title": "大文本粘贴菜单行数阈值",
+  "desc": "单位为行，粘贴文本达到设定行数时提示代码块或XML包装等选项，设为0则禁用菜单"
+ },
+ "startup.quiet": {
+  "title": "静默启动跳过欢迎信息",
+  "desc": "开启后跳过启动欢迎界面与系统状态消息，关闭则显示完整启动信息"
+ },
+ "startup.showSplash": {
+  "title": "交互启动显示开机动画",
+  "desc": "开启后在正常交互式启动时展示动态设置启动图，关闭则跳过开机动画"
+ },
+ "startup.setupWizard": {
+  "title": "新版本引导向导提示",
+  "desc": "开启后每个设置版本仅弹出展示一次新引入的初始化向导，关闭则不提示"
+ },
+ "startup.checkUpdate": {
+  "title": "启动时自动检查更新",
+  "desc": "开启后在应用启动时自动检测omp的新版本更新，关闭则不自动检测"
+ },
+ "update.channel": {
+  "title": "应用软件发布更新通道",
+  "desc": "设置omp update命令与启动检测所使用的软件发布更新通道"
+ },
+ "marketplace.autoUpdate": {
+  "title": "插件市场启动更新策略",
+  "desc": "设置在应用启动时检测并处理已安装插件和扩展更新的行为"
+ },
+ "startup.changelogMode": {
+  "title": "更新日志启动展示模式",
+  "desc": "设置启动时更新说明以摘要、完整详情展示或保持隐藏"
+ },
+ "magicKeywords.enabled": {
+  "title": "启用魔法关键词快捷指令",
+  "desc": "开启后允许识别独立的ultrathink、orchestrate及workflowz触发指令，关闭则作为普通文本"
+ },
+ "magicKeywords.ultrathink": {
+  "title": "深度思考魔法词触发",
+  "desc": "开启后独立输入ultrathink将自动请求模型开启最大深度思考，关闭则不触发"
+ },
+ "magicKeywords.orchestrate": {
+  "title": "多智能体编排魔法词",
+  "desc": "开启后独立输入orchestrate将自动附加多智能体协作编排提示，关闭则不触发"
+ },
+ "magicKeywords.workflow": {
+  "title": "评估工作流魔法词触发",
+  "desc": "开启后独立输入workflowz将自动附加评估工作流执行提示，关闭则不触发"
+ },
+ "completion.notify": {
+  "title": "智能体回复完成通知",
+  "desc": "设置智能体完成一轮任务回复时的系统桌面通知行为"
+ },
+ "error.notify": {
+  "title": "智能体执行错误通知",
+  "desc": "设置智能体执行因错误异常中止时的系统桌面通知行为"
+ },
+ "ask.timeout": {
+  "title": "交互提问超时自动选择",
+  "desc": "单位为秒，超时未应答则自动采纳推荐选项，设为0表示不设超时永久等待"
+ },
+ "ask.notify": {
+  "title": "等待用户输入提示通知",
+  "desc": "设置交互式ask工具暂停并等待用户输入时的系统通知提示行为"
+ },
+ "recap.enabled": {
+  "title": "终端空闲会话进展回顾",
+  "desc": "开启后在终端空闲一段时间自动调用大模型生成当前进展摘要，关闭则不生成"
+ },
+ "recap.idleSeconds": {
+  "title": "空闲回顾触发等待秒数",
+  "desc": "单位为秒，设置终端无操作保持空闲多久后自动生成进展回顾"
+ },
+ "collab.relayUrl": {
+  "title": "实时协同中继服务URL",
+  "desc": "设置/collab协同功能使用的WebSocket中继服务器地址，格式为wss://host[:port]"
+ },
+ "collab.webUrl": {
+  "title": "实时协同网页界面URL",
+  "desc": "设置/collab邀请链接打开的Web界面地址，留空则根据中继地址自动推导"
+ },
+ "collab.displayName": {
+  "title": "协同会话公开显示名称",
+  "desc": "设置在协同会话中向其他参与者展示的昵称，默认使用操作系统用户名"
+ },
+ "share.serverUrl": {
+  "title": "会话分享服务基础URL",
+  "desc": "设置/share命令上传会话加密快照及生成分享浏览链接的基础服务地址"
+ },
+ "share.store": {
+  "title": "加密会话分享存储目标",
+  "desc": "设置/share命令上传加密会话数据包的云端存储服务目标"
+ },
+ "share.redactSecrets": {
+  "title": "分享快照敏感信息脱敏",
+  "desc": "开启后在上传分享快照前根据密钥规则脱敏敏感凭据，关闭则原样上传"
+ },
+ "stt.enabled": {
+  "title": "启用麦克风STT语音输入",
+  "desc": "开启后允许使用麦克风进行实时语音转文字输入，关闭则禁用语音功能"
+ },
+ "stt.modelName": {
+  "title": "本地STT语音识别模型",
+  "desc": "选择设备端本地语音模型，可选低延迟的Parakeet或支持多语言的Whisper各规格"
+ },
+ "stt.submitTrigger": {
+  "title": "STT语音听写自动提交条件",
+  "desc": "设置语音听写自动提交的触发条件，可选从不、松键2词以上、完整句子或口令触发"
+ },
+ "tools.approval": {
+  "title": "单项工具调用审批策略",
+  "desc": "针对具体工具配置独立策略，可选allow自动放行、prompt弹窗确认或deny直接拦截"
+ },
+ "tools.approvalMode": {
+  "title": "全局工具调用审批模式",
+  "desc": "设置工具默认审批级别，可选仅只读放行、工作区写入放行或Yolo全量放行模式"
+ },
+ "features.unexpectedStopDetection": {
+  "title": "无响应异常中止自动恢复",
+  "desc": "设置模型无输出异常停止时的自愈策略，可选关闭、自动恢复或智能小模型分类恢复"
+ },
+ "extensions": {
+  "title": "已启用扩展插件列表",
+  "desc": ""
+ },
+ "disabledExtensions": {
+  "title": "已禁用扩展插件列表",
+  "desc": ""
+ },
+ "skills.enabled": {
+  "title": "启用Skills技能体系",
+  "desc": ""
+ },
+ "skills.enableCodexUser": {
+  "title": "加载Codex用户技能",
+  "desc": ""
+ },
+ "skills.enableClaudeUser": {
+  "title": "加载Claude用户技能",
+  "desc": ""
+ },
+ "skills.enableClaudeProject": {
+  "title": "加载Claude项目技能",
+  "desc": ""
+ },
+ "skills.enablePiUser": {
+  "title": "加载Pi用户全局技能",
+  "desc": ""
+ },
+ "skills.enablePiProject": {
+  "title": "启用项目级Pi技能目录",
+  "desc": ""
+ },
+ "skills.enableAgentsUser": {
+  "title": "启用用户全局Agents技能",
+  "desc": ""
+ },
+ "skills.enableAgentsProject": {
+  "title": "启用当前项目Agents技能",
+  "desc": ""
+ },
+ "skills.customDirectories": {
+  "title": "自定义技能搜索目录列表",
+  "desc": ""
+ },
+ "skills.ignoredSkills": {
+  "title": "忽略加载的技能排除列表",
+  "desc": ""
+ },
+ "skills.includeSkills": {
+  "title": "仅启用的指定技能白名单",
+  "desc": ""
+ },
+ "memory.backend": {
+  "title": "长短期记忆存储后端系统",
+  "desc": "设置记忆底层存储后端，可选关闭Off、本地摘要管道、Mnemopi本地SQLite库、Hindsight远程服务或Sharpshooter后端"
+ },
+ "sharpshooter.model": {
+  "title": "Sharpshooter记忆提炼模型",
+  "desc": "指定用于记忆提取与整合的模型选择器，留空则默认使用smol角色模型"
+ },
+ "autolearn.enabled": {
+  "title": "启用停机自动经验沉淀",
+  "desc": "开启后在智能体停止运行后引导其提取经验沉淀到记忆库并创建或改进隔离托管技能，关闭则不进行经验沉淀"
+ },
+ "autolearn.autoContinue": {
+  "title": "停止时自动执行提炼轮次",
+  "desc": "开启后在停机时自动执行单轮后台私有提炼（消耗额外Token），关闭则仅保留常驻自动学习提示引导"
+ },
+ "mnemopi.dbPath": {
+  "title": "Mnemopi数据库存储路径",
+  "desc": "自定义Mnemopi的SQLite数据库文件路径，留空时默认存放在智能体记忆目录下"
+ },
+ "mnemopi.bank": {
+  "title": "Mnemopi共享记忆库基准名",
+  "desc": "指定共享记忆库的基准名称，多项目隔离模式将基于此基准名称派生各项目的独立记忆库"
+ },
+ "mnemopi.scoping": {
+  "title": "Mnemopi记忆作用域隔离级别",
+  "desc": "控制记忆隔离范围，global为全局单库共享，per-project按工作目录独立隔离，per-project-tagged为写入隔离但召回可见全局记忆"
+ },
+ "mnemopi.embeddingVariant": {
+  "title": "Mnemopi本地嵌入模型系列",
+  "desc": "选择本地向量嵌入模型系列，en为优化英语模型，multilingual为多语言跨语种模型，更改后将在下次启动时重建已有记忆向量"
+ },
+ "mnemopi.autoRecall": {
+  "title": "Mnemopi会话首轮记忆召回",
+  "desc": "开启后在每个新会话的首轮自动检索并注入本地相关记忆，关闭则不自动执行首轮召回"
+ },
+ "mnemopi.autoRetain": {
+  "title": "Mnemopi对话自动存入记忆",
+  "desc": "开启后自动将已完成的对话轮次提取并保存到本地Mnemopi记忆库，关闭则不自动保留对话"
+ },
+ "mnemopi.polyphonicRecall": {
+  "title": "Mnemopi四路融合多声部召回",
+  "desc": "开启后启用向量、图谱、事实与时间四路并发检索并通过倒数排名融合（RRF）合并结果，关闭则使用基础检索"
+ },
+ "mnemopi.enhancedRecall": {
+  "title": "Mnemopi分层记忆查询缓存",
+  "desc": "开启后为重复及相似的记忆召回请求启用多级结果缓存以降低检索延迟，关闭则每次请求实时检索"
+ },
+ "mnemopi.proactiveLinking": {
+  "title": "Mnemopi主动情景图谱关联",
+  "desc": "开启后在新记忆存入时主动写入情景图谱并关联相关实体与记忆节点，关闭则不自动建立图谱链接"
+ },
+ "mnemopi.noEmbeddings": {
+  "title": "Mnemopi强制纯全文搜索检索",
+  "desc": "开启后强制使用确定性的FTS全文检索替代向量嵌入检索，关闭则使用向量语义检索"
+ },
+ "mnemopi.embeddingModel": {
+  "title": "Mnemopi自定义嵌入模型标识",
+  "desc": "显式指定用于覆盖默认系列的特定嵌入模型ID，留空则使用mnemopi.embeddingVariant指定的系列模型"
+ },
+ "mnemopi.embeddingApiUrl": {
+  "title": "Mnemopi嵌入接口服务地址",
+  "desc": "指定传递给Mnemopi的兼容OpenAI标准的嵌入API服务端点URL，留空则使用内置本地嵌入"
+ },
+ "mnemopi.embeddingApiKey": {
+  "title": "Mnemopi嵌入接口密钥凭证",
+  "desc": "设置调用外部Mnemopi嵌入API时所使用的API密钥凭证，留空则不发送认证头"
+ },
+ "mnemopi.llmMode": {
+  "title": "Mnemopi语言模型运行模式",
+  "desc": "选择记忆语言模型模式，可选不使用LLM、在线微型模型（/models中的TINY角色或@smol）或远程兼容OpenAI的端点"
+ },
+ "mnemopi.llmBaseUrl": {
+  "title": "Mnemopi远程大模型接口地址",
+  "desc": "设置Mnemopi在远程模式下调用的兼容OpenAI标准的LLM服务API端点URL"
+ },
+ "mnemopi.llmApiKey": {
+  "title": "Mnemopi远程大模型密钥凭证",
+  "desc": "设置Mnemopi在远程模式下调用大语言模型API所使用的API密钥凭据"
+ },
+ "mnemopi.llmModel": {
+  "title": "Mnemopi远程大模型名称",
+  "desc": "指定Mnemopi在远程模式下调用的大语言模型名称，留空则由远端服务默认模型处理"
+ },
+ "hindsight.apiUrl": {
+  "title": "Hindsight服务接口地址",
+  "desc": "设置Hindsight云端或自建私有化服务器的访问URL"
+ },
+ "hindsight.apiToken": {
+  "title": "Hindsight服务认证令牌",
+  "desc": "设置访问需要身份验证的Hindsight服务器所使用的Bearer Token身份令牌"
+ },
+ "hindsight.bankId": {
+  "title": "Hindsight记忆库唯一标识",
+  "desc": "设置Hindsight记忆库的唯一标识ID，留空时默认使用当前项目名称"
+ },
+ "hindsight.scoping": {
+  "title": "Hindsight记忆作用域隔离级别",
+  "desc": "控制记忆隔离策略，global为全局单库共享，per-project按工作目录完全隔离，per-project-tagged为带项目标签共享且召回时合并全局与项目记忆"
+ },
+ "hindsight.autoRecall": {
+  "title": "Hindsight会话首轮记忆召回",
+  "desc": "开启后在每个新会话的首轮对话中自动从Hindsight检索并注入相关记忆，关闭则不自动召回"
+ },
+ "hindsight.autoRetain": {
+  "title": "Hindsight对话记录自动沉淀",
+  "desc": "开启后每隔固定轮次及会话结束时自动将对话记录沉淀到Hindsight，关闭则不自动保存记录"
+ },
+ "hindsight.retainMode": {
+  "title": "Hindsight记忆持久化存储模式",
+  "desc": "选择记忆持久化存储模式，full-session为每个会话整体更新单个文档，last-turn为按最新轮次分块写入"
+ },
+ "hindsight.mentalModelsEnabled": {
+  "title": "Hindsight心智模型注入指令",
+  "desc": "开启后在启动时将记忆库现存的反思摘要心智模型只读注入到开发者指令中，关闭则不加载心智模型"
+ },
+ "hindsight.mentalModelAutoSeed": {
+  "title": "Hindsight心智模型自动初始化",
+  "desc": "开启后在会话启动时自动在记忆库中创建尚不存在的内置心智模型（项目规范、项目决策、用户偏好），关闭则不自动初始化"
+ },
+ "providers.memoryModel": {
+  "title": "Mnemopi事实提炼整合模型",
+  "desc": "设置用于事实提取与整合的模型来源，可选online在线模型（优先TINY角色，否则退化至smol或远程）或local端侧本地模型"
+ },
+ "advisor.enabled": {
+  "title": "启用旁路顾问审查模型",
+  "desc": "开启后引入第二模型作为顾问角色在后台被动审查每轮对话并适时注入建议批注，关闭则仅由主模型独立交互"
+ },
+ "prewalk.enabled": {
+  "title": "启用先强后快分阶段规划执行",
+  "desc": "开启后先由高智商主模型规划并开始首次编辑写入，随后自动无缝移交给快速廉价模型（默认smol角色）接力执行，关闭则全程使用主模型"
+ },
+ "advisor.syncBacklog": {
+  "title": "顾问审查积压同步暂停阈值",
+  "desc": "设置当顾问审查滞后达到指定轮数时最多暂停主智能体30秒以等待同步，设为Off则不等待跟进延迟"
+ },
+ "advisor.immuneTurns": {
+  "title": "顾问阻断介入后免打扰轮数",
+  "desc": "设置顾问抛出疑虑或阻塞性中断后主智能体以非中断模式接收后续反馈的主轮次数量，单位为轮，需为非负整数"
+ },
+ "advisor.maxNotesPerUpdate": {
+  "title": "顾问单次更新最大批注建议数",
+  "desc": "设置顾问每次提示更新允许采纳的非阻塞性建议批注最大数量，取值范围1到32（UI快捷预设为1到5），阻塞性问题不受此限"
+ },
+ "modelRoleStorage": {
+  "title": "模型角色映射配置持久化位置",
+  "desc": "设置模型选择器角色映射配置的保存目标位置，可选存入全局配置或项目局部配置"
+ },
+ "images.describeForTextModels": {
+  "title": "纯文本模型图像自动转述描述",
+  "desc": "开启后当向不支持视觉的模型发送图片时自动保存到local://并调用视觉模型生成文字描述注入上下文而非直接丢弃，关闭则直接忽略图片"
+ },
+ "images.urls.enabled": {
+  "title": "启用图像外链转换图床服务",
+  "desc": "开启后将发送的图片通过后端链发布并向支持拉取URL的模型提供商发送短链接而非内联Base64（失败时自动回退），关闭则始终使用内联Base64"
+ },
+ "images.urls.backends": {
+  "title": "图像外链发布图床后端列表",
+  "desc": "指定发布图像供模型提供商访问时按顺序尝试的目标图床后端列表"
+ },
+ "images.urls.command": {
+  "title": "自定义命令行图床执行模板",
+  "desc": "设置command图床后端的命令行参数模板，支持{file}图像路径及可选{mime}/{ext}占位符，取标准输出打印的最后一个URL作为外链"
+ },
+ "images.urls.publicBaseUrl": {
+  "title": "图像服务外网访问基础URL",
+  "desc": "设置Blob图片服务器对外公开可访问的基础URL，ssh模式下为必填项，direct直接模式下为可选项"
+ },
+ "images.urls.ttlHours": {
+  "title": "本地托管图像外链有效期小时数",
+  "desc": "设置本地托管图片URL的有效服务窗口期，单位为小时，自会话最后一次发送起计算且恢复会话可重置窗口，设为0表示伴随Broker运行常驻有效"
+ },
+ "images.urls.bindHost": {
+  "title": "图床服务器监听地址",
+  "desc": "设置图片 Blob 服务绑定的主机地址，隧道转发使用回环地址，直接对外服务使用 0.0.0.0"
+ },
+ "images.urls.sshTarget": {
+  "title": "SSH反向转发目标主机",
+  "desc": "指定 SSH 反向端口转发的目标主机地址，格式为 user@host"
+ },
+ "images.urls.sshRemotePort": {
+  "title": "SSH反向转发远端端口",
+  "desc": "设置 Web 服务器反向代理所指向的 SSH 远端反向转发监听端口号，需为有效端口数字"
+ },
+ "defaultThinkingLevel": {
+  "title": "默认模型思考深度等级",
+  "desc": "设定支持思考功能模型的默认推理深度，可选值对应不同的推理思考投入程度"
+ },
+ "hideThinkingBlock": {
+  "title": "隐藏助手思考过程区块",
+  "desc": "开启后在助手回复中隐藏思考过程区块，关闭则显示完整推理过程"
+ },
+ "proseOnlyThinking": {
+  "title": "思考摘要仅保留纯文本",
+  "desc": "开启后在思考摘要中隐藏代码块并替换为省略号，关闭则完整保留代码块"
+ },
+ "omitThinking": {
+  "title": "完全忽略上游思考输出",
+  "desc": "开启后指示上游服务商在响应中完全去除思考摘要，关闭则保留支持服务商返回的思考内容"
+ },
+ "externalThinking": {
+  "title": "启用独立私有思考草稿",
+  "desc": "开启后使用不对用户展示的私有草稿并禁用主流模型原生推理，关闭则使用模型原生推理"
+ },
+ "model.loopGuard.enabled": {
+  "title": "启用模型流式循环防护",
+  "desc": "开启后自动检测模型推理过程与正文输出中的无限死循环，关闭则不进行循环检测"
+ },
+ "model.loopGuard.checkAssistantContent": {
+  "title": "循环防护覆盖正文输出",
+  "desc": "开启后除思考日志外额外对助手正文消息执行循环检测，关闭则仅检查思考过程"
+ },
+ "model.loopGuard.toolCallReminder": {
+  "title": "连续规划中断提示工具调用",
+  "desc": "开启后在 Gemini 推理流连续输出多个规划标题却未调用工具时中断并注入工具调用提醒，关闭则不介入"
+ },
+ "model.toolCallLoopGuard.enabled": {
+  "title": "跨轮次工具重复调用防护",
+  "desc": "开启后检测跨轮次连续相同的工具调用并在陷入循环时注入纠正引导，关闭则不限制重复调用"
+ },
+ "model.toolCallLoopGuard.threshold": {
+  "title": "工具重复调用触发阈值",
+  "desc": "触发注入纠正引导所需的连续相同工具调用次数，单位为次，达到该正整数阈值即介入"
+ },
+ "model.toolCallLoopGuard.exemptTools": {
+  "title": "工具循环防护白名单列表",
+  "desc": "指定允许连续重复执行而不触发跨轮次循环防护的工具名称数组"
+ },
+ "inlineToolDescriptors": {
+  "title": "内联工具描述注入模式",
+  "desc": "控制是否在系统提示词内联完整工具描述并剥离 Schema 描述以避免重复，auto 仅对 Gemini 启用，true 启用，false 禁用"
+ },
+ "includeModelInPrompt": {
+  "title": "提示词包含当前模型标识",
+  "desc": "开启后在系统提示词中显式注入当前活跃模型标识符以使智能体感知自身模型，关闭则不注入"
+ },
+ "includeWorkspaceTree": {
+  "title": "提示词包含工作区目录树",
+  "desc": "开启后在系统提示词渲染工作区目录树以便感知项目结构，但文件变动时会破坏会话间的提示词缓存，关闭则不渲染"
+ },
+ "skillful": {
+  "title": "提示词列出可用技能列表",
+  "desc": "开启后在系统提示词列出全部可用技能，关闭可节省上下文并可在会话内通过 /skillful 单独切换"
+ },
+ "personality": {
+  "title": "智能体沟通风格预设",
+  "desc": "设定注入系统提示词个性化模块的沟通风格，可选不同性格预设以调整助手的语气与表达习惯"
+ },
+ "temperature": {
+  "title": "模型采样随机度温度",
+  "desc": "控制模型采样的随机程度，0 为确定性输出，1 为高创意度输出，-1 表示使用服务商默认值"
+ },
+ "topP": {
+  "title": "核采样概率阈值比例",
+  "desc": "控制核采样的累计概率截断阈值，取值范围为 0 到 1 之间的小数，-1 表示使用服务商默认值"
+ },
+ "topK": {
+  "title": "候选标记采样数量上限",
+  "desc": "限制每次采样从概率最高的候选标记数量中选取，输入正整数指定数量，-1 表示使用服务商默认值"
+ },
+ "minP": {
+  "title": "最小相对概率采样阈值",
+  "desc": "设置相对于最高概率候选标记的最低保留概率阈值，取值范围为 0 到 1 之间的小数，-1 表示使用服务商默认值"
+ },
+ "presencePenalty": {
+  "title": "存在惩罚抑制新词重复",
+  "desc": "对已出现标记施加存在惩罚以鼓励讨论新话题，数值越大越抑制已出现词汇，-1 表示使用服务商默认值"
+ },
+ "repetitionPenalty": {
+  "title": "重复惩罚降低内容冗余",
+  "desc": "对重复生成的标记施加重复惩罚以降低内容冗余，数值大于 1 时抑制重复，-1 表示使用服务商默认值"
+ },
+ "textVerbosity": {
+  "title": "模型回复详细程度等级",
+  "desc": "设置 OpenAI 与 Codex 响应的详细程度，可选 low 简要、medium 适中或 high 详细"
+ },
+ "tier.openai": {
+  "title": "OpenAI服务处理等级",
+  "desc": "指定 OpenAI 请求的 service_tier 服务处理级别，可选 default、flex 或 priority 等等级，none 表示不发送该字段"
+ },
+ "tier.anthropic": {
+  "title": "Claude服务处理等级",
+  "desc": "指定 Claude 请求的处理级别，设为 priority 可在直连 Anthropic 官方支持模型时启用快速模式，第三方路由下忽略"
+ },
+ "tier.google": {
+  "title": "Gemini服务处理等级",
+  "desc": "指定 Gemini 官方与对应路由请求的顶层 serviceTier 处理级别，可选 standard 或 priority 等，none 表示省略该字段"
+ },
+ "tier.subagent": {
+  "title": "子智能体服务处理等级",
+  "desc": "指定派生子智能体的服务等级，inherit 继承主智能体配置，指定具体值则直接应用于子模型所属厂商"
+ },
+ "tier.advisor": {
+  "title": "顾问模型服务处理等级",
+  "desc": "指定顾问模型的服务等级，none 为标准处理，inherit 继承主智能体配置，指定具体值则应用于对应厂商"
+ },
+ "retry.maxRetries": {
+  "title": "API请求失败重试上限",
+  "desc": "设置遇到 API 错误时的最大重试次数，单位为次，达到上限后停止重试并报错"
+ },
+ "retry.maxDelayMs": {
+  "title": "重试退避等待时长上限",
+  "desc": "两次重试之间的最大退避等待时长，单位为毫秒，上游要求等待超出该值且无备用时快速失败，0 表示不设等待上限"
+ },
+ "retry.waitForUsageReset": {
+  "title": "等待上游配额重置恢复",
+  "desc": "开启后在上游配额耗尽并给出重置时间时休眠等待恢复而非快速失败，关闭则直接报错退出"
+ },
+ "retry.modelFallback": {
+  "title": "允许自动切换备用模型",
+  "desc": "开启后在请求失败重试耗尽时自动故障转移到配置的备用模型，关闭则仅在原模型上重试"
+ },
+ "retry.usageAwareFallback": {
+  "title": "基于用量感知提前切换",
+  "desc": "开启后根据订阅计划配额报告在硬性限流前优先轮换同厂商账号或备用模型，关闭则仅在请求受限时切换"
+ },
+ "retry.usageReservePct": {
+  "title": "配额预留切换百分比阈值",
+  "desc": "判定订阅计划模型达到余量警戒线的百分比阈值，取值范围为 0 到 100，剩余配额低于该百分比时触发轮换"
+ },
+ "retry.usageReservePolicy": {
+  "title": "厂商配额均耗尽处理策略",
+  "desc": "决定同厂商所有订阅账号均落入预留警戒线时的应对策略，可选继续消耗预留配额或立即切换至跨厂商备用模型"
+ },
+ "retry.fallbackChains": {
+  "title": "故障转移备用模型链路映射",
+  "desc": "配置模型角色、特定模型或厂商通配符到有序备选模型列表的 JSON 映射字典，用于在请求失败时代偿切换"
+ },
+ "retry.fallbackRevertPolicy": {
+  "title": "备用模型切回主模型策略",
+  "desc": "决定降级切换到备用模型后在何时切回主模型，可选单轮后切回、会话结束后切回或永不自动切回"
+ },
+ "providers.anthropic.serverSideFallback": {
+  "title": "Claude服务端安全降级回退",
+  "desc": "开启后在请求被 Anthropic 安全分类器拦截时由服务端自动降级重试至 Opus 模型，关闭则保持原样直接报错"
+ },
+ "providers.autoThinkingModel": {
+  "title": "自动思考难度评估分类模型",
+  "desc": "指定 auto 思考级别用于评估任务难度的分类模型，可选默认在线轻量模型或本地端侧模型"
+ },
+ "providers.autoThinkingMaxEffort": {
+  "title": "自动思考最大推理投入上限",
+  "desc": "设定 auto 评估允许解析达到的最高思考等级，xhigh 限制最高为次顶级，max 允许由分类器触发顶级思考"
+ },
+ "providers.maxInFlightRequests": {
+  "title": "单厂商最大并发请求数限制",
+  "desc": "设置各模型服务商在本地多进程间共享的最大并发 LLM 请求数 JSON 映射，未列出的服务商不受限制"
+ },
+ "providers.openai-codex.codeMode": {
+  "title": "Codex代码执行模式路由",
+  "desc": "控制是否将 Codex 专用模型请求路由至 Eval 代码模式，auto 遵循模型目录标记，true 强制开启，false 禁用"
+ },
+ "providers.openai-codex.codeModeDirectTools": {
+  "title": "Codex代码模式直通工具列表",
+  "desc": "在 Eval 等默认直通工具之外额外暴露给 Codex 代码模式直接调用的工具名称数组"
+ },
+ "secrets.enabled": {
+  "title": "发送前脱敏凭据与敏感信息",
+  "desc": "开启后在向上游 AI 服务商发送请求前自动混淆已配置机密并脱敏疑似凭据的 Token，关闭则不进行脱敏"
+ },
+ "providers.ollama-cloud.maxConcurrency": {
+  "title": "Ollama云端子任务并发上限",
+  "desc": "设置单进程内允许并发运行的 Ollama Cloud 子智能体任务数上限，单位为个，0 表示不作限制"
+ },
+ "providers.webSearchOrder": {
+  "title": "网页搜索工具服务商优先级",
+  "desc": "定义 web_search 工具调用的网络搜索服务商优先顺序数组，未列出的服务商排在后面并保持默认顺序"
+ },
+ "providers.webSearchExclude": {
+  "title": "网络搜索排除服务商列表",
+  "desc": "配置 web_search 绝不使用的搜索服务商列表，即使作为降级备选项也不会调用"
+ },
+ "providers.webSearchTimeoutSeconds": {
+  "title": "网络搜索单服务商超时秒数",
+  "desc": "每个搜索服务商传输层的硬超时时间，单位为秒，超时后切换至下一个备选项，最大值为 300 秒"
+ },
+ "providers.webSearchGeminiModel": {
+  "title": "Gemini搜索接地模型ID",
+  "desc": "用于 Gemini Google Search 搜索接地的模型 ID，默认为 gemini-2.5-flash"
+ },
+ "providers.antigravityEndpoint": {
+  "title": "反重力提供商端点路由策略",
+  "desc": "google-antigravity 服务商各项功能（聊天、搜索、图像、发现）的端点路由策略选择"
+ },
+ "providers.imageOrder": {
+  "title": "图像生成服务商优先级顺序",
+  "desc": "图像生成服务商的优先级调用列表，未列出的服务商依次遵循当前会话提供商和内置默认顺序"
+ },
+ "providers.fireworksTier": {
+  "title": "Fireworks服务层级路由模式",
+  "desc": "Fireworks 请求的服务路径选择，Priority 支付更高费用以在高峰期保证高可用性，Standard 为标准路径，Fast 系列模型不受此限制"
+ },
+ "live.voice": {
+  "title": "实时语音会话发音人音色",
+  "desc": "基于 Codex 的实时语音交互会话所使用的发音人音色选择"
+ },
+ "providers.tts": {
+  "title": "TTS工具语音合成后端服务",
+  "desc": "tts 工具的语音合成后端，可选本地端侧神经 TTS（Kokoro-82M）、xAI Grok Voice 或 DeepInfra 语音服务"
+ },
+ "tts.localModel": {
+  "title": "本地端侧TTS神经模型选择",
+  "desc": "本地 TTS 后端使用的端侧神经网络模型，默认为 Kokoro-82M"
+ },
+ "tts.localVoice": {
+  "title": "本地TTS发音人音色选择",
+  "desc": "本地 TTS 后端使用的 Kokoro 发音人音色，可选英美口音及男女声"
+ },
+ "speech.enabled": {
+  "title": "启用助手输出实时语音朗读",
+  "desc": "开启后在助手流式生成输出时通过扬声器实时朗读，关闭则保持静音"
+ },
+ "speech.mode": {
+  "title": "语音朗读内容播报范围",
+  "desc": "语音朗读的内容范围，all 朗读消息与思考过程，assistant 仅朗读消息，yield 仅在轮次结束时朗读最终结果"
+ },
+ "speech.enhanced": {
+  "title": "启用语音合成口语化增强重写",
+  "desc": "开启后在合成前利用轻量模型将输出改写为自然口语并过滤代码与链接，关闭或失败时仅执行基础机械清理"
+ },
+ "speech.voice": {
+  "title": "助手语音播报Kokoro音色",
+  "desc": "实时朗读助手输出时所使用的 Kokoro 发音人音色选择"
+ },
+ "providers.tinyModel": {
+  "title": "会话标题生成轻量模型选择",
+  "desc": "生成会话标题的轻量模型，online 默认优先使用模型的 TINY 角色或 @smol，亦可选本地端侧模型"
+ },
+ "providers.tinyModelDevice": {
+  "title": "本地轻量模型推理设备后端",
+  "desc": "本地轻量模型的推理后端，default 使用纯 CPU 的 ONNX，mlx 使用 Apple 芯片的 mlx-lm 运行，环境变量 PI_TINY_DEVICE 优先"
+ },
+ "providers.tinyModelDtype": {
+  "title": "本地轻量模型ONNX量化精度",
+  "desc": "本地轻量模型的 ONNX 量化精度，default 使用模型自带精度（q4），较低精度运行较快，较高精度输出更保真，MLX 后端直接使用预量化 4 位的模型权重，环境变量 PI_TINY_DTYPE 优先"
+ },
+ "providers.unexpectedStopModel": {
+  "title": "异常中断智能检测分类模型",
+  "desc": "智能检测异常中断所用的分类器模型，online 默认使用在线模型（TINY 角色或 smol），亦可选本地端侧模型"
+ },
+ "providers.kimiApiFormat": {
+  "title": "Kimi代码服务API协议格式",
+  "desc": "Kimi Code 服务商的 API 协议格式，auto 会自动跟随实时模型元数据进行适配"
+ },
+ "providers.openaiWebsockets": {
+  "title": "OpenAI模型WebSocket连接策略",
+  "desc": "OpenAI Codex 模型的 WebSocket 连接策略，auto 采用模型默认值，on 强制启用，off 完全禁用"
+ },
+ "providers.cacheRetention": {
+  "title": "提示词缓存保留时长控制策略",
+  "desc": "转发至支持该特性的服务商（Anthropic、Bedrock、OpenRouter、OpenAI）的 Prompt 缓存保留时长策略"
+ },
+ "providers.streamFirstEventTimeoutSeconds": {
+  "title": "模型首个流式事件超时秒数",
+  "desc": "等待模型流式响应首个事件的超时时间，单位为秒，-1 使用服务商或环境默认值，0 禁用看门狗检测"
+ },
+ "providers.streamIdleTimeoutSeconds": {
+  "title": "模型流式传输空闲超时秒数",
+  "desc": "模型流式传输各事件间允许静默的最大间隔时间，单位为秒，-1 使用服务商或环境默认值，0 禁用看门狗检测"
+ },
+ "providers.openrouterVariant": {
+  "title": "OpenRouter模型路由变体后缀",
+  "desc": "追加至 OpenRouter 模型 ID 后的默认路由变体后缀，default 使用默认路由，若选择器已指定变体则被覆盖"
+ },
+ "providers.fetch": {
+  "title": "网页读取工具解析后端优先级",
+  "desc": "fetch/read URL 工具抓取网页时使用的阅读器后端优先级选择，auto 会自动选择最优解析后端"
+ },
+ "codexResets.autoRedeem": {
+  "title": "Codex重置额度自动兑换策略",
+  "desc": "自动使用已保存的 Codex 速率重置额度，unset 在首次消耗前询问确认，yes 直接自动扣除，no 则完全禁用自动兑换"
+ },
+ "codexResets.minBlockedMinutes": {
+  "title": "自动重置触发最小封锁分钟数",
+  "desc": "触发自动兑换所需的最小自然解封等待时间，单位为分钟，低于此阈值时不消耗额度"
+ },
+ "codexResets.keepCredits": {
+  "title": "保留重置额度最低保底数量",
+  "desc": "自动兑换时保留的重置额度底线数量，单位为次，设为 0 允许自动用尽全部额度，即将过期的额度不受此限制"
+ },
+ "codexResets.salvageHorizonHours": {
+  "title": "临期重置额度挽救窗口小时数",
+  "desc": "重置额度临近过期时自动兑换的提前预警时间，单位为小时，0 表示禁用临期挽救"
+ },
+ "provider.appendOnlyContext": {
+  "title": "保持仅追加上下文以优化缓存",
+  "desc": "缓存系统提示词与工具定义并保持消息仅追加记录以提升前缀缓存命中率，auto 针对已知支持前缀缓存的服务商自动启用"
+ },
+ "exa.enabled": {
+  "title": "启用Exa网络搜索服务商",
+  "desc": "开启后允许调用 Exa 搜索引擎获取网络检索结果，关闭则不使用该服务商"
+ },
+ "exa.searchDelayMs": {
+  "title": "Exa搜索请求最小间隔毫秒数",
+  "desc": "Exa 网络搜索请求之间的最小延迟时间，单位为毫秒，设为 0 表示禁用请求限速"
+ },
+ "searxng.endpoint": {
+  "title": "SearXNG自建搜索实例根URL",
+  "desc": "用于网络搜索的自建 SearXNG 实例基础 URL 根地址"
+ },
+ "bash.enabled": {
+  "title": "启用Bash终端命令执行工具",
+  "desc": "开启后允许智能体使用 bash 工具执行系统终端命令，关闭则完全禁止执行 Shell 命令"
+ },
+ "bash.allowCompoundCommands": {
+  "title": "允许逐条评估复合命令执行链",
+  "desc": "开启后对 && 复合命令链按单条子命令分别评估权限，关闭或未匹配规则时回退至常规审批策略"
+ },
+ "bash.autoBackground.enabled": {
+  "title": "Bash长耗时命令自动转入后台",
+  "desc": "开启后自动将耗时较长的 Bash 命令转入后台执行并在完成时回传结果，关闭则持续同步阻塞等待"
+ },
+ "bash.patterns": {
+  "title": "Bash命令审批规则匹配列表",
+  "desc": "有序的 Bash 命令审批规则列表，各项包含 match 和 approval 字段且仅支持 '*' 通配符"
+ },
+ "bashInterceptor.enabled": {
+  "title": "拦截已有专用工具的Shell命令",
+  "desc": "开启后拦截已具备专用内置工具的 Shell 命令并引导使用专用工具，关闭则允许直接执行原始终端命令"
+ },
+ "bash.direnv": {
+  "title": "Bash会话自动载入direnv环境",
+  "desc": "控制是否自动将仓库的 .envrc 载入 Bash 会话以注入环境变量与工具，auto 仅对已授权目录自动加载，严格遵循 direnv 白名单"
+ },
+ "bash.direnvLoadTimeoutMs": {
+  "title": "direnv环境导出最大超时毫秒",
+  "desc": "首次执行 direnv export 的最大等待时间，单位为毫秒，超时后会话将在无 direnv 环境的状态下运行"
+ },
+ "shellMinimizer.enabled": {
+  "title": "压缩Shell命令冗长终端输出",
+  "desc": "开启后在将 Git、npm、cargo 等命令的冗长输出回传给智能体前进行精简压缩，关闭则原样传递原始输出"
+ },
+ "shellMinimizer.sourceOutlineLevel": {
+  "title": "源码文件大纲提取压缩模式",
+  "desc": "读取或查看源码文件时的大纲生成模式，default 采用标准模式，aggressive 采用激进压缩模式"
+ },
+ "eval.py": {
+  "title": "允许Eval工具调度Python代码",
+  "desc": "开启后允许 eval 工具将 Python 代码块提交至 IPython 内核执行，关闭则禁止执行 Python 代码"
+ },
+ "eval.js": {
+  "title": "允许Eval工具执行JS代码",
+  "desc": "开启后允许 eval 工具将 JavaScript 代码块调度至进程内运行时执行，关闭则禁止执行 JS 代码"
+ },
+ "eval.tools.enabled": {
+  "title": "允许代码单元定义动态子工具",
+  "desc": "开启后允许在 eval 代码单元中定义工具并供 task、agent() 和 workpool() 子智能体调用，关闭则禁止定义动态工具"
+ },
+ "eval.workpool.freshAgents": {
+  "title": "工作池任务每次生成新子智能体",
+  "desc": "开启后为 workpool 中的每个任务单独创建全新的子智能体，关闭则复用已有工作节点或批量处理队列项"
+ },
+ "eval.autoBackground.enabled": {
+  "title": "Eval长耗时代码自动转入后台",
+  "desc": "开启后自动将运行时间较长的 eval 代码单元转入后台执行并在完成后回传结果，关闭则持续同步等待"
+ },
+ "python.kernelMode": {
+  "title": "Python内核进程生命周期模式",
+  "desc": "IPython 内核的生命周期模式，session 在多次调用间保持进程常驻以维持上下文，或在每次执行时全新启动"
+ },
+ "python.interpreter": {
+  "title": "指定Python可执行文件路径",
+  "desc": "显式指定 Python 解释器的具体可执行文件路径，配置后将跳过自动环境探测"
+ },
+ "plan.enabled": {
+  "title": "启用规划模式",
+  "desc": "开启后在执行具体操作前先进行只读探索与方案规划，关闭则直接执行"
+ },
+ "plan.defaultOnStartup": {
+  "title": "启动默认进入规划模式",
+  "desc": "开启后每个新会话启动时自动进入规划模式，关闭则以常规模式启动"
+ },
+ "plan.autosave": {
+  "title": "自动保存规划方案",
+  "desc": "开启后在规划模式完成且方案确认后自动保存到磁盘，关闭则不自动落盘"
+ },
+ "plan.autosaveDir": {
+  "title": "规划方案自动保存目录",
+  "desc": "指定已确认规划方案的自动保存路径，支持绝对路径、相对路径及波浪号展开，留空默认保存至项目下的 .omp/plans/ 目录"
+ },
+ "goal.enabled": {
+  "title": "启用会话目标模式",
+  "desc": "开启后启用基于会话的目标追踪模式与内置 goal 工具，关闭则不进行跨轮次目标管理"
+ },
+ "goal.statusInFooter": {
+  "title": "状态栏显示目标预算",
+  "desc": "开启后在状态栏目标指示器旁同步显示 Token 预算消耗，关闭则仅显示目标状态"
+ },
+ "goal.continuationModes": {
+  "title": "目标自动续行运行模式",
+  "desc": "指定允许进行中的目标在回合之间自动继续推进的运行模式列表，默认包含 interactive 模式"
+ },
+ "title.refreshOnReplan": {
+  "title": "重新规划刷新会话标题",
+  "desc": "开启后当待办初始化重新规划时自动更新生成的会话标题，关闭则不自动刷新，用户手动设置的标题始终不会被覆盖"
+ },
+ "task.isolation.enabled": {
+  "title": "启用子代理工作区隔离",
+  "desc": "开启后让子代理在代码仓库的独立副本中隔离运行并在完成后集成修改，关闭则直接操作当前工作区"
+ },
+ "isolation.backend": {
+  "title": "工作区隔离底层后端",
+  "desc": "指定子代理隔离与工作树克隆的文件系统后端，auto 为自动探测最优后端，亦可选 apfs、btrfs、zfs、reflink、overlayfs、projfs、block-clone 或 rcopy"
+ },
+ "worktree.clone": {
+  "title": "写时复制克隆工作树",
+  "desc": "开启后新建 Git 工作树时优先通过写时复制克隆当前目录以复用构建产物，关闭或文件系统不支持时使用常规检出"
+ },
+ "worktree.cleanSource": {
+  "title": "创建工作树清理原工作区",
+  "desc": "开启后使用 /wt 创建新工作树并将修改迁移过去后重置原工作区的已跟踪变动并删除未跟踪文件，关闭则保留原工作区内容"
+ },
+ "task.isolation.apply": {
+  "title": "自动应用隔离任务修改",
+  "desc": "开启后自动将隔离子代理成功的修改合并回主工作区，关闭则仅保留补丁文件或分支等工件供手动处理"
+ },
+ "task.isolation.merge": {
+  "title": "隔离任务修改合并策略",
+  "desc": "指定隔离子代理修改集成回主分支的方式，可选 patch 整合差异并直接应用补丁，或 branch 为每个任务生成独立提交并以非快进方式合并分支"
+ },
+ "task.isolation.commits": {
+  "title": "隔离提交信息生成风格",
+  "desc": "指定隔离仓库提交信息的生成风格，可选 generic 使用固定模板消息，或 ai 根据差异内容由 AI 自动生成详细提交说明"
+ },
+ "worktree.base": {
+  "title": "智能体托管工作树根目录",
+  "desc": "设置智能体托管工作树的基础存放目录，包含任务隔离副本与 GitHub PR 检出等，默认使用 ~/.omp/wt，环境变量 OMP_WORKTREE_DIR 拥有更高优先级"
+ },
+ "task.eager": {
+  "title": "子代理任务委派倾向",
+  "desc": "指定将工作分派给子代理的积极程度，可选 default 遵循模型默认策略、preferred 在系统提示词中推荐委派，或 always 强制在首回合追加委派提醒"
+ },
+ "task.batch": {
+  "title": "批量派发子代理任务",
+  "desc": "开启后 task 工具支持单次调用传递共享上下文与任务列表以批量并行派发子代理，关闭则恢复单任务扁平派发模式"
+ },
+ "task.enableEffort": {
+  "title": "允许指定子代理思考等级",
+  "desc": "开启后在派发任务时暴露可选的 effort 参数以允许调用方为每个子代理单独覆盖思考推理等级，关闭则继承默认等级"
+ },
+ "task.maxConcurrency": {
+  "title": "子代理最大并发数量",
+  "desc": "设置同时并发运行的子代理最大数量，单位为个，默认值为 32，设为 0 表示不设并发上限"
+ },
+ "task.enableLsp": {
+  "title": "允许子代理使用 LSP 工具",
+  "desc": "开启后允许通过 task 工具派发的子代理调用 lsp 语言服务工具，关闭则禁用以节约 Token 消耗"
+ },
+ "task.maxRecursionDepth": {
+  "title": "子代理最大递归深度",
+  "desc": "设置子代理继续派生子代理的最大嵌套层数，单位为层，默认值为 2，设为 0 禁止派生，设为 -1 表示不限递归层数"
+ },
+ "task.maxRuntimeMs": {
+  "title": "子代理最长运行时间",
+  "desc": "设置单个子代理的最长硬性物理运行时间限制，单位为毫秒，超时将触发超时中止，设为 0 表示不限制运行时间"
+ },
+ "task.agentIdleTtlMs": {
+  "title": "空闲子代理内存存活时间",
+  "desc": "设置空闲子代理在内存中保持存活的最长时间，单位为毫秒，超时后将暂存至磁盘并在收到消息时自动唤醒，设为 0 表示常驻内存直到会话退出"
+ },
+ "task.softRequestBudget": {
+  "title": "子代理软性请求预算上限",
+  "desc": "设置每个子代理单次运行允许的模型请求次数软上限，单位为次，超出后注入收尾提示且达到 1.5 倍时强制停止产出部分结果，设为 0 禁用限制"
+ },
+ "task.softRequestBudgetNotice": {
+  "title": "超出请求预算收尾提示",
+  "desc": "开启后当子代理超过软性请求预算时注入一条转向提示要求其尽快收尾，关闭则不发出提示直到达到 1.5 倍阈值强制停止"
+ },
+ "task.maxEffort": {
+  "title": "子代理最高允许思考等级",
+  "desc": "限制 task 工具派发子代理时允许指定的最高推理深度上限，可选 minimal、low、medium、high、xhigh 或 max，防止子代理超出算力开销上限"
+ },
+ "task.prewalk": {
+  "title": "通用任务子代理预热交接",
+  "desc": "开启后内置 task 子代理先由强模型完成规划并开始实施，首次修改文件时自动交接给轻量模型角色接管后续执行，关闭则全程由主模型执行"
+ },
+ "skills.enableSkillCommands": {
+  "title": "技能注册为斜杠命令",
+  "desc": "开启后将所有已启用的技能自动注册为 /skill:名称 格式的快捷斜杠命令，关闭则只能由智能体根据上下文被动调用"
+ },
+ "commands.enableClaudeUser": {
+  "title": "加载 Claude 用户级命令",
+  "desc": "开启后自动从用户主目录下的 ~/.claude/commands/ 路径加载自定义斜杠命令，关闭则忽略该目录"
+ },
+ "commands.enableClaudeProject": {
+  "title": "加载 Claude 项目级命令",
+  "desc": "开启后自动从当前项目根目录下的 .claude/commands/ 路径加载自定义斜杠命令，关闭则忽略该目录"
+ },
+ "commands.enableOpencodeUser": {
+  "title": "加载 OpenCode 用户级命令",
+  "desc": "开启后自动从用户主目录下的 ~/.config/opencode/commands/ 路径加载自定义斜杠命令，关闭则忽略该目录"
+ },
+ "commands.enableOpencodeProject": {
+  "title": "加载 OpenCode 项目级命令",
+  "desc": "开启后自动从当前项目根目录下的 .opencode/commands/ 路径加载自定义斜杠命令，关闭则忽略该目录"
+ },
+ "tools.artifactSpillThreshold": {
+  "title": "工具输出工件溢出阈值",
+  "desc": "设置工具输出自动转存为工件的大小阈值，单位为 KB，默认 50 KB，超过该大小的输出将存入工件并在正文中保留截短内容"
+ },
+ "tools.artifactTailBytes": {
+  "title": "工件溢出尾部保留大小",
+  "desc": "设置工具输出溢出转存为工件时正文内联保留的尾部内容大小，单位为 KB，默认 20 KB"
+ },
+ "tools.artifactHeadBytes": {
+  "title": "工件溢出首部保留大小",
+  "desc": "设置工具输出溢出转存为工件时正文内联保留的首部内容大小，单位为 KB，默认 20 KB，设为 0 表示不保留首部仅保留尾部"
+ },
+ "tools.outputMaxColumns": {
+  "title": "工具输出单行字节上限",
+  "desc": "设置流式工具输出与读取文件时的单行字节上限，单位为字节，超宽部分将被省略截断，设为 0 表示不限制单行宽度"
+ },
+ "tools.artifactTailLines": {
+  "title": "工件溢出尾部最大行数",
+  "desc": "设置工具输出溢出转存为工件时正文内联保留的尾部最大行数，单位为行，默认 500 行"
+ },
+ "todo.enabled": {
+  "title": "启用待办清单工具",
+  "desc": "开启后启用 todo 工具以支持分阶段任务规划与执行跟踪，关闭则禁止使用待办功能"
+ },
+ "todo.reminders": {
+  "title": "未完成待办事项提醒",
+  "desc": "开启后在回合结束前提醒智能体核对并完成剩余的待办事项，关闭则不在停机前进行待办检查"
+ },
+ "todo.remindersMax": {
+  "title": "待办事项最大提醒次数",
+  "desc": "设置智能体停止前最多重试注入待办检查提醒的次数，单位为次，默认 3 次，超过后将放弃继续提醒"
+ },
+ "todo.eager": {
+  "title": "自动创建待办清单倾向",
+  "desc": "控制首条消息后自动创建待办清单的倾向，可选 default 由模型自主决定、preferred 在首条消息后建议生成待办，或 always 强制在首条消息后生成完整待办"
+ },
+ "glob.enabled": {
+  "title": "启用 Glob 文件路径检索",
+  "desc": "开启后启用基于通配符模式快速匹配文件与目录路径的 glob 工具，关闭则禁止使用该工具"
+ },
+ "grep.enabled": {
+  "title": "启用 Grep 文本正则检索",
+  "desc": "开启后启用基于正则表达式快速检索文件内容的 grep 工具，关闭则禁止使用该工具"
+ },
+ "grep.contextBefore": {
+  "title": "Grep 匹配前上下文行数",
+  "desc": "设置 grep 工具在匹配结果前额外展示的上下文行数，单位为行，默认 1 行，设为 0 表示不展示前置上下文"
+ },
+ "grep.contextAfter": {
+  "title": "Grep 匹配后上下文行数",
+  "desc": "设置 grep 工具在匹配结果后额外展示的上下文行数，单位为行，默认 3 行，设为 0 表示不展示后置上下文"
+ },
+ "astGrep.enabled": {
+  "title": "启用 AST 结构化代码检索",
+  "desc": "开启后启用基于语法树结构检索代码模式的 ast_grep 工具，关闭则禁止使用该工具"
+ },
+ "astEdit.enabled": {
+  "title": "启用 AST 结构化代码改写",
+  "desc": "开启后启用基于语法树结构进行安全代码重写的 ast_edit 工具，关闭则禁止使用该工具"
+ },
+ "debug.enabled": {
+  "title": "启用 DAP 协议断点调试",
+  "desc": "开启后启用基于 DAP 协议的交互式断点调试工具 debug，关闭则禁止使用该工具"
+ },
+ "launch.enabled": {
+  "title": "启用长期运行进程管理",
+  "desc": "开启后允许使用 launch 工具监管项目共享的长期运行进程，关闭则禁用"
+ },
+ "speechgen.enabled": {
+  "title": "启用TTS语音文件合成",
+  "desc": "开启后允许使用 tts 工具通过本地 Kokoro 或 xAI Grok Voice 生成语音文件，关闭则禁用"
+ },
+ "generate_image.enabled": {
+  "title": "启用文生图与图像编辑工具",
+  "desc": "开启后允许使用 generate_image 工具生成和编辑图像并在 tools.xdev 开启时暴露为 xd:// 设备，关闭则禁用"
+ },
+ "computer.enabled": {
+  "title": "启用宿主机桌面自动化功能",
+  "desc": "开启后在 eval 环境中启用屏幕截图、键鼠输入及无障碍等桌面自动化接口，关闭则禁用"
+ },
+ "computer.display": {
+  "title": "桌面自动化目标显示器",
+  "desc": "指定合并所有显示器画面（all）或指定原生显示器 ID"
+ },
+ "computer.maxWidth": {
+  "title": "合并截屏最大像素宽度",
+  "desc": "设置多显示器合并截图的最大像素宽度，单位像素（px），默认为 3840"
+ },
+ "computer.maxHeight": {
+  "title": "合并截屏最大像素高度",
+  "desc": "设置多显示器合并截图的最大像素高度，单位像素（px），默认为 2400"
+ },
+ "images.questionTimeoutMs": {
+  "title": "图像视觉提问超时时长",
+  "desc": "read 工具使用 ?q= 发起视觉提问调用的单次请求超时时间，单位毫秒，设为 0 表示不限制超时"
+ },
+ "checkpoint.enabled": {
+  "title": "启用上下文检查点与回滚",
+  "desc": "开启后允许使用 checkpoint 和 rewind 工具创建检查点并回滚上下文状态，关闭则禁用"
+ },
+ "fetch.enabled": {
+  "title": "允许读取工具抓取URL",
+  "desc": "开启后允许 read 工具抓取并解析外部 URL 网页内容，关闭则拒绝网络抓取"
+ },
+ "vault.enabled": {
+  "title": "启用Obsidian笔记库访问",
+  "desc": "开启后允许通过 vault:// 协议和 Obsidian CLI 读写笔记库，关闭则拒绝解析并从系统提示词移除"
+ },
+ "github.enabled": {
+  "title": "启用GitHub集成操作工具",
+  "desc": "开启后允许使用 github 工具统一操作仓库、Issue、PR、代码差异、搜索及 Actions 工作流，关闭则禁用"
+ },
+ "github.cache.enabled": {
+  "title": "启用GitHub本地视图缓存",
+  "desc": "开启后将渲染的 Issue 和 PR 视图缓存在本地数据库以免费重复读取，关闭则每次实时请求"
+ },
+ "github.cache.softTtlSec": {
+  "title": "GitHub缓存软过期时间",
+  "desc": "缓存的 Issue 或 PR 视图可直接返回的有效时间窗口，单位秒，默认 300 秒（5 分钟）"
+ },
+ "github.cache.hardTtlSec": {
+  "title": "GitHub缓存硬过期时间",
+  "desc": "超出软过期后台刷新且超出硬过期直接丢弃缓存数据，单位秒，默认 604800 秒（7 天）"
+ },
+ "web_search.enabled": {
+  "title": "启用实时网络搜索工具",
+  "desc": "开启后允许使用 web_search 工具检索实时网络信息，关闭则禁用联网搜索"
+ },
+ "security.enabled": {
+  "title": "启用原生安全扫描功能",
+  "desc": "开启后支持制定并执行安全扫描计划及访问只读的 security:// 资源命名空间，关闭则禁用"
+ },
+ "ask.enabled": {
+  "title": "启用向用户交互提问工具",
+  "desc": "开启后允许模型使用 ask 工具主动向用户发起交互式提问以澄清需求，关闭则禁用"
+ },
+ "browser.enabled": {
+  "title": "启用Chromium浏览器自动化",
+  "desc": "开启后在 eval 环境中注入基于 Puppeteer 的 Chromium 浏览器自动化控制能力，关闭则禁用"
+ },
+ "browser.cdpUrl": {
+  "title": "默认CDP调试连接端点",
+  "desc": "设置附加到已有浏览器实例的 HTTP CDP 发现端点 URL，工具调用显式指定的参数具有更高优先级"
+ },
+ "browser.relay": {
+  "title": "启用Chrome浏览器中继",
+  "desc": "开启后通过浏览器扩展直接控制本机 Chrome 标签页且优先级高于 CDP，关闭则使用独立浏览器"
+ },
+ "browser.relayUrl": {
+  "title": "Chrome浏览器中继地址",
+  "desc": "设置 omp 浏览器中继服务的 HTTP 端点 URL，默认为 http://127.0.0.1:9224"
+ },
+ "browser.headless": {
+  "title": "浏览器无头模式运行开关",
+  "desc": "开启后在后台以无头模式静默运行浏览器，关闭则显示图形界面窗口"
+ },
+ "browser.cmux": {
+  "title": "启用cmux网页视图自动化",
+  "desc": "开启后在检测到可用套接字时优先使用 cmux WKWebView 表面进行自动化，关闭则使用标准环境"
+ },
+ "browser.freezeOnTurnEnd": {
+  "title": "回合结束冻结无头标签页",
+  "desc": "开启后在对话回合结束时自动冻结无头标签页以停止 CPU/GPU 占用并在下次使用时解冻，关闭则持续运行"
+ },
+ "browser.idleCloseSec": {
+  "title": "无头标签页空闲关闭超时",
+  "desc": "自动关闭空闲超过指定秒数的无头标签页，单位秒，设为 0 表示永不因空闲自动关闭"
+ },
+ "browser.screenshotDir": {
+  "title": "浏览器截屏保存目标目录",
+  "desc": "指定保存浏览器自动化截屏图像的目标文件夹路径，支持 ~ 路径，未设置时保存至临时文件"
+ },
+ "tools.intentTracing": {
+  "title": "启用工具调用意图追踪",
+  "desc": "开启后要求智能体在发起每次工具调用前以简短文本说明意图，关闭则直接调用"
+ },
+ "tools.abortOnFabricatedResult": {
+  "title": "立即中止伪造工具结果生成",
+  "desc": "开启后在模型生成中途伪造工具调用结果时立即中止生成，关闭则等待生成结束并丢弃伪造内容"
+ },
+ "tools.speculativeExecution.enabled": {
+  "title": "启用只读操作投机预执行",
+  "desc": "开启后对已校验的直接 read 和嵌套 eval 等安全只读操作进行投机预执行以降低延迟，关闭则禁用"
+ },
+ "tools.speculativeExecution.maxInFlight": {
+  "title": "投机预执行最大并发数",
+  "desc": "允许在常规调度前投机并发执行的已校验本地读取操作最大数量，单位为操作个数，必须大于等于 1"
+ },
+ "tools.maxTimeout": {
+  "title": "智能体工具最长超时限制",
+  "desc": "限制智能体为任意工具调用可设定的最大超时时间，单位秒，设为 0 表示不限制超时"
+ },
+ "async.enabled": {
+  "title": "启用异步命令与后台任务",
+  "desc": "开启后允许执行异步 Bash 命令及后台并发子任务，关闭则仅允许同步执行"
+ },
+ "async.pollWaitDuration": {
+  "title": "后台任务轮询等待时长",
+  "desc": "设定 hub 等待后台作业的单次观察时长，可选固定时长（5s/10s/30s/1m/5m）或自适应递增的 smart 模式"
+ },
+ "irc.timeoutMs": {
+  "title": "智能体消息等待默认超时",
+  "desc": "hub 等待消息及同步发送时的默认超时时间，单位毫秒，设为 0 表示永不超时"
+ },
+ "tools.xdev": {
+  "title": "启用xd设备按需挂载模式",
+  "desc": "开启后将低频工具作为 xd:// 虚拟设备挂载以缩减提示词体积，关闭则将所有工具展开在顶层 Schema"
+ },
+ "tools.xdevDocs": {
+  "title": "xd设备文档提示词内联策略",
+  "desc": "配置内联到系统提示词的设备文档范围，可选 inline（全部内联）、builtins（仅内置核心工具）或 catalog（仅索引目录）"
+ },
+ "tools.xdevInlineDevices": {
+  "title": "xd额外内联设备匹配规则",
+  "desc": "当文档策略为仅内置工具时，指定额外强制内联到系统提示词的设备名称 glob 匹配模式列表"
+ },
+ "mcp.enableProjectConfig": {
+  "title": "自动加载项目MCP配置",
+  "desc": "开启后自动从当前项目根目录加载 .mcp.json 或 mcp.json 配置文件，关闭则忽略"
+ },
+ "mcp.renderMarkdownResults": {
+  "title": "MCP纯文本渲染为Markdown",
+  "desc": "开启后将非 JSON 格式的 MCP 纯文本结果在对话记录中渲染为 Markdown，关闭则显示为纯文本"
+ },
+ "mcp.notifications": {
+  "title": "注入MCP资源变更通知",
+  "desc": "开启后自动将来自 MCP 服务端的资源更新通知注入当前智能体对话上下文，关闭则不注入"
+ },
+ "mcp.notificationDebounceMs": {
+  "title": "MCP资源通知防抖延迟",
+  "desc": "将 MCP 资源更新通知合并注入对话前的防抖等待时间窗口，单位毫秒"
+ },
+ "tasks.todoClearDelay": {
+  "title": "待办完成自动清理延迟",
+  "desc": "已完成或已放弃的待办任务从待办挂件中自动移除前的保留等待时间，单位秒，默认为 60 秒"
+ },
+ "extensionHandlers.toolCallTimeoutMs": {
+  "title": "扩展工具调用执行超时",
+  "desc": "扩展插件处理 tool_call 钩子的正数活动超时时间，单位毫秒，无效值默认回退为 30000 毫秒"
+ },
+ "dev.autoqa": {
+  "title": "启用工具异常自动上报",
+  "desc": "开启后通过 xd://report_issue 自动上报工具异常（首次上报需授权），关闭则不上报"
+ },
+ "dev.autoqaPush.endpoint": {
+  "title": "自动QA数据上报接口URL",
+  "desc": "接收自动 QA 测试 JSON 报告的完整目标服务 URL，默认为 https://qa.omp.sh/v1/grievances"
+ }
+}
