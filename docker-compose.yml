@@ -1,0 +1,26 @@
+services:
+  omp-webui:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: oh-my-pi-webui:latest
+    container_name: oh-my-pi-webui
+    restart: unless-stopped
+    ports:
+      - "8172:8172"
+    environment:
+      # WebUI 安全访问密钥，首次登录后亦可在界面中初始化独立账号密码
+      - WEBUI_API_KEY=change-me-to-a-long-random-string
+      - PORT=8172
+      - HOST=0.0.0.0
+      - OMP_BIN=/usr/local/bin/omp
+      - OMP_CWD=/workspaces
+    volumes:
+      # 持久化 omp 配置、会话归档与 WebUI 本地 SQLite 数据库
+      - omp_data:/root/.omp
+      # 挂载宿主机项目代码目录，供智能体在容器内执行开发任务
+      - ./workspaces:/workspaces
+
+volumes:
+  omp_data:
+    name: omp_webui_data

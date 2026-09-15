@@ -35,6 +35,56 @@ pnpm start
 
 打开 `http://127.0.0.1:8172`，首次访问会引导**初始化账号**（设置用户名和密码，只能初始化一次）。
 
+## Docker 部署
+
+项目提供了针对 Oh My Pi 深度优化的多阶段构建 `Dockerfile` 与 `docker-compose.yml`，容器内置预装了官方最新版 `omp` 运行引擎与完整构建依赖。
+
+### 方式一：Docker Compose（推荐）
+
+1. 准备本地项目工作区目录：
+```bash
+mkdir -p workspaces
+```
+
+2. 启动容器服务：
+```bash
+docker compose up -d --build
+```
+
+3. 浏览器访问：
+打开 `http://localhost:8172`，首次进入按提示设置管理员账号与密码即可。
+
+### 方式二：Docker 原生命令运行
+
+```bash
+# 1. 构建本地镜像
+docker build -t oh-my-pi-webui:latest .
+
+# 2. 启动容器并挂载数据卷
+docker run -d \
+  --name oh-my-pi-webui \
+  --restart unless-stopped \
+  -p 8172:8172 \
+  -e WEBUI_API_KEY=change-me-to-a-long-random-string \
+  -v omp_webui_data:/root/.omp \
+  -v $(pwd)/workspaces:/workspaces \
+  oh-my-pi-webui:latest
+```
+
+### 数据持久化说明
+
+| 挂载路径 | 容器内路径 | 作用说明 |
+| --- | --- | --- |
+| `omp_webui_data` (Volume) | `/root/.omp` | 持久化 WebUI SQLite 数据库、`omp` 会话记录、全局配置与认证凭据 |
+| `./workspaces` (Bind Mount) | `/workspaces` | 映射宿主机代码工作区，供智能体在容器内执行开发与文件修改 |
+
+### 容器内找回密码
+
+若在 Docker 部署中遗忘 WebUI 密码，可直接在运行中的容器内执行重置：
+```bash
+docker compose exec omp-webui node dist/cli/reset-password.js --password 'your-new-password'
+```
+
 ## 认证
 
 - **账号登录**：初始化时设置的用户名 + 密码，密码以 scrypt（16 字节盐 + 64 字节派生）单向存储。
