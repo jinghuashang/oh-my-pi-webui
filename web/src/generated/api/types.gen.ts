@@ -2138,6 +2138,70 @@ export type McpServersListResponseDto = {
     nextCursor: string | null;
 };
 
+export type McpConfigResponseDto = {
+    /**
+     * Configured MCP servers dictionary
+     */
+    mcpServers: {
+        [key: string]: unknown;
+    };
+    /**
+     * List of disabled server names
+     */
+    disabledServers: Array<string>;
+    /**
+     * Available GitHub mirrors for MCP installation
+     */
+    mirrors: Array<string>;
+};
+
+export type McpStoreItemDto = {
+    name: string;
+    title: string;
+    description: string;
+    category: string;
+    type: string;
+    config: {
+        [key: string]: unknown;
+    };
+    installed: boolean;
+    enabled: boolean;
+    hasGithubSource?: boolean;
+};
+
+export type McpStoreResponseDto = {
+    items: Array<McpStoreItemDto>;
+    mirrors: Array<string>;
+};
+
+export type InstallMcpServerDto = {
+    /**
+     * Identifier of the MCP server
+     */
+    name: string;
+    /**
+     * Server configuration object
+     */
+    config: {
+        [key: string]: unknown;
+    };
+    /**
+     * GitHub mirror URL to accelerate git/github sources
+     */
+    mirrorUrl?: string;
+};
+
+export type ToggleMcpServerDto = {
+    /**
+     * Identifier of the MCP server
+     */
+    name: string;
+    /**
+     * Whether the server is enabled
+     */
+    enabled: boolean;
+};
+
 export type McpServerOauthLoginRequestDto = {
     name: string;
     scopes?: Array<string>;
@@ -2215,6 +2279,81 @@ export type CreateProjectResponseDto = {
      * Whether a git repository was initialized in the project
      */
     isGit: boolean;
+};
+
+export type CloneProjectDto = {
+    /**
+     * GitHub repository URL or owner/repo shorthand
+     */
+    url: string;
+    /**
+     * Custom project directory name (default: extracted from repo name)
+     */
+    name?: string;
+    /**
+     * Specific branch or tag to clone
+     */
+    branch?: string;
+    /**
+     * Whether to shallow clone with --depth 1 for speed (default true)
+     */
+    shallow?: boolean;
+    /**
+     * Optional initial prompt message to start the project session
+     */
+    initialPrompt?: string;
+    /**
+     * Optional model to use for the initial session
+     */
+    model?: string;
+};
+
+export type OmpVersionResponseDto = {
+    /**
+     * Currently installed omp version
+     */
+    currentVersion: string;
+    /**
+     * Latest released omp version
+     */
+    latestVersion: string;
+    /**
+     * Whether an update is available
+     */
+    hasUpdate: boolean;
+    /**
+     * Recommended command to perform update
+     */
+    updateCommand: string;
+    /**
+     * Release notes or changelog summary
+     */
+    releaseNotes?: string;
+    /**
+     * GitHub release page URL
+     */
+    releaseUrl?: string;
+    /**
+     * Timestamp when update check was performed in ms
+     */
+    checkedAt: number;
+};
+
+export type OmpUpgradeRequestDto = {
+    /**
+     * Switch to canary channel
+     */
+    canary?: boolean;
+    /**
+     * Force update even if current
+     */
+    force?: boolean;
+};
+
+export type OmpUpgradeResponseDto = {
+    success: boolean;
+    message: string;
+    output: string;
 };
 
 export type AppGetStatusData = {
@@ -4497,6 +4636,114 @@ export type McpServersReloadAllResponses = {
 
 export type McpServersReloadAllResponse = McpServersReloadAllResponses[keyof McpServersReloadAllResponses];
 
+export type McpServersGetConfigData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/mcp-servers/config';
+};
+
+export type McpServersGetConfigErrors = {
+    400: ApiErrorResponseDto;
+    401: ApiErrorResponseDto;
+};
+
+export type McpServersGetConfigError = McpServersGetConfigErrors[keyof McpServersGetConfigErrors];
+
+export type McpServersGetConfigResponses = {
+    200: McpConfigResponseDto;
+};
+
+export type McpServersGetConfigResponse = McpServersGetConfigResponses[keyof McpServersGetConfigResponses];
+
+export type McpServersGetStoreData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/mcp-servers/store';
+};
+
+export type McpServersGetStoreErrors = {
+    400: ApiErrorResponseDto;
+    401: ApiErrorResponseDto;
+};
+
+export type McpServersGetStoreError = McpServersGetStoreErrors[keyof McpServersGetStoreErrors];
+
+export type McpServersGetStoreResponses = {
+    200: McpStoreResponseDto;
+};
+
+export type McpServersGetStoreResponse = McpServersGetStoreResponses[keyof McpServersGetStoreResponses];
+
+export type McpServersInstallServerData = {
+    body: InstallMcpServerDto;
+    path?: never;
+    query?: never;
+    url: '/api/mcp-servers/config/install';
+};
+
+export type McpServersInstallServerErrors = {
+    400: ApiErrorResponseDto;
+    401: ApiErrorResponseDto;
+};
+
+export type McpServersInstallServerError = McpServersInstallServerErrors[keyof McpServersInstallServerErrors];
+
+export type McpServersInstallServerResponses = {
+    200: {
+        [key: string]: unknown;
+    };
+};
+
+export type McpServersInstallServerResponse = McpServersInstallServerResponses[keyof McpServersInstallServerResponses];
+
+export type McpServersToggleServerData = {
+    body: ToggleMcpServerDto;
+    path?: never;
+    query?: never;
+    url: '/api/mcp-servers/config/toggle';
+};
+
+export type McpServersToggleServerErrors = {
+    400: ApiErrorResponseDto;
+    401: ApiErrorResponseDto;
+};
+
+export type McpServersToggleServerError = McpServersToggleServerErrors[keyof McpServersToggleServerErrors];
+
+export type McpServersToggleServerResponses = {
+    200: {
+        [key: string]: unknown;
+    };
+};
+
+export type McpServersToggleServerResponse = McpServersToggleServerResponses[keyof McpServersToggleServerResponses];
+
+export type McpServersDeleteServerData = {
+    body?: never;
+    path: {
+        name: string;
+    };
+    query?: never;
+    url: '/api/mcp-servers/config/{name}';
+};
+
+export type McpServersDeleteServerErrors = {
+    400: ApiErrorResponseDto;
+    401: ApiErrorResponseDto;
+};
+
+export type McpServersDeleteServerError = McpServersDeleteServerErrors[keyof McpServersDeleteServerErrors];
+
+export type McpServersDeleteServerResponses = {
+    200: {
+        [key: string]: unknown;
+    };
+};
+
+export type McpServersDeleteServerResponse = McpServersDeleteServerResponses[keyof McpServersDeleteServerResponses];
+
 export type McpServersStartOauthLoginData = {
     body: McpServerOauthLoginRequestDto;
     path?: never;
@@ -4554,3 +4801,62 @@ export type ProjectsCreateProjectResponses = {
 };
 
 export type ProjectsCreateProjectResponse = ProjectsCreateProjectResponses[keyof ProjectsCreateProjectResponses];
+
+export type ProjectsCloneProjectData = {
+    body: CloneProjectDto;
+    path?: never;
+    query?: never;
+    url: '/api/projects/clone';
+};
+
+export type ProjectsCloneProjectErrors = {
+    401: ApiErrorResponseDto;
+};
+
+export type ProjectsCloneProjectError = ProjectsCloneProjectErrors[keyof ProjectsCloneProjectErrors];
+
+export type ProjectsCloneProjectResponses = {
+    201: CreateProjectResponseDto;
+};
+
+export type ProjectsCloneProjectResponse = ProjectsCloneProjectResponses[keyof ProjectsCloneProjectResponses];
+
+export type OmpUpdateCheckUpdateData = {
+    body?: never;
+    path?: never;
+    query?: {
+        refresh?: boolean;
+    };
+    url: '/api/omp/update/check';
+};
+
+export type OmpUpdateCheckUpdateErrors = {
+    401: ApiErrorResponseDto;
+};
+
+export type OmpUpdateCheckUpdateError = OmpUpdateCheckUpdateErrors[keyof OmpUpdateCheckUpdateErrors];
+
+export type OmpUpdateCheckUpdateResponses = {
+    200: OmpVersionResponseDto;
+};
+
+export type OmpUpdateCheckUpdateResponse = OmpUpdateCheckUpdateResponses[keyof OmpUpdateCheckUpdateResponses];
+
+export type OmpUpdateUpgradeData = {
+    body: OmpUpgradeRequestDto;
+    path?: never;
+    query?: never;
+    url: '/api/omp/update/upgrade';
+};
+
+export type OmpUpdateUpgradeErrors = {
+    401: ApiErrorResponseDto;
+};
+
+export type OmpUpdateUpgradeError = OmpUpdateUpgradeErrors[keyof OmpUpdateUpgradeErrors];
+
+export type OmpUpdateUpgradeResponses = {
+    200: OmpUpgradeResponseDto;
+};
+
+export type OmpUpdateUpgradeResponse = OmpUpdateUpgradeResponses[keyof OmpUpdateUpgradeResponses];

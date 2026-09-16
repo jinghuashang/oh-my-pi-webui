@@ -2,6 +2,7 @@
  * MCPs tab: full MCP server list with status, auth, reload, and OAuth login.
  */
 import { useState } from 'react';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   AlertCircle,
   CheckCircle2,
@@ -10,8 +11,9 @@ import {
   Loader2,
   LogIn,
   RefreshCw,
+  Sparkles,
 } from 'lucide-react';
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useNavigate } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -33,6 +35,7 @@ import { copyTextToClipboard } from '@/lib/clipboard';
 
 export function McpsTab() {
   const { t } = useTranslation();
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const runtimeStatuses = useMcpStore((s) => s.statuses);
 
@@ -54,7 +57,7 @@ export function McpsTab() {
       showSnackbar(t('MCP servers reloading'), 'success');
       void queryClient.invalidateQueries({ queryKey: mcpServersListServersQueryKey() });
     },
-    onError: (err) => showSnackbar(getApiErrorMessage(err), 'error'),
+    onError: (err: unknown) => showSnackbar(getApiErrorMessage(err), 'error'),
   });
 
   // Build merged rows from inventory + runtime status
@@ -91,22 +94,32 @@ export function McpsTab() {
             total: rows.length,
           })}
         </p>
-        <Button
-          variant="outline"
-          size="sm"
-          className="gap-1.5"
-          disabled={reloadMutation.isPending}
-          onClick={() => reloadMutation.mutate()}
-        >
-          {reloadMutation.isPending ? (
-            <Loader2 className="h-3.5 w-3.5 animate-spin" />
-          ) : (
-            <RefreshCw className="h-3.5 w-3.5" />
-          )}
-          {t('Reload All')}
-        </Button>
+        <div className="flex items-center gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            className="gap-1.5 text-xs text-primary border-primary/30 hover:bg-primary/10"
+            onClick={() => void navigate({ to: '/integrations', search: { tab: 'mcp-store' } })}
+          >
+            <Sparkles className="h-3.5 w-3.5" />
+            {t('MCP Store')}
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            className="gap-1.5"
+            disabled={reloadMutation.isPending}
+            onClick={() => reloadMutation.mutate()}
+          >
+            {reloadMutation.isPending ? (
+              <Loader2 className="h-3.5 w-3.5 animate-spin" />
+            ) : (
+              <RefreshCw className="h-3.5 w-3.5" />
+            )}
+            {t('Reload All')}
+          </Button>
+        </div>
       </div>
-
       {/* Server list */}
       {rows.length === 0 ? (
         <p className="py-8 text-center text-sm text-muted-foreground">

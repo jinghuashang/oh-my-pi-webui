@@ -1,7 +1,8 @@
 /** Unit tests for McpServersService: list and reload operations. */
+import { ConfigService } from '@nestjs/config';
 import { Test, type TestingModule } from '@nestjs/testing';
 import { OmpService } from '../omp/omp-engine.service';
-import { McpServersService } from './mcp-servers.service';
+import { McpServersService, rewriteGithubUrl } from './mcp-servers.service';
 
 describe('McpServersService', () => {
   let moduleRef: TestingModule;
@@ -15,6 +16,7 @@ describe('McpServersService', () => {
       providers: [
         McpServersService,
         { provide: OmpService, useValue: codexService },
+        { provide: ConfigService, useValue: new ConfigService() },
       ],
     }).compile();
     service = moduleRef.get(McpServersService);
@@ -57,5 +59,33 @@ describe('McpServersService', () => {
     expect(codexService.request).toHaveBeenCalledWith(
       'config/mcpServer/reload',
     );
+  });
+
+  it('rewrites GitHub URLs with mirror prefix', () => {
+    const rawGit = 'git+https://github.com/oraios/serena';
+    const rawHttp = 'https://github.com/oraios/serena';
+
+    expect(rewriteGithubUrl(rawGit, 'direct')).toBe(rawGit);
+    expect(rewriteGithubUrl(rawGit, 'https://github.com/')).toBe(rawGit);
+    expect(rewriteGithubUrl(rawGit, 'https://ghfast.top/')).toBe(
+      'git+https://ghfast.top/https://github.com/oraios/serena',
+    );
+    expect(rewriteGithubUrl(rawHttp, 'https://ghproxy.net/')).toBe(
+      'https://ghproxy.net/https://github.com/oraios/serena',
+    );
+    expect(rewriteGithubUrl(rawGit, 'https://kkgithub.com/')).toBe(
+      'git+https://kkgithub.com/oraios/serena',
+    );
+  });
+
+  it('returns default store items with mirrors', async () => {
+    const store = await service.getStore();
+    expect(store.items.length).toBeGreaterThanOrEqual(5);
+    expect(store.items.some((i) => i.name === 'exa')).toBe(true);
+    expect(store.items.some((i) => i.name === 'context7')).toBe(true);
+    expect(store.items.some((i) => i.name === 'playwright')).toBe(true);
+    expect(store.items.some((i) => i.name === 'deepwiki')).toBe(true);
+    expect(store.items.some((i) => i.name === 'serena')).toBe(true);
+    expect(store.mirrors.length).toBeGreaterThan(0);
   });
 });

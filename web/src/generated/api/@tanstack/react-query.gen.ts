@@ -3,8 +3,8 @@
 import { type DefaultError, type InfiniteData, infiniteQueryOptions, queryOptions, type UseMutationOptions } from '@tanstack/react-query';
 
 import { client } from '../client.gen.js';
-import { accountCancelLogin, accountLogin, accountLogout, accountReadAccount, accountReadRateLimits, appGetStatus, appsListApps, appsReadApps, archiveListArchive, archiveReadEntry, authLogin, authLogout, authSetup, authStatus, catalogApply, catalogBlockers, catalogReadDraft, catalogReadEffective, catalogRestart, catalogRestore, catalogSaveDraft, catalogSeed, catalogState, catalogUseDefault, catalogValidate, chatUploadAttachment, filesAddRoot, filesCopyPath, filesCreateDirectory, filesCreateFile, filesDeletePath, filesDownloadFile, filesGetMetadata, filesGetRoots, filesMovePath, filesReadFile, filesReadTree, filesRenamePath, filesServeFile, filesUploadFiles, filesWriteFile, gitCheckout, gitCommit, gitStatus, logsExportDiagnostics, logsListLogs, mcpServersListServers, mcpServersReloadAll, mcpServersStartOauthLogin, modelsListModels, ompConfigGetConfig, ompConfigUpdateConfig, ompEngineConfigReadConfig, ompEngineConfigReadRawConfig, ompEngineConfigUpdateConfig, ompEngineConfigUpdateRawConfig, ompFeedbackUploadFeedback, ompStatusGetStatus, ompStatusUpdateApprovalPolicy, ompStatusUpdateSandboxMode, onlyOfficeGetConfig, onlyOfficeHandleCallback, type Options, pendingApprovalsListPending, pendingApprovalsRespond, pluginsInstallPlugin, pluginsListPlugins, pluginsReadPlugin, pluginsReconcilePlugin, pluginsUninstallPlugin, projectsCreateProject, projectsListProjects, settingsGetSetting, settingsListSettings, settingsResetSetting, settingsUpdateSetting, settingsUpdateSettings, skillsListSkills, skillsWriteSkillConfig, threadCommandsClearGoal, threadCommandsListCollaborationModes, threadCommandsReadCollaborationMode, threadCommandsReadGoal, threadCommandsSetCollaborationMode, threadCommandsSetGoal, threadCommandsStartReview, threadsArchiveThread, threadsCompactThread, threadsCountTurns, threadsCreateMessageBranch, threadsDeletionDeleteThread, threadsDeletionPreviewDelete, threadsDeletionReadBranchAdoptionStatus, threadSecurityPolicyPatchSecurityPolicy, threadSecurityPolicyReadSecurityPolicy, threadsForkThread, threadsInterruptTurn, threadsListBranchTrees, threadsListLoadedThreads, threadsListOverview, threadsListThreads, threadsListTurnItems, threadsListTurns, threadsReadBranchState, threadsReadBranchTree, threadsReadThread, threadsResumeThread, threadsSetThreadName, threadsStartThread, threadsStartTurn, threadsSteerTurn, threadsUnarchiveThread, tokenUsageReadThreadTokenUsage, turnDiffReadThreadTurnDiffs, turnErrorsReadThreadTurnErrors } from '../sdk.gen.js';
-import type { AccountCancelLoginData, AccountCancelLoginError, AccountCancelLoginResponse, AccountLoginData, AccountLoginError, AccountLoginResponse, AccountLogoutData, AccountLogoutError, AccountLogoutResponse, AccountReadAccountData, AccountReadAccountError, AccountReadAccountResponse, AccountReadRateLimitsData, AccountReadRateLimitsError, AccountReadRateLimitsResponse, AppGetStatusData, AppGetStatusResponse, AppsListAppsData, AppsListAppsError, AppsListAppsResponse, AppsReadAppsData, AppsReadAppsError, AppsReadAppsResponse, ArchiveListArchiveData, ArchiveListArchiveError, ArchiveListArchiveResponse, ArchiveReadEntryData, ArchiveReadEntryError, AuthLoginData, AuthLoginError, AuthLoginResponse, AuthLogoutData, AuthLogoutResponse, AuthSetupData, AuthSetupError, AuthSetupResponse, AuthStatusData, AuthStatusResponse, CatalogApplyData, CatalogApplyResponse, CatalogBlockersData, CatalogBlockersResponse, CatalogReadDraftData, CatalogReadDraftResponse, CatalogReadEffectiveData, CatalogReadEffectiveResponse, CatalogRestartData, CatalogRestartResponse, CatalogRestoreData, CatalogRestoreResponse, CatalogSaveDraftData, CatalogSaveDraftResponse, CatalogSeedData, CatalogSeedResponse, CatalogStateData, CatalogStateResponse, CatalogUseDefaultData, CatalogUseDefaultResponse, CatalogValidateData, CatalogValidateResponse, ChatUploadAttachmentData, ChatUploadAttachmentError, ChatUploadAttachmentResponse, FilesAddRootData, FilesAddRootError, FilesAddRootResponse, FilesCopyPathData, FilesCopyPathError, FilesCopyPathResponse, FilesCreateDirectoryData, FilesCreateDirectoryError, FilesCreateDirectoryResponse, FilesCreateFileData, FilesCreateFileError, FilesCreateFileResponse, FilesDeletePathData, FilesDeletePathError, FilesDeletePathResponse, FilesDownloadFileData, FilesDownloadFileError, FilesGetMetadataData, FilesGetMetadataError, FilesGetMetadataResponse, FilesGetRootsData, FilesGetRootsError, FilesGetRootsResponse, FilesMovePathData, FilesMovePathError, FilesMovePathResponse, FilesReadFileData, FilesReadFileError, FilesReadFileResponse, FilesReadTreeData, FilesReadTreeError, FilesReadTreeResponse, FilesRenamePathData, FilesRenamePathError, FilesRenamePathResponse, FilesServeFileData, FilesServeFileError, FilesUploadFilesData, FilesUploadFilesError, FilesUploadFilesResponse, FilesWriteFileData, FilesWriteFileError, FilesWriteFileResponse, GitCheckoutData, GitCheckoutError, GitCommitData, GitCommitError, GitCommitResponse, GitStatusData, GitStatusError, GitStatusResponse, LogsExportDiagnosticsData, LogsExportDiagnosticsError, LogsExportDiagnosticsResponse, LogsListLogsData, LogsListLogsError, LogsListLogsResponse, McpServersListServersData, McpServersListServersError, McpServersListServersResponse, McpServersReloadAllData, McpServersReloadAllError, McpServersReloadAllResponse, McpServersStartOauthLoginData, McpServersStartOauthLoginError, McpServersStartOauthLoginResponse, ModelsListModelsData, ModelsListModelsError, ModelsListModelsResponse, OmpConfigGetConfigData, OmpConfigGetConfigError, OmpConfigUpdateConfigData, OmpConfigUpdateConfigError, OmpEngineConfigReadConfigData, OmpEngineConfigReadConfigError, OmpEngineConfigReadConfigResponse, OmpEngineConfigReadRawConfigData, OmpEngineConfigReadRawConfigError, OmpEngineConfigReadRawConfigResponse, OmpEngineConfigUpdateConfigData, OmpEngineConfigUpdateConfigError, OmpEngineConfigUpdateConfigResponse, OmpEngineConfigUpdateRawConfigData, OmpEngineConfigUpdateRawConfigError, OmpEngineConfigUpdateRawConfigResponse, OmpFeedbackUploadFeedbackData, OmpFeedbackUploadFeedbackError, OmpFeedbackUploadFeedbackResponse, OmpStatusGetStatusData, OmpStatusGetStatusError, OmpStatusGetStatusResponse, OmpStatusUpdateApprovalPolicyData, OmpStatusUpdateApprovalPolicyError, OmpStatusUpdateApprovalPolicyResponse, OmpStatusUpdateSandboxModeData, OmpStatusUpdateSandboxModeError, OmpStatusUpdateSandboxModeResponse, OnlyOfficeGetConfigData, OnlyOfficeGetConfigError, OnlyOfficeGetConfigResponse, OnlyOfficeHandleCallbackData, OnlyOfficeHandleCallbackResponse, PendingApprovalsListPendingData, PendingApprovalsListPendingError, PendingApprovalsListPendingResponse, PendingApprovalsRespondData, PendingApprovalsRespondResponse, PluginsInstallPluginData, PluginsInstallPluginError, PluginsInstallPluginResponse, PluginsListPluginsData, PluginsListPluginsError, PluginsListPluginsResponse, PluginsReadPluginData, PluginsReadPluginError, PluginsReadPluginResponse, PluginsReconcilePluginData, PluginsReconcilePluginError, PluginsReconcilePluginResponse, PluginsUninstallPluginData, PluginsUninstallPluginError, PluginsUninstallPluginResponse, ProjectsCreateProjectData, ProjectsCreateProjectError, ProjectsCreateProjectResponse, ProjectsListProjectsData, ProjectsListProjectsError, ProjectsListProjectsResponse, SettingsGetSettingData, SettingsGetSettingError, SettingsGetSettingResponse, SettingsListSettingsData, SettingsListSettingsError, SettingsListSettingsResponse, SettingsResetSettingData, SettingsResetSettingError, SettingsResetSettingResponse, SettingsUpdateSettingData, SettingsUpdateSettingError, SettingsUpdateSettingResponse, SettingsUpdateSettingsData, SettingsUpdateSettingsError, SettingsUpdateSettingsResponse, SkillsListSkillsData, SkillsListSkillsError, SkillsListSkillsResponse, SkillsWriteSkillConfigData, SkillsWriteSkillConfigError, SkillsWriteSkillConfigResponse, ThreadCommandsClearGoalData, ThreadCommandsClearGoalError, ThreadCommandsClearGoalResponse, ThreadCommandsListCollaborationModesData, ThreadCommandsListCollaborationModesError, ThreadCommandsListCollaborationModesResponse, ThreadCommandsReadCollaborationModeData, ThreadCommandsReadCollaborationModeError, ThreadCommandsReadCollaborationModeResponse, ThreadCommandsReadGoalData, ThreadCommandsReadGoalError, ThreadCommandsReadGoalResponse, ThreadCommandsSetCollaborationModeData, ThreadCommandsSetCollaborationModeError, ThreadCommandsSetCollaborationModeResponse, ThreadCommandsSetGoalData, ThreadCommandsSetGoalError, ThreadCommandsSetGoalResponse, ThreadCommandsStartReviewData, ThreadCommandsStartReviewError, ThreadCommandsStartReviewResponse, ThreadsArchiveThreadData, ThreadsArchiveThreadError, ThreadsArchiveThreadResponse, ThreadsCompactThreadData, ThreadsCompactThreadError, ThreadsCompactThreadResponse, ThreadsCountTurnsData, ThreadsCountTurnsError, ThreadsCountTurnsResponse, ThreadsCreateMessageBranchData, ThreadsCreateMessageBranchError, ThreadsCreateMessageBranchResponse, ThreadsDeletionDeleteThreadData, ThreadsDeletionDeleteThreadError, ThreadsDeletionDeleteThreadResponse, ThreadsDeletionPreviewDeleteData, ThreadsDeletionPreviewDeleteError, ThreadsDeletionPreviewDeleteResponse, ThreadsDeletionReadBranchAdoptionStatusData, ThreadsDeletionReadBranchAdoptionStatusError, ThreadsDeletionReadBranchAdoptionStatusResponse, ThreadSecurityPolicyPatchSecurityPolicyData, ThreadSecurityPolicyPatchSecurityPolicyError, ThreadSecurityPolicyPatchSecurityPolicyResponse, ThreadSecurityPolicyReadSecurityPolicyData, ThreadSecurityPolicyReadSecurityPolicyResponse, ThreadsForkThreadData, ThreadsForkThreadError, ThreadsForkThreadResponse, ThreadsInterruptTurnData, ThreadsInterruptTurnError, ThreadsInterruptTurnResponse, ThreadsListBranchTreesData, ThreadsListBranchTreesError, ThreadsListBranchTreesResponse, ThreadsListLoadedThreadsData, ThreadsListLoadedThreadsError, ThreadsListLoadedThreadsResponse, ThreadsListOverviewData, ThreadsListOverviewError, ThreadsListOverviewResponse, ThreadsListThreadsData, ThreadsListThreadsError, ThreadsListThreadsResponse, ThreadsListTurnItemsData, ThreadsListTurnItemsError, ThreadsListTurnItemsResponse, ThreadsListTurnsData, ThreadsListTurnsError, ThreadsListTurnsResponse, ThreadsReadBranchStateData, ThreadsReadBranchStateError, ThreadsReadBranchStateResponse, ThreadsReadBranchTreeData, ThreadsReadBranchTreeError, ThreadsReadBranchTreeResponse, ThreadsReadThreadData, ThreadsReadThreadError, ThreadsReadThreadResponse, ThreadsResumeThreadData, ThreadsResumeThreadError, ThreadsResumeThreadResponse, ThreadsSetThreadNameData, ThreadsSetThreadNameError, ThreadsSetThreadNameResponse, ThreadsStartThreadData, ThreadsStartThreadError, ThreadsStartThreadResponse, ThreadsStartTurnData, ThreadsStartTurnError, ThreadsStartTurnResponse, ThreadsSteerTurnData, ThreadsSteerTurnError, ThreadsSteerTurnResponse, ThreadsUnarchiveThreadData, ThreadsUnarchiveThreadError, ThreadsUnarchiveThreadResponse, TokenUsageReadThreadTokenUsageData, TokenUsageReadThreadTokenUsageError, TokenUsageReadThreadTokenUsageResponse, TurnDiffReadThreadTurnDiffsData, TurnDiffReadThreadTurnDiffsError, TurnDiffReadThreadTurnDiffsResponse, TurnErrorsReadThreadTurnErrorsData, TurnErrorsReadThreadTurnErrorsError, TurnErrorsReadThreadTurnErrorsResponse } from '../types.gen.js';
+import { accountCancelLogin, accountLogin, accountLogout, accountReadAccount, accountReadRateLimits, appGetStatus, appsListApps, appsReadApps, archiveListArchive, archiveReadEntry, authLogin, authLogout, authSetup, authStatus, catalogApply, catalogBlockers, catalogReadDraft, catalogReadEffective, catalogRestart, catalogRestore, catalogSaveDraft, catalogSeed, catalogState, catalogUseDefault, catalogValidate, chatUploadAttachment, filesAddRoot, filesCopyPath, filesCreateDirectory, filesCreateFile, filesDeletePath, filesDownloadFile, filesGetMetadata, filesGetRoots, filesMovePath, filesReadFile, filesReadTree, filesRenamePath, filesServeFile, filesUploadFiles, filesWriteFile, gitCheckout, gitCommit, gitStatus, logsExportDiagnostics, logsListLogs, mcpServersDeleteServer, mcpServersGetConfig, mcpServersGetStore, mcpServersInstallServer, mcpServersListServers, mcpServersReloadAll, mcpServersStartOauthLogin, mcpServersToggleServer, modelsListModels, ompConfigGetConfig, ompConfigUpdateConfig, ompEngineConfigReadConfig, ompEngineConfigReadRawConfig, ompEngineConfigUpdateConfig, ompEngineConfigUpdateRawConfig, ompFeedbackUploadFeedback, ompStatusGetStatus, ompStatusUpdateApprovalPolicy, ompStatusUpdateSandboxMode, ompUpdateCheckUpdate, ompUpdateUpgrade, onlyOfficeGetConfig, onlyOfficeHandleCallback, type Options, pendingApprovalsListPending, pendingApprovalsRespond, pluginsInstallPlugin, pluginsListPlugins, pluginsReadPlugin, pluginsReconcilePlugin, pluginsUninstallPlugin, projectsCloneProject, projectsCreateProject, projectsListProjects, settingsGetSetting, settingsListSettings, settingsResetSetting, settingsUpdateSetting, settingsUpdateSettings, skillsListSkills, skillsWriteSkillConfig, threadCommandsClearGoal, threadCommandsListCollaborationModes, threadCommandsReadCollaborationMode, threadCommandsReadGoal, threadCommandsSetCollaborationMode, threadCommandsSetGoal, threadCommandsStartReview, threadsArchiveThread, threadsCompactThread, threadsCountTurns, threadsCreateMessageBranch, threadsDeletionDeleteThread, threadsDeletionPreviewDelete, threadsDeletionReadBranchAdoptionStatus, threadSecurityPolicyPatchSecurityPolicy, threadSecurityPolicyReadSecurityPolicy, threadsForkThread, threadsInterruptTurn, threadsListBranchTrees, threadsListLoadedThreads, threadsListOverview, threadsListThreads, threadsListTurnItems, threadsListTurns, threadsReadBranchState, threadsReadBranchTree, threadsReadThread, threadsResumeThread, threadsSetThreadName, threadsStartThread, threadsStartTurn, threadsSteerTurn, threadsUnarchiveThread, tokenUsageReadThreadTokenUsage, turnDiffReadThreadTurnDiffs, turnErrorsReadThreadTurnErrors } from '../sdk.gen.js';
+import type { AccountCancelLoginData, AccountCancelLoginError, AccountCancelLoginResponse, AccountLoginData, AccountLoginError, AccountLoginResponse, AccountLogoutData, AccountLogoutError, AccountLogoutResponse, AccountReadAccountData, AccountReadAccountError, AccountReadAccountResponse, AccountReadRateLimitsData, AccountReadRateLimitsError, AccountReadRateLimitsResponse, AppGetStatusData, AppGetStatusResponse, AppsListAppsData, AppsListAppsError, AppsListAppsResponse, AppsReadAppsData, AppsReadAppsError, AppsReadAppsResponse, ArchiveListArchiveData, ArchiveListArchiveError, ArchiveListArchiveResponse, ArchiveReadEntryData, ArchiveReadEntryError, AuthLoginData, AuthLoginError, AuthLoginResponse, AuthLogoutData, AuthLogoutResponse, AuthSetupData, AuthSetupError, AuthSetupResponse, AuthStatusData, AuthStatusResponse, CatalogApplyData, CatalogApplyResponse, CatalogBlockersData, CatalogBlockersResponse, CatalogReadDraftData, CatalogReadDraftResponse, CatalogReadEffectiveData, CatalogReadEffectiveResponse, CatalogRestartData, CatalogRestartResponse, CatalogRestoreData, CatalogRestoreResponse, CatalogSaveDraftData, CatalogSaveDraftResponse, CatalogSeedData, CatalogSeedResponse, CatalogStateData, CatalogStateResponse, CatalogUseDefaultData, CatalogUseDefaultResponse, CatalogValidateData, CatalogValidateResponse, ChatUploadAttachmentData, ChatUploadAttachmentError, ChatUploadAttachmentResponse, FilesAddRootData, FilesAddRootError, FilesAddRootResponse, FilesCopyPathData, FilesCopyPathError, FilesCopyPathResponse, FilesCreateDirectoryData, FilesCreateDirectoryError, FilesCreateDirectoryResponse, FilesCreateFileData, FilesCreateFileError, FilesCreateFileResponse, FilesDeletePathData, FilesDeletePathError, FilesDeletePathResponse, FilesDownloadFileData, FilesDownloadFileError, FilesGetMetadataData, FilesGetMetadataError, FilesGetMetadataResponse, FilesGetRootsData, FilesGetRootsError, FilesGetRootsResponse, FilesMovePathData, FilesMovePathError, FilesMovePathResponse, FilesReadFileData, FilesReadFileError, FilesReadFileResponse, FilesReadTreeData, FilesReadTreeError, FilesReadTreeResponse, FilesRenamePathData, FilesRenamePathError, FilesRenamePathResponse, FilesServeFileData, FilesServeFileError, FilesUploadFilesData, FilesUploadFilesError, FilesUploadFilesResponse, FilesWriteFileData, FilesWriteFileError, FilesWriteFileResponse, GitCheckoutData, GitCheckoutError, GitCommitData, GitCommitError, GitCommitResponse, GitStatusData, GitStatusError, GitStatusResponse, LogsExportDiagnosticsData, LogsExportDiagnosticsError, LogsExportDiagnosticsResponse, LogsListLogsData, LogsListLogsError, LogsListLogsResponse, McpServersDeleteServerData, McpServersDeleteServerError, McpServersDeleteServerResponse, McpServersGetConfigData, McpServersGetConfigError, McpServersGetConfigResponse, McpServersGetStoreData, McpServersGetStoreError, McpServersGetStoreResponse, McpServersInstallServerData, McpServersInstallServerError, McpServersInstallServerResponse, McpServersListServersData, McpServersListServersError, McpServersListServersResponse, McpServersReloadAllData, McpServersReloadAllError, McpServersReloadAllResponse, McpServersStartOauthLoginData, McpServersStartOauthLoginError, McpServersStartOauthLoginResponse, McpServersToggleServerData, McpServersToggleServerError, McpServersToggleServerResponse, ModelsListModelsData, ModelsListModelsError, ModelsListModelsResponse, OmpConfigGetConfigData, OmpConfigGetConfigError, OmpConfigUpdateConfigData, OmpConfigUpdateConfigError, OmpEngineConfigReadConfigData, OmpEngineConfigReadConfigError, OmpEngineConfigReadConfigResponse, OmpEngineConfigReadRawConfigData, OmpEngineConfigReadRawConfigError, OmpEngineConfigReadRawConfigResponse, OmpEngineConfigUpdateConfigData, OmpEngineConfigUpdateConfigError, OmpEngineConfigUpdateConfigResponse, OmpEngineConfigUpdateRawConfigData, OmpEngineConfigUpdateRawConfigError, OmpEngineConfigUpdateRawConfigResponse, OmpFeedbackUploadFeedbackData, OmpFeedbackUploadFeedbackError, OmpFeedbackUploadFeedbackResponse, OmpStatusGetStatusData, OmpStatusGetStatusError, OmpStatusGetStatusResponse, OmpStatusUpdateApprovalPolicyData, OmpStatusUpdateApprovalPolicyError, OmpStatusUpdateApprovalPolicyResponse, OmpStatusUpdateSandboxModeData, OmpStatusUpdateSandboxModeError, OmpStatusUpdateSandboxModeResponse, OmpUpdateCheckUpdateData, OmpUpdateCheckUpdateError, OmpUpdateCheckUpdateResponse, OmpUpdateUpgradeData, OmpUpdateUpgradeError, OmpUpdateUpgradeResponse, OnlyOfficeGetConfigData, OnlyOfficeGetConfigError, OnlyOfficeGetConfigResponse, OnlyOfficeHandleCallbackData, OnlyOfficeHandleCallbackResponse, PendingApprovalsListPendingData, PendingApprovalsListPendingError, PendingApprovalsListPendingResponse, PendingApprovalsRespondData, PendingApprovalsRespondResponse, PluginsInstallPluginData, PluginsInstallPluginError, PluginsInstallPluginResponse, PluginsListPluginsData, PluginsListPluginsError, PluginsListPluginsResponse, PluginsReadPluginData, PluginsReadPluginError, PluginsReadPluginResponse, PluginsReconcilePluginData, PluginsReconcilePluginError, PluginsReconcilePluginResponse, PluginsUninstallPluginData, PluginsUninstallPluginError, PluginsUninstallPluginResponse, ProjectsCloneProjectData, ProjectsCloneProjectError, ProjectsCloneProjectResponse, ProjectsCreateProjectData, ProjectsCreateProjectError, ProjectsCreateProjectResponse, ProjectsListProjectsData, ProjectsListProjectsError, ProjectsListProjectsResponse, SettingsGetSettingData, SettingsGetSettingError, SettingsGetSettingResponse, SettingsListSettingsData, SettingsListSettingsError, SettingsListSettingsResponse, SettingsResetSettingData, SettingsResetSettingError, SettingsResetSettingResponse, SettingsUpdateSettingData, SettingsUpdateSettingError, SettingsUpdateSettingResponse, SettingsUpdateSettingsData, SettingsUpdateSettingsError, SettingsUpdateSettingsResponse, SkillsListSkillsData, SkillsListSkillsError, SkillsListSkillsResponse, SkillsWriteSkillConfigData, SkillsWriteSkillConfigError, SkillsWriteSkillConfigResponse, ThreadCommandsClearGoalData, ThreadCommandsClearGoalError, ThreadCommandsClearGoalResponse, ThreadCommandsListCollaborationModesData, ThreadCommandsListCollaborationModesError, ThreadCommandsListCollaborationModesResponse, ThreadCommandsReadCollaborationModeData, ThreadCommandsReadCollaborationModeError, ThreadCommandsReadCollaborationModeResponse, ThreadCommandsReadGoalData, ThreadCommandsReadGoalError, ThreadCommandsReadGoalResponse, ThreadCommandsSetCollaborationModeData, ThreadCommandsSetCollaborationModeError, ThreadCommandsSetCollaborationModeResponse, ThreadCommandsSetGoalData, ThreadCommandsSetGoalError, ThreadCommandsSetGoalResponse, ThreadCommandsStartReviewData, ThreadCommandsStartReviewError, ThreadCommandsStartReviewResponse, ThreadsArchiveThreadData, ThreadsArchiveThreadError, ThreadsArchiveThreadResponse, ThreadsCompactThreadData, ThreadsCompactThreadError, ThreadsCompactThreadResponse, ThreadsCountTurnsData, ThreadsCountTurnsError, ThreadsCountTurnsResponse, ThreadsCreateMessageBranchData, ThreadsCreateMessageBranchError, ThreadsCreateMessageBranchResponse, ThreadsDeletionDeleteThreadData, ThreadsDeletionDeleteThreadError, ThreadsDeletionDeleteThreadResponse, ThreadsDeletionPreviewDeleteData, ThreadsDeletionPreviewDeleteError, ThreadsDeletionPreviewDeleteResponse, ThreadsDeletionReadBranchAdoptionStatusData, ThreadsDeletionReadBranchAdoptionStatusError, ThreadsDeletionReadBranchAdoptionStatusResponse, ThreadSecurityPolicyPatchSecurityPolicyData, ThreadSecurityPolicyPatchSecurityPolicyError, ThreadSecurityPolicyPatchSecurityPolicyResponse, ThreadSecurityPolicyReadSecurityPolicyData, ThreadSecurityPolicyReadSecurityPolicyResponse, ThreadsForkThreadData, ThreadsForkThreadError, ThreadsForkThreadResponse, ThreadsInterruptTurnData, ThreadsInterruptTurnError, ThreadsInterruptTurnResponse, ThreadsListBranchTreesData, ThreadsListBranchTreesError, ThreadsListBranchTreesResponse, ThreadsListLoadedThreadsData, ThreadsListLoadedThreadsError, ThreadsListLoadedThreadsResponse, ThreadsListOverviewData, ThreadsListOverviewError, ThreadsListOverviewResponse, ThreadsListThreadsData, ThreadsListThreadsError, ThreadsListThreadsResponse, ThreadsListTurnItemsData, ThreadsListTurnItemsError, ThreadsListTurnItemsResponse, ThreadsListTurnsData, ThreadsListTurnsError, ThreadsListTurnsResponse, ThreadsReadBranchStateData, ThreadsReadBranchStateError, ThreadsReadBranchStateResponse, ThreadsReadBranchTreeData, ThreadsReadBranchTreeError, ThreadsReadBranchTreeResponse, ThreadsReadThreadData, ThreadsReadThreadError, ThreadsReadThreadResponse, ThreadsResumeThreadData, ThreadsResumeThreadError, ThreadsResumeThreadResponse, ThreadsSetThreadNameData, ThreadsSetThreadNameError, ThreadsSetThreadNameResponse, ThreadsStartThreadData, ThreadsStartThreadError, ThreadsStartThreadResponse, ThreadsStartTurnData, ThreadsStartTurnError, ThreadsStartTurnResponse, ThreadsSteerTurnData, ThreadsSteerTurnError, ThreadsSteerTurnResponse, ThreadsUnarchiveThreadData, ThreadsUnarchiveThreadError, ThreadsUnarchiveThreadResponse, TokenUsageReadThreadTokenUsageData, TokenUsageReadThreadTokenUsageError, TokenUsageReadThreadTokenUsageResponse, TurnDiffReadThreadTurnDiffsData, TurnDiffReadThreadTurnDiffsError, TurnDiffReadThreadTurnDiffsResponse, TurnErrorsReadThreadTurnErrorsData, TurnErrorsReadThreadTurnErrorsError, TurnErrorsReadThreadTurnErrorsResponse } from '../types.gen.js';
 
 export type QueryKey<TOptions extends Options> = [
     Pick<TOptions, 'baseUrl' | 'body' | 'headers' | 'path' | 'query'> & {
@@ -2217,6 +2217,93 @@ export const mcpServersReloadAllMutation = (options?: Partial<Options<McpServers
     return mutationOptions;
 };
 
+export const mcpServersGetConfigQueryKey = (options?: Options<McpServersGetConfigData>) => createQueryKey('mcpServersGetConfig', options);
+
+/**
+ * Get current MCP configuration from mcp.json
+ */
+export const mcpServersGetConfigOptions = (options?: Options<McpServersGetConfigData>) => queryOptions<McpServersGetConfigResponse, McpServersGetConfigError, McpServersGetConfigResponse, ReturnType<typeof mcpServersGetConfigQueryKey>>({
+    queryFn: async ({ queryKey, signal }) => {
+        const { data } = await mcpServersGetConfig({
+            ...options,
+            ...queryKey[0],
+            signal,
+            throwOnError: true
+        });
+        return data;
+    },
+    queryKey: mcpServersGetConfigQueryKey(options)
+});
+
+export const mcpServersGetStoreQueryKey = (options?: Options<McpServersGetStoreData>) => createQueryKey('mcpServersGetStore', options);
+
+/**
+ * Get default MCP store items with install status
+ */
+export const mcpServersGetStoreOptions = (options?: Options<McpServersGetStoreData>) => queryOptions<McpServersGetStoreResponse, McpServersGetStoreError, McpServersGetStoreResponse, ReturnType<typeof mcpServersGetStoreQueryKey>>({
+    queryFn: async ({ queryKey, signal }) => {
+        const { data } = await mcpServersGetStore({
+            ...options,
+            ...queryKey[0],
+            signal,
+            throwOnError: true
+        });
+        return data;
+    },
+    queryKey: mcpServersGetStoreQueryKey(options)
+});
+
+/**
+ * Install or update an MCP server configuration
+ */
+export const mcpServersInstallServerMutation = (options?: Partial<Options<McpServersInstallServerData>>): UseMutationOptions<McpServersInstallServerResponse, McpServersInstallServerError, Options<McpServersInstallServerData>> => {
+    const mutationOptions: UseMutationOptions<McpServersInstallServerResponse, McpServersInstallServerError, Options<McpServersInstallServerData>> = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await mcpServersInstallServer({
+                ...options,
+                ...fnOptions,
+                throwOnError: true
+            });
+            return data;
+        }
+    };
+    return mutationOptions;
+};
+
+/**
+ * Toggle an MCP server enabled/disabled
+ */
+export const mcpServersToggleServerMutation = (options?: Partial<Options<McpServersToggleServerData>>): UseMutationOptions<McpServersToggleServerResponse, McpServersToggleServerError, Options<McpServersToggleServerData>> => {
+    const mutationOptions: UseMutationOptions<McpServersToggleServerResponse, McpServersToggleServerError, Options<McpServersToggleServerData>> = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await mcpServersToggleServer({
+                ...options,
+                ...fnOptions,
+                throwOnError: true
+            });
+            return data;
+        }
+    };
+    return mutationOptions;
+};
+
+/**
+ * Delete an MCP server from mcp.json
+ */
+export const mcpServersDeleteServerMutation = (options?: Partial<Options<McpServersDeleteServerData>>): UseMutationOptions<McpServersDeleteServerResponse, McpServersDeleteServerError, Options<McpServersDeleteServerData>> => {
+    const mutationOptions: UseMutationOptions<McpServersDeleteServerResponse, McpServersDeleteServerError, Options<McpServersDeleteServerData>> = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await mcpServersDeleteServer({
+                ...options,
+                ...fnOptions,
+                throwOnError: true
+            });
+            return data;
+        }
+    };
+    return mutationOptions;
+};
+
 /**
  * Start MCP server OAuth login
  */
@@ -2259,6 +2346,58 @@ export const projectsCreateProjectMutation = (options?: Partial<Options<Projects
     const mutationOptions: UseMutationOptions<ProjectsCreateProjectResponse, ProjectsCreateProjectError, Options<ProjectsCreateProjectData>> = {
         mutationFn: async (fnOptions) => {
             const { data } = await projectsCreateProject({
+                ...options,
+                ...fnOptions,
+                throwOnError: true
+            });
+            return data;
+        }
+    };
+    return mutationOptions;
+};
+
+/**
+ * Clone a GitHub repository into data/projects and start initial session thread
+ */
+export const projectsCloneProjectMutation = (options?: Partial<Options<ProjectsCloneProjectData>>): UseMutationOptions<ProjectsCloneProjectResponse, ProjectsCloneProjectError, Options<ProjectsCloneProjectData>> => {
+    const mutationOptions: UseMutationOptions<ProjectsCloneProjectResponse, ProjectsCloneProjectError, Options<ProjectsCloneProjectData>> = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await projectsCloneProject({
+                ...options,
+                ...fnOptions,
+                throwOnError: true
+            });
+            return data;
+        }
+    };
+    return mutationOptions;
+};
+
+export const ompUpdateCheckUpdateQueryKey = (options?: Options<OmpUpdateCheckUpdateData>) => createQueryKey('ompUpdateCheckUpdate', options);
+
+/**
+ * Check for OMP binary updates
+ */
+export const ompUpdateCheckUpdateOptions = (options?: Options<OmpUpdateCheckUpdateData>) => queryOptions<OmpUpdateCheckUpdateResponse, OmpUpdateCheckUpdateError, OmpUpdateCheckUpdateResponse, ReturnType<typeof ompUpdateCheckUpdateQueryKey>>({
+    queryFn: async ({ queryKey, signal }) => {
+        const { data } = await ompUpdateCheckUpdate({
+            ...options,
+            ...queryKey[0],
+            signal,
+            throwOnError: true
+        });
+        return data;
+    },
+    queryKey: ompUpdateCheckUpdateQueryKey(options)
+});
+
+/**
+ * Execute omp update command to upgrade CLI
+ */
+export const ompUpdateUpgradeMutation = (options?: Partial<Options<OmpUpdateUpgradeData>>): UseMutationOptions<OmpUpdateUpgradeResponse, OmpUpdateUpgradeError, Options<OmpUpdateUpgradeData>> => {
+    const mutationOptions: UseMutationOptions<OmpUpdateUpgradeResponse, OmpUpdateUpgradeError, Options<OmpUpdateUpgradeData>> = {
+        mutationFn: async (fnOptions) => {
+            const { data } = await ompUpdateUpgrade({
                 ...options,
                 ...fnOptions,
                 throwOnError: true

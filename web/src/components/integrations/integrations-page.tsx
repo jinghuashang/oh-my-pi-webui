@@ -11,15 +11,16 @@ import { useTimelineStore } from '@/stores/timeline-store';
 import { PluginsTab } from './plugins-tab';
 import { AppsTab } from './apps-tab';
 import { McpsTab } from './mcps-tab';
+import { McpStoreTab } from './mcp-store-tab';
 
-const TABS = ['plugins', 'apps', 'mcps'] as const;
+const TABS = ['mcp-store', 'mcps', 'plugins', 'apps'] as const;
 type IntegrationTab = (typeof TABS)[number];
-
 function tabLabel(tab: IntegrationTab): string {
   const labels: Record<IntegrationTab, string> = {
+    'mcp-store': 'MCP Store',
+    mcps: 'Installed MCPs',
     plugins: 'Plugins',
     apps: 'Apps',
-    mcps: 'MCP Servers',
   };
   return labels[tab];
 }
@@ -72,9 +73,10 @@ export function IntegrationsPage() {
 
         <Separator />
 
+        {tab === 'mcp-store' && <McpStoreTab />}
+        {tab === 'mcps' && <McpsTab />}
         {tab === 'plugins' && <PluginsTab />}
         {tab === 'apps' && <AppsTab />}
-        {tab === 'mcps' && <McpsTab />}
       </div>
     </div>
   );

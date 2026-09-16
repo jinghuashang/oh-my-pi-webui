@@ -9,6 +9,7 @@ import { ErrorCode } from '../common/error-codes';
 import { FilesService } from '../files/files.service';
 import { ThreadsService } from '../threads/threads.service';
 import {
+  CloneProjectDto,
   CreateProjectDto,
   CreateProjectResponseDto,
   ProjectItemDto,
@@ -179,6 +180,150 @@ export class ProjectsService {
       path: projectDir,
       threadId,
       isGit,
+    };
+  }
+
+  /**
+   * Normalizes repository URL or owner/repo format and extracts a default project folder name.
+   */
+  normalizeGitUrl(rawUrl: string): { normalizedUrl: string; defaultName: string } {
+    const trimmed = rawUrl.trim();
+    if (!trimmed) {
+      throw BusinessException.badRequest(
+        ErrorCode.files.pathRequired,
+        'Repository URL is required',
+      );
+    }
+
+    let url = trimmed;
+    // Handle owner/repo shorthand (e.g. "can1357/oh-my-pi")
+    if (/^[a-zA-Z0-9_-]+\/[a-zA-Z0-9_.-]+$/.test(url)) {
+      url = `https://github.com/${url}.git`;
+    } else if (url.startsWith('github.com/')) {
+      url = `https://${url}`;
+    }
+
+    // Extract repository name from url
+    const cleanUrl = url.replace(/\.git$/, '').replace(/\/+$/, '');
+    const parts = cleanUrl.split(/[/:]/);
+    const lastPart = parts[parts.length - 1];
+    const defaultName = lastPart ? lastPart.replace(/[^a-zA-Z0-9_-]/g, '') : 'project';
+
+    return {
+      normalizedUrl: url,
+      defaultName: defaultName || 'project',
+    };
+  }
+
+  /**
+   * Clones a GitHub repository into data/projects/<projectName>, registers workspace root,
+   * creates an initial session thread, and optionally sends the initial prompt!
+   */
+  async cloneProject(dto: CloneProjectDto): Promise<CreateProjectResponseDto> {
+    const { normalizedUrl, defaultName } = this.normalizeGitUrl(dto.url);
+    const rawName = typeof dto.name === 'string' && dto.name.trim() ? dto.name.trim() : defaultName;
+
+    // Validate project name against path traversal
+    if (rawName.includes('/') || rawName.includes('\\') || rawName.includes('..')) {
+      throw BusinessException.badRequest(
+        ErrorCode.files.nameInvalid,
+        'Project name cannot contain path separators or parent directory references',
+      );
+    }
+
+    const sanitizedName = rawName.replace(/[\x00-\x1f\x7f<>:"|?*]/g, '').trim();
+    if (!sanitizedName) {
+      throw BusinessException.badRequest(
+        ErrorCode.files.nameInvalid,
+        'Project name contains only illegal characters',
+      );
+    }
+
+    const baseDir = this.getProjectsBaseDir();
+    if (!fs.existsSync(baseDir)) {
+      fs.mkdirSync(baseDir, { recursive: true });
+    }
+
+    const projectDir = path.join(baseDir, sanitizedName);
+    const alreadyExists = fs.existsSync(projectDir);
+
+    if (!alreadyExists) {
+      // Execute git clone
+      const args = ['clone'];
+      if (dto.shallow !== false) {
+        args.push('--depth', '1');
+      }
+      if (dto.branch && dto.branch.trim()) {
+        args.push('--branch', dto.branch.trim());
+      }
+      args.push(normalizedUrl, projectDir);
+
+      this.logger.log(`Cloning repository from ${normalizedUrl} into ${projectDir}...`);
+      try {
+        await execFileAsync('git', args, {
+          timeout: 180_000,
+          env: {
+            ...process.env,
+            GIT_TERMINAL_PROMPT: '0',
+          },
+        });
+      } catch (err) {
+        // Clean up partial directory on clone failure
+        if (fs.existsSync(projectDir)) {
+          try {
+            await fs.promises.rm(projectDir, { recursive: true, force: true });
+          } catch {}
+        }
+        let stderr = '';
+        if (err && typeof err === 'object' && 'stderr' in err && typeof err.stderr === 'string') {
+          stderr = err.stderr;
+        } else {
+          stderr = String(err);
+        }
+        this.logger.error(`Git clone failed for ${normalizedUrl}: ${stderr}`);
+        throw BusinessException.badRequest(
+          ErrorCode.git.commandFailed,
+          `Failed to clone repository: ${stderr.trim()}`,
+        );
+      }
+    } else {
+      this.logger.log(`Project directory ${projectDir} already exists; opening existing workspace.`);
+    }
+
+    // Register workspace root in FilesService
+    try {
+      this.filesService.addWorkspaceRoot(projectDir);
+    } catch (e) {
+      this.logger.warn(`Could not add ${projectDir} as dynamic workspace root: ${String(e)}`);
+    }
+
+    // Start initial thread session with cwd = projectDir
+    const threadRes = await this.threadsService.startThread({
+      cwd: projectDir,
+      model: dto.model,
+    });
+
+    const threadId = threadRes.thread.id;
+
+    // Send initial prompt if provided
+    if (dto.initialPrompt && dto.initialPrompt.trim()) {
+      try {
+        await this.threadsService.startTurn({
+          threadId,
+          input: [{ type: 'text', text: dto.initialPrompt.trim(), text_elements: [] }],
+        });
+      } catch (err) {
+        this.logger.warn(`Failed to send initial prompt to thread ${threadId}: ${String(err)}`);
+      }
+    }
+
+    this.logger.log(`Cloned and opened project "${sanitizedName}" at ${projectDir} with thread ${threadId}`);
+
+    return {
+      name: sanitizedName,
+      path: projectDir,
+      threadId,
+      isGit: true,
     };
   }
 }

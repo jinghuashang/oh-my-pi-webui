@@ -60,3 +60,70 @@ export class McpServerOauthLoginResponseDto {
   @ApiProperty()
   authorizationUrl!: string;
 }
+
+export class McpConfigResponseDto {
+  @ApiProperty({ description: 'Configured MCP servers dictionary' })
+  mcpServers!: Record<string, unknown>;
+
+  @ApiProperty({ description: 'List of disabled server names', type: [String] })
+  disabledServers!: string[];
+
+  @ApiProperty({ description: 'Available GitHub mirrors for MCP installation' })
+  mirrors!: Array<{ id: string; name: string; url: string }>;
+}
+
+export class InstallMcpServerDto {
+  @ApiProperty({ description: 'Identifier of the MCP server' })
+  name!: string;
+
+  @ApiProperty({ description: 'Server configuration object' })
+  config!: Record<string, unknown>;
+
+  @ApiPropertyOptional({ description: 'GitHub mirror URL to accelerate git/github sources' })
+  mirrorUrl?: string;
+}
+
+export class ToggleMcpServerDto {
+  @ApiProperty({ description: 'Identifier of the MCP server' })
+  name!: string;
+
+  @ApiProperty({ description: 'Whether the server is enabled' })
+  enabled!: boolean;
+}
+
+export class McpStoreItemDto {
+  @ApiProperty()
+  name!: string;
+
+  @ApiProperty()
+  title!: string;
+
+  @ApiProperty()
+  description!: string;
+
+  @ApiProperty()
+  category!: string;
+
+  @ApiProperty()
+  type!: 'stdio' | 'http';
+
+  @ApiProperty()
+  config!: Record<string, unknown>;
+
+  @ApiProperty()
+  installed!: boolean;
+
+  @ApiProperty()
+  enabled!: boolean;
+
+  @ApiPropertyOptional()
+  hasGithubSource?: boolean;
+}
+
+export class McpStoreResponseDto {
+  @ApiProperty({ type: [McpStoreItemDto] })
+  items!: McpStoreItemDto[];
+
+  @ApiProperty()
+  mirrors!: Array<{ id: string; name: string; url: string }>;
+}

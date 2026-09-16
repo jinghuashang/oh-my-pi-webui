@@ -9,6 +9,7 @@ import {
 } from '@nestjs/swagger';
 import { ApiErrorResponseDto } from '../common/dto/api-responses.dto';
 import {
+  CloneProjectDto,
   CreateProjectDto,
   CreateProjectResponseDto,
   ProjectsListResponseDto,
@@ -45,5 +46,20 @@ export class ProjectsController {
     @Body() body: CreateProjectDto,
   ): Promise<CreateProjectResponseDto> {
     return this.projectsService.createProject(body);
+  }
+
+  /**
+   * Clones a GitHub repository into data/projects/<projectName>, registers workspace root,
+   * and creates an initial session thread!
+   */
+  @Post('clone')
+  @ApiOperation({
+    summary: 'Clone a GitHub repository into data/projects and start initial session thread',
+  })
+  @ApiCreatedResponse({ type: CreateProjectResponseDto })
+  async cloneProject(
+    @Body() body: CloneProjectDto,
+  ): Promise<CreateProjectResponseDto> {
+    return this.projectsService.cloneProject(body);
   }
 }

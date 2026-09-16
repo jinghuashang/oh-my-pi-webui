@@ -4,8 +4,9 @@
  * state, queries, mutations, and view routing.
  */
 import { useMemo, useState } from 'react';
-import { FolderOpen, FolderPlus, PanelLeftClose, Puzzle, Settings, Terminal } from 'lucide-react';
+import { FolderOpen, FolderPlus, PanelLeftClose, Puzzle, RefreshCw, Settings, Terminal } from 'lucide-react';
 import { CreateProjectDialog } from './sidebar/create-project-dialog';
+import { OmpUpdateDialog } from './sidebar/omp-update-dialog';
 import { useNavigate, useRouterState } from '@tanstack/react-router';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
@@ -13,6 +14,7 @@ import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
 import {
+  ompUpdateCheckUpdateOptions,
   threadsArchiveThreadMutation,
   threadsCompactThreadMutation,
   threadsForkThreadMutation,
@@ -96,9 +98,12 @@ export function ThreadSidebar() {
   const [confirmAction, setConfirmAction] = useState<ConfirmAction>(null);
   const [dirPickerOpen, setDirPickerOpen] = useState(false);
   const [createProjectOpen, setCreateProjectOpen] = useState(false);
+  const [updateDialogOpen, setUpdateDialogOpen] = useState(false);
   const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
   const [graphTargetId, setGraphTargetId] = useState<string | null>(null);
 
+  const updateQuery = useQuery(ompUpdateCheckUpdateOptions());
+  const updateData = updateQuery.data;
   // ── Queries ─────────────────────────────────────────────────────────
   // The sidebar reads one server-side projection. It used to join a paginated
   // thread list with the branch topology on the client, fold branches into
@@ -565,17 +570,52 @@ export function ThreadSidebar() {
         )}
       </ScrollArea>
 
-      {/* Desktop collapse toggle (hidden in mobile Sheet) */}
-      <div className="hidden shrink-0 border-t border-border px-2 py-1.5 lg:block">
+      {/* Desktop bottom footer: OMP update check + collapse sidebar */}
+      <div className="hidden shrink-0 border-t border-border px-2 py-1.5 lg:block space-y-1">
+        {/* OMP Update Status Row */}
+        <button
+          type="button"
+          onClick={() => setUpdateDialogOpen(true)}
+          className="flex w-full cursor-pointer items-center justify-between rounded-lg px-2.5 py-1.5 text-xs text-muted-foreground transition-colors hover:bg-accent/50 hover:text-foreground group"
+        >
+          <div className="flex items-center gap-2">
+            <RefreshCw
+              className={cn(
+                'h-3.5 w-3.5 shrink-0 transition-transform',
+                updateQuery.isFetching && 'animate-spin text-primary',
+              )}
+            />
+            <span className="font-mono text-[11px]">
+              omp v{updateData?.currentVersion || '...'}
+            </span>
+          </div>
+          {updateData?.hasUpdate ? (
+            <span className="flex items-center gap-1 text-[11px] font-medium text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded-full border border-emerald-500/20">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+              {t('New version')}
+            </span>
+          ) : (
+            <span className="text-[10px] text-muted-foreground/60 group-hover:text-muted-foreground">
+              {t('Check update')}
+            </span>
+          )}
+        </button>
+
+        {/* Desktop collapse toggle */}
         <button
           type="button"
           onClick={toggleDesktopSidebarCollapsed}
-          className="flex w-full cursor-pointer items-center gap-2 rounded-lg px-2.5 py-2 text-sm text-muted-foreground transition-colors hover:bg-accent/50 hover:text-foreground"
+          className="flex w-full cursor-pointer items-center gap-2 rounded-lg px-2.5 py-1.5 text-sm text-muted-foreground transition-colors hover:bg-accent/50 hover:text-foreground"
         >
           <PanelLeftClose className="h-4 w-4 shrink-0" />
           {t('Collapse sidebar')}
         </button>
       </div>
+
+      <OmpUpdateDialog
+        open={updateDialogOpen}
+        onClose={() => setUpdateDialogOpen(false)}
+      />
 
       <RenameDialog
         open={renameThread !== null}

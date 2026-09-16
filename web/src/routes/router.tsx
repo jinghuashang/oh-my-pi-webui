@@ -21,9 +21,9 @@ import { IntegrationsPage } from '@/components/integrations/integrations-page';
 import { BASE_PATH } from '@/base-path';
 
 export type LoginSearch = { redirect: string };
-export type IntegrationsSearch = { tab: 'plugins' | 'apps' | 'mcps' };
+export type IntegrationsSearch = { tab: 'mcp-store' | 'mcps' | 'plugins' | 'apps' };
 
-const INTEGRATION_TABS = ['plugins', 'apps', 'mcps'] as const;
+const INTEGRATION_TABS = ['mcp-store', 'mcps', 'plugins', 'apps'] as const;
 
 function sanitizeIntegrationsSearch(search: Record<string, unknown>): IntegrationsSearch {
   const tab = search.tab;

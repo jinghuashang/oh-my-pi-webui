@@ -2,9 +2,11 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpCode,
   HttpStatus,
+  Param,
   Post,
   Query,
 } from '@nestjs/common';
@@ -24,10 +26,14 @@ import {
 import { ApiErrorResponseDto } from '../common/dto/api-responses.dto';
 import { McpServersService } from './mcp-servers.service';
 import {
+  InstallMcpServerDto,
   MCP_SERVER_STATUS_DETAIL_VALUES,
+  McpConfigResponseDto,
   McpServerOauthLoginRequestDto,
   McpServerOauthLoginResponseDto,
   McpServersListResponseDto,
+  McpStoreResponseDto,
+  ToggleMcpServerDto,
 } from './dto/mcp-servers.dto';
 import type { v2 } from '../omp/omp-schema';
 
@@ -69,6 +75,46 @@ export class McpServersController {
   @ApiNoContentResponse()
   reloadAll(): Promise<void> {
     return this.mcpServersService.reloadAll();
+  }
+
+  /** Gets current MCP configuration from mcp.json. */
+  @Get('config')
+  @ApiOperation({ summary: 'Get current MCP configuration from mcp.json' })
+  @ApiOkResponse({ type: McpConfigResponseDto })
+  getConfig(): Promise<McpConfigResponseDto> {
+    return this.mcpServersService.getConfig();
+  }
+
+  /** Gets MCP store items with install status and available GitHub mirrors. */
+  @Get('store')
+  @ApiOperation({ summary: 'Get default MCP store items with install status' })
+  @ApiOkResponse({ type: McpStoreResponseDto })
+  getStore(): Promise<McpStoreResponseDto> {
+    return this.mcpServersService.getStore();
+  }
+
+  /** Installs or updates an MCP server into mcp.json with mirror support. */
+  @Post('config/install')
+  @ApiOperation({ summary: 'Install or update an MCP server configuration' })
+  @ApiOkResponse({ type: Object })
+  installServer(@Body() body: InstallMcpServerDto) {
+    return this.mcpServersService.installServer(body);
+  }
+
+  /** Toggles enablement of an MCP server. */
+  @Post('config/toggle')
+  @ApiOperation({ summary: 'Toggle an MCP server enabled/disabled' })
+  @ApiOkResponse({ type: Object })
+  toggleServer(@Body() body: ToggleMcpServerDto) {
+    return this.mcpServersService.toggleServer(body);
+  }
+
+  /** Deletes an MCP server from mcp.json. */
+  @Delete('config/:name')
+  @ApiOperation({ summary: 'Delete an MCP server from mcp.json' })
+  @ApiOkResponse({ type: Object })
+  deleteServer(@Param('name') name: string) {
+    return this.mcpServersService.deleteServer(name);
   }
 
   /** Starts an OAuth login flow for one MCP server. */

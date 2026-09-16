@@ -19,6 +19,7 @@ import { DatabaseModule } from './database/database.module';
 import { FilesModule } from './files/files.module';
 import { LogsModule } from './logs/logs.module';
 import { McpServersModule } from './mcp-servers/mcp-servers.module';
+import { OmpUpdateModule } from './omp-update/omp-update.module';
 import { ModelsModule } from './models/models.module';
 import { OnlyOfficeModule } from './onlyoffice/onlyoffice.module';
 import { PendingApprovalsModule } from './pending-approvals/pending-approvals.module';
@@ -136,6 +137,7 @@ const PINO_REDACT = {
     LogsModule,
     McpServersModule,
     ProjectsModule,
+    OmpUpdateModule,
   ],
   controllers: [AppController],
   providers: [

@@ -17,6 +17,29 @@ export class CreateProjectDto {
   initGit?: boolean;
 }
 
+export class CloneProjectDto {
+  @ApiProperty({ description: 'GitHub repository URL or owner/repo shorthand' })
+  url!: string;
+
+  @ApiPropertyOptional({ description: 'Custom project directory name (default: extracted from repo name)' })
+  name?: string;
+
+  @ApiPropertyOptional({ description: 'Specific branch or tag to clone' })
+  branch?: string;
+
+  @ApiPropertyOptional({
+    description: 'Whether to shallow clone with --depth 1 for speed (default true)',
+    default: true,
+  })
+  shallow?: boolean;
+
+  @ApiPropertyOptional({ description: 'Optional initial prompt message to start the project session' })
+  initialPrompt?: string;
+
+  @ApiPropertyOptional({ description: 'Optional model to use for the initial session' })
+  model?: string;
+}
+
 export class ProjectItemDto {
   @ApiProperty({ description: 'Project directory name' })
   name!: string;

@@ -85,4 +85,51 @@ describe('ProjectsService', () => {
     const listing = await service.listProjects();
     expect(listing.projects.some((p) => p.name === 'hello-world-project')).toBe(true);
   });
+
+  it('normalizes various GitHub repository URL formats correctly', () => {
+    const res1 = service.normalizeGitUrl('can1357/oh-my-pi');
+    expect(res1.normalizedUrl).toBe('https://github.com/can1357/oh-my-pi.git');
+    expect(res1.defaultName).toBe('oh-my-pi');
+
+    const res2 = service.normalizeGitUrl('https://github.com/can1357/oh-my-pi.git');
+    expect(res2.normalizedUrl).toBe('https://github.com/can1357/oh-my-pi.git');
+    expect(res2.defaultName).toBe('oh-my-pi');
+
+    const res3 = service.normalizeGitUrl('github.com/owner/demo-repo');
+    expect(res3.normalizedUrl).toBe('https://github.com/owner/demo-repo');
+    expect(res3.defaultName).toBe('demo-repo');
+
+    expect(() => service.normalizeGitUrl('')).toThrow(BusinessException);
+  });
+
+  it('validates project names when cloning', async () => {
+    await expect(
+      service.cloneProject({ url: 'owner/repo', name: '../bad' }),
+    ).rejects.toBeInstanceOf(BusinessException);
+    await expect(
+      service.cloneProject({ url: '', name: 'good' }),
+    ).rejects.toBeInstanceOf(BusinessException);
+  });
+
+  it('opens existing directory when project folder already exists', async () => {
+    const existingFolder = path.join(tempBaseDir, 'existing-repo');
+    await fs.promises.mkdir(existingFolder, { recursive: true });
+
+    const result = await service.cloneProject({
+      url: 'owner/existing-repo',
+      initialPrompt: 'Review the existing codebase',
+    });
+
+    expect(result.name).toBe('existing-repo');
+    expect(result.path).toBe(existingFolder);
+    expect(mockFilesService.addWorkspaceRoot).toHaveBeenCalledWith(existingFolder);
+    expect(mockThreadsService.startThread).toHaveBeenCalledWith({
+      cwd: existingFolder,
+      model: undefined,
+    });
+    expect(mockThreadsService.startTurn).toHaveBeenCalledWith({
+      threadId: 'thread-test-123',
+      input: [{ type: 'text', text: 'Review the existing codebase', text_elements: [] }],
+    });
+  });
 });
