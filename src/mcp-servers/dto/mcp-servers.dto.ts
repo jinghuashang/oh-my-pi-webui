@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { jsonValueSchema } from '../../codex/dto/v2/openapi.schema';
+import { jsonValueSchema } from '../../omp/dto/v2/openapi.schema';
 
 export const MCP_SERVER_STATUS_DETAIL_VALUES = [
   'full',

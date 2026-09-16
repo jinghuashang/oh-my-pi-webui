@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
-import { CodexModule } from '../codex/codex.module';
+import { OmpEngineModule } from '../omp/omp-engine.module';
 import { AppsController } from './apps.controller';
 import { AppsService } from './apps.service';
 
 @Module({
-  imports: [CodexModule],
+  imports: [OmpEngineModule],
   controllers: [AppsController],
   providers: [AppsService],
   exports: [AppsService],

@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ModelsService } from './models.service';
-import { CodexService } from '../codex/codex.service';
+import { OmpService } from '../omp/omp-engine.service';
 
 describe('ModelsService', () => {
   let service: ModelsService;
@@ -10,7 +10,7 @@ describe('ModelsService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ModelsService,
-        { provide: CodexService, useValue: mockCodex },
+        { provide: OmpService, useValue: mockCodex },
       ],
     }).compile();
 

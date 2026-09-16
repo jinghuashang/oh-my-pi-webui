@@ -57,7 +57,7 @@ export function ForkGoalDialog({ prompt, pending, onConfirm, onCancel }: Props) 
           />
           <span className="text-muted-foreground">
             {t(
-              'Carry the goal into the fork. Codex defers continuing it until you send the first message there, after which the fork may keep spending tokens on this objective.',
+              'Carry the goal into the fork. OMP defers continuing it until you send the first message there, after which the fork may keep spending tokens on this objective.',
             )}
           </span>
         </label>

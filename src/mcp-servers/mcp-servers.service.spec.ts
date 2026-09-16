@@ -1,6 +1,6 @@
 /** Unit tests for McpServersService: list and reload operations. */
 import { Test, type TestingModule } from '@nestjs/testing';
-import { CodexService } from '../codex/codex.service';
+import { OmpService } from '../omp/omp-engine.service';
 import { McpServersService } from './mcp-servers.service';
 
 describe('McpServersService', () => {
@@ -14,7 +14,7 @@ describe('McpServersService', () => {
     moduleRef = await Test.createTestingModule({
       providers: [
         McpServersService,
-        { provide: CodexService, useValue: codexService },
+        { provide: OmpService, useValue: codexService },
       ],
     }).compile();
     service = moduleRef.get(McpServersService);

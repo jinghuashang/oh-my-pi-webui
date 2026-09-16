@@ -3,7 +3,7 @@ import type {
   ServerNotification,
   ServerRequest,
   v2,
-} from '../codex/codex-schema';
+} from '../omp/omp-schema';
 
 /** Includes structured path semantics and an intentionally omitted network grant. */
 export function permissionApprovalFixture() {

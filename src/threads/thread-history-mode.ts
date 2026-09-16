@@ -1,6 +1,6 @@
 /** Shared enforcement for the paginated thread-history invariant. */
 import { HttpStatus } from '@nestjs/common';
-import type { v2 } from '../codex/codex-schema';
+import type { v2 } from '../omp/omp-schema';
 import { BusinessException } from '../common/business.exception';
 import { ErrorCode } from '../common/error-codes';
 

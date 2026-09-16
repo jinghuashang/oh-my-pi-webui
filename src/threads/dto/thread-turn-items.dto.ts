@@ -1,6 +1,6 @@
 /** Bounded persisted-item read contract for open/reconnect recovery. */
 import { ApiProperty } from '@nestjs/swagger';
-import { threadItemSchema } from '../../codex/dto/v2';
+import { threadItemSchema } from '../../omp/dto/v2';
 import type { TurnItemsRead } from '../thread-item-history';
 
 /** An exhausted read covers persisted items at read time, not future completions. */

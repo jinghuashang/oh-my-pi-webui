@@ -1,6 +1,6 @@
-import { CodexRpcError } from '../codex/codex-errors';
-import type { v2 } from '../codex/codex-schema';
-import { CodexService } from '../codex/codex.service';
+import { OmpRpcError } from '../omp/omp-errors';
+import type { v2 } from '../omp/omp-schema';
+import { OmpService } from '../omp/omp-engine.service';
 import { ErrorCode } from '../common/error-codes';
 import { ConversationBranchAdoptionService } from '../conversation-branches/conversation-branch-adoption.service';
 import { ConversationBranchMutationsService } from '../conversation-branches/conversation-branch-mutations.service';
@@ -67,13 +67,13 @@ describe('ThreadsDeletionService', () => {
   beforeEach(() => {
     requestLog = [];
     const planner = new ThreadsDeletePlannerService(
-      mockCodex as unknown as CodexService,
+      mockCodex as unknown as OmpService,
       mockAdoption as unknown as ConversationBranchAdoptionService,
       mockBranchMutations as unknown as ConversationBranchMutationsService,
       mockPendingApprovals as unknown as PendingApprovalsService,
     );
     service = new ThreadsDeletionService(
-      mockCodex as unknown as CodexService,
+      mockCodex as unknown as OmpService,
       planner,
       mockBranchMutations as unknown as ConversationBranchMutationsService,
       mockBranches as unknown as ConversationBranchesService,
@@ -148,7 +148,7 @@ describe('ThreadsDeletionService', () => {
         return Promise.resolve(listResponse(params, [makeThread('root')]));
       }
       if (method === 'thread/delete') {
-        throw new CodexRpcError({
+        throw new OmpRpcError({
           code: -32600,
           message: 'no rollout found for thread id root',
         });
@@ -216,7 +216,7 @@ describe('ThreadsDeletionService', () => {
       if (method === 'thread/delete') {
         const threadId = (params as { threadId: string }).threadId;
         if (threadId === 'root') {
-          throw new CodexRpcError({
+          throw new OmpRpcError({
             code: -32600,
             message:
               'cannot delete thread root: forked history still references it',
@@ -322,7 +322,7 @@ describe('ThreadsDeletionService', () => {
         );
       }
       if (method === 'thread/delete') {
-        throw new CodexRpcError({ code: -32603, message: 'transport failed' });
+        throw new OmpRpcError({ code: -32603, message: 'transport failed' });
       }
       throw new Error(`unexpected ${method}`);
     });

@@ -1,7 +1,7 @@
 import { Test, type TestingModule } from '@nestjs/testing';
 import { PluginsController } from './plugins.controller';
 import { PluginsService } from './plugins.service';
-import type { v2 } from '../codex/codex-schema';
+import type { v2 } from '../omp/omp-schema';
 
 describe('PluginsController', () => {
   let moduleRef: TestingModule;

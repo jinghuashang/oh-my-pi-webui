@@ -101,8 +101,8 @@ async function bootstrap() {
 
   if (process.env.NODE_ENV !== 'production') {
     const swaggerConfig = new DocumentBuilder()
-      .setTitle('Codex WebUI')
-      .setDescription('Codex WebUI API')
+      .setTitle('Oh My Pi WebUI')
+      .setDescription('Oh My Pi WebUI API')
       .setVersion('0.1.0')
       .addBearerAuth()
       .build();

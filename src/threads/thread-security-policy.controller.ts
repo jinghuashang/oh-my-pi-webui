@@ -19,9 +19,9 @@ import {
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
-import type { v2 } from '../codex/codex-schema';
-import { CodexService } from '../codex/codex.service';
-import { CODEX_V2_EXTRA_MODELS } from '../codex/dto/v2';
+import type { v2 } from '../omp/omp-schema';
+import { OmpService } from '../omp/omp-engine.service';
+import { CODEX_V2_EXTRA_MODELS } from '../omp/dto/v2';
 import { BusinessException } from '../common/business.exception';
 import { ApiErrorResponseDto } from '../common/dto/api-responses.dto';
 import { ErrorCode } from '../common/error-codes';
@@ -42,7 +42,7 @@ export class ThreadSecurityPolicyController {
   private readonly logger = new Logger(ThreadSecurityPolicyController.name);
 
   constructor(
-    private readonly codex: CodexService,
+    private readonly ompService: OmpService,
     private readonly settingsObserver: ThreadSettingsObserverService,
     private readonly deletionRegistry: ThreadDeletionRegistryService,
   ) {}
@@ -83,7 +83,7 @@ export class ThreadSecurityPolicyController {
       { threadId, fields: Object.keys(patch) },
       'Queueing thread security policy',
     );
-    const { thread } = await this.codex.request<v2.ThreadReadResponse>(
+    const { thread } = await this.ompService.request<v2.ThreadReadResponse>(
       'thread/read',
       {
         threadId,
@@ -101,7 +101,7 @@ export class ThreadSecurityPolicyController {
       );
     }
     this.deletionRegistry.assertMutable(threadId);
-    await this.codex.request<Record<string, never>>('thread/settings/update', {
+    await this.ompService.request<Record<string, never>>('thread/settings/update', {
       threadId,
       ...patch,
     });

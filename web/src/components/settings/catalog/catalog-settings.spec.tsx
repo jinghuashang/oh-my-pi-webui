@@ -73,7 +73,7 @@ it.each(['startupError', 'repairError'] as const)(
     const user = userEvent.setup();
     fixture.render(<CatalogSettings />);
     expect(await screen.findByText('Repair diagnostic')).toBeVisible();
-    await user.click(screen.getByRole('button', { name: 'Restart Codex' }));
+    await user.click(screen.getByRole('button', { name: 'Restart OMP' }));
     await user.click(screen.getByRole('button', { name: 'Restore previous' }));
     await waitFor(() =>
       expect(fixture.server.writes).toContainEqual({
@@ -99,7 +99,7 @@ it('offers restart for a healthy unapplied pointer and withdraws stale restorati
   };
   fixture.render(<CatalogSettings />);
   expect(
-    await screen.findByRole('button', { name: 'Restart Codex' }),
+    await screen.findByRole('button', { name: 'Restart OMP' }),
   ).toBeEnabled();
   expect(
     screen.getByRole('button', { name: 'Restore previous' }),

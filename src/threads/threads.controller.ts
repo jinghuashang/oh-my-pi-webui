@@ -31,14 +31,14 @@ import {
   ApiErrorResponseDto,
   OkResponseDto,
 } from '../common/dto/api-responses.dto';
-import type { v2 } from '../codex/codex-schema';
+import type { v2 } from '../omp/omp-schema';
 import {
   BranchStateDto,
   BranchTreeDto,
   CreateMessageBranchDto,
   CreateMessageBranchResponseDto,
 } from '../conversation-branches/dto/conversation-branches.dto';
-import { REASONING_EFFORT_VALUES } from '../codex/dto/v2/openapi.schema';
+import { REASONING_EFFORT_VALUES } from '../omp/dto/v2/openapi.schema';
 import { FilesService } from '../files/files.service';
 import { ThreadsService } from './threads.service';
 import {

@@ -1,5 +1,5 @@
 /** Retains proposed file changes that history cannot supply before approval. */
-import type { ServerNotification } from '../codex/codex-schema';
+import type { ServerNotification } from '../omp/omp-schema';
 import type { FileChangeApprovalSubjectDto } from './dto/pending-approvals.dto';
 
 interface FileProposal {

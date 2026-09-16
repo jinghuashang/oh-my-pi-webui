@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { ThreadSecurityPolicyController } from './thread-security-policy.controller';
 import { AuthModule } from '../auth/auth.module';
 import { ChatModule } from '../chat/chat.module';
-import { CodexModule } from '../codex/codex.module';
+import { OmpEngineModule } from '../omp/omp-engine.module';
 import { ConversationBranchesModule } from '../conversation-branches/conversation-branches.module';
 import { DatabaseModule } from '../database/database.module';
 import { FilesModule } from '../files/files.module';
@@ -29,7 +29,7 @@ import { ThreadsService } from './threads.service';
   imports: [
     AuthModule,
     ChatModule,
-    CodexModule,
+    OmpEngineModule,
     ConversationBranchesModule,
     DatabaseModule,
     FilesModule,

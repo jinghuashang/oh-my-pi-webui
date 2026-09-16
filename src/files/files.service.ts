@@ -30,7 +30,7 @@ import { pipeline } from 'node:stream/promises';
 const MAX_READ_SIZE = 5 * 1024 * 1024;
 
 /** Prefix used for upload temp files written next to their final target. */
-const UPLOAD_TEMP_PREFIX = '.codex-upload-';
+const UPLOAD_TEMP_PREFIX = '.omp-upload-';
 
 /** Parsed fallback excluded dirs derived from the settings default. */
 const DEFAULT_EXCLUDED_DIRS = new Set(

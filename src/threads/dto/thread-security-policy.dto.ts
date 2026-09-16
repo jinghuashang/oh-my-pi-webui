@@ -1,9 +1,9 @@
 /** REST contracts for observed security settings and queued thread policy changes. */
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import type { v2 } from '../../codex/codex-schema';
-import { approvalPolicySchema } from '../../codex/dto/v2/approval.dto';
-import { sandboxPolicySchema } from '../../codex/dto/v2/sandbox.dto';
-import { APPROVALS_REVIEWER_VALUES } from '../../codex/dto/v2/openapi.schema';
+import type { v2 } from '../../omp/omp-schema';
+import { approvalPolicySchema } from '../../omp/dto/v2/approval.dto';
+import { sandboxPolicySchema } from '../../omp/dto/v2/sandbox.dto';
+import { APPROVALS_REVIEWER_VALUES } from '../../omp/dto/v2/openapi.schema';
 
 /** Explicit policy leaves supported by the pinned thread/settings/update RPC. */
 export class PatchThreadSecurityPolicyDto {

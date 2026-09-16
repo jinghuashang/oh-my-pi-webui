@@ -17,9 +17,9 @@ import {
 import {
   appsListAppsQueryKey,
   appsReadAppsOptions,
-  codexConfigReadConfigOptions,
-  codexConfigUpdateConfigMutation,
-  codexStatusGetStatusOptions,
+  ompEngineConfigReadConfigOptions,
+  ompEngineConfigUpdateConfigMutation,
+  ompStatusGetStatusOptions,
 } from '@/generated/api/@tanstack/react-query.gen';
 import type {
   AppInfoDto,
@@ -31,14 +31,14 @@ import {
   ConfigBooleanOverrideControl,
   ConfigSelectOverrideControl,
   type OverrideSelectOption,
-} from '@/components/codex-config/config-override-controls';
+} from '@/components/omp-config/config-override-controls';
 import {
   type AppToolApprovalModeValue,
   type ApprovalReviewerValue,
   type ConfigRecord,
   isEditableConfigSegment,
   isUserConfigOrigin,
-} from '@/lib/codex-config';
+} from '@/lib/omp-config';
 import { getApiErrorMessage } from '@/lib/api-error';
 import { showSnackbar } from '@/stores/snackbar-store';
 import { useTimelineStore } from '@/stores/timeline-store';
@@ -82,19 +82,19 @@ export function AppDetailSheet({ app, onClose }: AppDetailSheetProps) {
   });
 
   const configQuery = useQuery({
-    ...codexConfigReadConfigOptions(),
+    ...ompEngineConfigReadConfigOptions(),
     enabled: app !== null,
   });
 
   const updateMutation = useMutation({
-    ...codexConfigUpdateConfigMutation(),
+    ...ompEngineConfigUpdateConfigMutation(),
     onSuccess: (data) => {
-      queryClient.setQueryData(codexConfigReadConfigOptions().queryKey, data);
+      queryClient.setQueryData(ompEngineConfigReadConfigOptions().queryKey, data);
       void queryClient.invalidateQueries({
-        queryKey: codexConfigReadConfigOptions().queryKey,
+        queryKey: ompEngineConfigReadConfigOptions().queryKey,
       });
       void queryClient.invalidateQueries({
-        queryKey: codexStatusGetStatusOptions().queryKey,
+        queryKey: ompStatusGetStatusOptions().queryKey,
       });
       void queryClient.invalidateQueries({
         queryKey: appsListAppsQueryKey(),
@@ -153,7 +153,7 @@ export function AppDetailSheet({ app, onClose }: AppDetailSheetProps) {
                 <WarningBanner message={t('Failed to load app metadata.')} />
               )}
               {configQuery.isError && (
-                <WarningBanner message={t('Failed to load Codex config.')} />
+                <WarningBanner message={t('Failed to load OMP config.')} />
               )}
               {!idEditable && (
                 <WarningBanner
@@ -255,7 +255,7 @@ function AppPolicyControls({
     <PolicySection title={t('App Settings')}>
       <ConfigBooleanOverrideControl
         label={t('App enabled')}
-        description={t('Controls whether this app is available to Codex.')}
+        description={t('Controls whether this app is available to OMP.')}
         effectiveValue={enabled.value}
         source={enabled.source}
         overridden={isUserConfigOrigin(origins, `${appBase}.enabled`)}

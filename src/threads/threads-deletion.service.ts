@@ -3,8 +3,8 @@ import { HttpStatus, Inject, Injectable, Logger } from '@nestjs/common';
 import { eq } from 'drizzle-orm';
 import { BusinessException } from '../common/business.exception';
 import { ErrorCode } from '../common/error-codes';
-import { CodexService } from '../codex/codex.service';
-import type { v2 } from '../codex/codex-schema';
+import { OmpService } from '../omp/omp-engine.service';
+import type { v2 } from '../omp/omp-schema';
 import {
   ConversationBranchMutationsService,
   OrphanedLocalTopologyError,
@@ -37,7 +37,7 @@ export class ThreadsDeletionService {
   private readonly logger = new Logger(ThreadsDeletionService.name);
 
   constructor(
-    private readonly codex: CodexService,
+    private readonly ompService: OmpService,
     private readonly planner: ThreadsDeletePlannerService,
     private readonly branchMutations: ConversationBranchMutationsService,
     private readonly branches: ConversationBranchesService,
@@ -293,7 +293,7 @@ export class ThreadsDeletionService {
       }
       if (!turnId) continue;
       try {
-        await this.codex.request('turn/interrupt', { threadId, turnId });
+        await this.ompService.request('turn/interrupt', { threadId, turnId });
         interruptedThreadIds.push(threadId);
         this.appendCancelledRequestIds(
           cancelledApprovalRequestIds,
@@ -323,7 +323,7 @@ export class ThreadsDeletionService {
     cancelledApprovalRequestIds: string[],
   ): Promise<ThreadDeleteFailureDto | null> {
     try {
-      await this.codex.request<v2.ThreadDeleteResponse>('thread/delete', {
+      await this.ompService.request<v2.ThreadDeleteResponse>('thread/delete', {
         threadId,
       });
       deletedThreadIds.push(threadId);

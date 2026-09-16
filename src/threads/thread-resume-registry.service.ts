@@ -1,12 +1,12 @@
 /** Generation-scoped resume registry for non-idempotent thread/resume calls. */
 import { Injectable, Logger } from '@nestjs/common';
 import { ThreadSettingsObserverService } from './thread-settings-observer.service';
-import { CodexProcessManager } from '../codex/codex-process-manager.service';
+import { OmpProcessManager } from '../omp/omp-process-manager.service';
 import type {
   ReasoningEffort,
   ServerNotification,
   v2,
-} from '../codex/codex-schema';
+} from '../omp/omp-schema';
 import type { ThreadOpenResponseDto } from './dto/threads.dto';
 import { isThreadOwnershipConflictError } from './thread-errors';
 import {
@@ -47,7 +47,7 @@ export class ThreadResumeRegistryService {
 
   constructor(
     private readonly history: ThreadHistoryService,
-    private readonly codexManager: CodexProcessManager,
+    private readonly codexManager: OmpProcessManager,
     private readonly settingsObserver: ThreadSettingsObserverService,
   ) {
     this.codexManager.addListener(

@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { jsonValueSchema } from '../../codex/dto/v2/openapi.schema';
+import { jsonValueSchema } from '../../omp/dto/v2/openapi.schema';
 
 /** Query parameters for reading structured application logs. */
 export class LogsQueryDto {

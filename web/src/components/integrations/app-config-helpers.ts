@@ -1,7 +1,7 @@
 /** Helpers for app integration config controls. */
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import type { OverrideSelectOption } from '@/components/codex-config/config-override-controls';
+import type { OverrideSelectOption } from '@/components/omp-config/config-override-controls';
 import {
   APP_TOOL_APPROVAL_MODE_VALUES,
   APPROVAL_REVIEWER_VALUES,
@@ -12,7 +12,7 @@ import {
   isApprovalReviewerValue,
   isBooleanValue,
   resolveConfigValue,
-} from '@/lib/codex-config';
+} from '@/lib/omp-config';
 
 /** Builds localized approval reviewer picker options. */
 export function useReviewerOptions(): readonly OverrideSelectOption<ApprovalReviewerValue>[] {

@@ -2,7 +2,7 @@
 import { HttpStatus, Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { BusinessException } from '../common/business.exception';
 import { ErrorCode } from '../common/error-codes';
-import { CodexProcessManager } from '../codex/codex-process-manager.service';
+import { OmpProcessManager } from '../omp/omp-process-manager.service';
 import {
   BRANCH_START_SENTINEL,
   type ConversationBranchEdge,
@@ -46,7 +46,7 @@ export class ConversationBranchAdoptionService implements OnModuleInit {
     null;
 
   constructor(
-    private readonly codexManager: CodexProcessManager,
+    private readonly codexManager: OmpProcessManager,
     private readonly mutations: ConversationBranchMutationsService,
   ) {
     this.codexManager.addLifecycleListener((event) => {

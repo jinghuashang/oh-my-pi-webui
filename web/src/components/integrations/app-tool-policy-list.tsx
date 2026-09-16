@@ -5,13 +5,13 @@ import {
   ConfigBooleanOverrideControl,
   ConfigSelectOverrideControl,
   type OverrideSelectOption,
-} from '@/components/codex-config/config-override-controls';
+} from '@/components/omp-config/config-override-controls';
 import type {
   AppToolSummaryDto,
   ConfigEditDto,
 } from '@/generated/api/types.gen';
-import type { AppToolApprovalModeValue, ConfigRecord } from '@/lib/codex-config';
-import { isEditableConfigSegment, isUserConfigOrigin } from '@/lib/codex-config';
+import type { AppToolApprovalModeValue, ConfigRecord } from '@/lib/omp-config';
+import { isEditableConfigSegment, isUserConfigOrigin } from '@/lib/omp-config';
 import { PolicySection, WarningBanner } from './app-detail-layout';
 import { resolveApprovalMode, resolveBoolean } from './app-config-helpers';
 

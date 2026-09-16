@@ -1,6 +1,6 @@
 import { EventEmitter } from 'node:events';
 import type Database from 'better-sqlite3';
-import type { CodexProcessManager } from '../codex/codex-process-manager.service';
+import type { OmpProcessManager } from '../omp/omp-process-manager.service';
 import type { AppDatabase } from '../database/database.constants';
 import { createTestDatabase } from '../database/database.testing';
 import { turnErrors } from '../database/schema';
@@ -24,7 +24,7 @@ describe('TurnErrorsService', () => {
       }),
     };
     service = new TurnErrorsService(
-      emitter as unknown as CodexProcessManager,
+      emitter as unknown as OmpProcessManager,
       branches as never,
       db,
     );

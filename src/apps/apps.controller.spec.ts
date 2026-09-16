@@ -2,7 +2,7 @@ import { Test, type TestingModule } from '@nestjs/testing';
 import { ErrorCode } from '../common/error-codes';
 import { AppsController } from './apps.controller';
 import { AppsService } from './apps.service';
-import type { v2 } from '../codex/codex-schema';
+import type { v2 } from '../omp/omp-schema';
 
 describe('AppsController', () => {
   let moduleRef: TestingModule;

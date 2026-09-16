@@ -8,7 +8,7 @@
  */
 import { useQuery } from '@tanstack/react-query';
 import {
-  codexStatusGetStatusOptions,
+  ompStatusGetStatusOptions,
   modelsListModelsOptions,
 } from '@/generated/api/@tanstack/react-query.gen';
 import type { ModelDto } from '@/generated/api';
@@ -39,7 +39,7 @@ export function useActiveModel(): ActiveModel {
 
   // Config model from status (lightweight, cached)
   const { data: statusData } = useQuery({
-    ...codexStatusGetStatusOptions(),
+    ...ompStatusGetStatusOptions(),
     refetchOnWindowFocus: true,
   });
   // Full model list from dedicated endpoint (longer staleTime). Hidden models

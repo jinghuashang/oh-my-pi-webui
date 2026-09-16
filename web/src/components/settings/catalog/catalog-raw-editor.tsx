@@ -51,7 +51,7 @@ export function CatalogRawEditor({
           <p className="flex items-start gap-1.5 text-xs text-amber-500">
             <AlertTriangle className="mt-0.5 h-3.5 w-3.5 shrink-0" />
             {t(
-              'A catalog Codex cannot parse stops it from starting. Validate before applying.',
+              'A catalog OMP cannot parse stops it from starting. Validate before applying.',
             )}
           </p>
           <div className="overflow-hidden rounded-md border border-border">
@@ -77,7 +77,7 @@ export function CatalogRawEditor({
             disabled={content === null || validating}
             onClick={onValidate}
           >
-            {t('Validate with Codex')}
+            {t('Validate with OMP')}
           </Button>
         </div>
       )}

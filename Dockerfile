@@ -34,7 +34,7 @@ RUN pnpm build
 RUN pnpm prune --prod
 
 # ==============================================================================
-# Stage 2: Production Runtime
+# Stage 2: Production Runtime with OMP Engine
 # ==============================================================================
 FROM node:22-bookworm-slim AS runner
 
@@ -62,7 +62,8 @@ ENV NODE_ENV=production \
     BRIDGE_BIN=bridge/dist/index.js \
     OMP_BIN=/usr/local/bin/omp \
     OMP_CWD=/workspaces \
-    OMP_SESSION_DIR=/root/.omp/agent/sessions
+    OMP_SESSION_DIR=/root/.omp/agent/sessions \
+    PATH="/usr/local/bin:$PATH"
 
 # Copy built dependencies and distribution artifacts from builder
 COPY --from=builder /app/node_modules ./node_modules
@@ -72,6 +73,10 @@ COPY --from=builder /app/drizzle ./drizzle
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/bridge/dist ./bridge/dist
 COPY --from=builder /app/bridge/package.json ./bridge/package.json
+
+# Copy entrypoint script
+COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
 
 # Pre-create data and workspace directories
 RUN mkdir -p /root/.omp /workspaces /app/logs
@@ -86,4 +91,5 @@ HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
 # Data persistence volumes
 VOLUME ["/root/.omp", "/workspaces"]
 
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
 CMD ["node", "dist/main.js"]

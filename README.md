@@ -37,52 +37,96 @@ pnpm start
 
 ## Docker 部署
 
-项目提供了针对 Oh My Pi 深度优化的多阶段构建 `Dockerfile` 与 `docker-compose.yml`，容器内置预装了官方最新版 `omp` 运行引擎与完整构建依赖。
+项目提供了开箱即用的多阶段构建 `Dockerfile` 与 `docker-compose.yml`，具备 **OMP 主体引擎自动安装**、**宿主机 `./data` 目录直接映射** 与 **容器启动自动初始化** 能力。
 
-### 方式一：Docker Compose（推荐）
+### 🌟 核心特性
 
-1. 准备本地项目工作区目录：
+1. **全自动安装 OMP 主体引擎**：Docker 镜像与 `docker-entrypoint.sh` 启动脚本在构建与启动时会自动探测并下载官方最新版 `omp` 核心引擎，宿主机无需预先安装任何 Python、Rust 或编译工具；
+2. **配置直通宿主机 `./data`**：容器内的默认存储 `/root/.omp` 直接映射至宿主机项目的 `./data` 目录，无需在 Docker 私有卷中翻找，直接在宿主机即可用文本编辑器打开并修改 `./data/agent/config.yml` 与备份 `./data/webui.sqlite` 数据库；
+3. **初次启动自动初始化**：如果 `./data/agent/config.yml` 尚不存在，启动脚本会自动生成带清晰中文注释的标准默认配置文件；
+4. **宿主机代码空间映射**：项目根目录的 `./workspaces` 映射至容器内的 `/workspaces`，智能体在容器内操作的代码修改直接落盘在宿主机本地。
+
+### 🚀 快速启动（Docker Compose 推荐）
+
+1. **启动服务**：
 ```bash
-mkdir -p workspaces
-```
-
-2. 启动容器服务：
-```bash
+# 一键构建镜像并在后台启动容器
 docker compose up -d --build
 ```
 
-3. 浏览器访问：
-打开 `http://localhost:8172`，首次进入按提示设置管理员账号与密码即可。
+2. **查看运行日志与 OMP 主体状态**：
+```bash
+docker compose logs -f
+```
+控制台会打印出 OMP 引擎的版本号以及初始化的数据目录信息。
 
-### 方式二：Docker 原生命令运行
+3. **访问 WebUI 界面**：
+打开浏览器访问 `http://localhost:8172`，首次访问按提示创建管理员账号与密码即可。
+
+---
+
+### ⚙️ 模型配置与 API Key 接入（三种方式任选其一）
+
+- **方式一（最方便）：直接编辑宿主机 `./data/agent/config.yml`**
+  容器启动后，直接在宿主机打开 `./data/agent/config.yml`，填写模型角色与配置项，保存后即刻生效。
+
+- **方式二：在 `docker-compose.yml` 中传入环境变量**
+  在 `docker-compose.yml` 的 `environment` 小节中取消注释并填入你的模型 API Key：
+  ```yaml
+  environment:
+    - WEBUI_API_KEY=change-me-to-a-long-random-string
+    - DEEPSEEK_API_KEY=sk-xxx
+    - OPENAI_API_KEY=sk-xxx
+    - ANTHROPIC_API_KEY=sk-ant-xxx
+    - GEMINI_API_KEY=xxx
+  ```
+  重启容器后，容器内 OMP 主体与各工具将直接识别生效。
+
+- **方式三：在 Web 界面中可视化配置**
+  登录 WebUI 后，点击左侧菜单的「设置」->「通用」中的「智能体配置」为各角色挑选模型，或进入「config.yml」在线 Monaco 编辑器直接修改。
+
+---
+
+### 📦 数据目录结构映射说明
+
+| 宿主机路径 | 容器内路径 | 作用说明 |
+| --- | --- | --- |
+| `./data/agent/config.yml` | `/root/.omp/agent/config.yml` | **OMP 主体核心配置文件**，直接在此编辑模型分派与参数 |
+| `./data/webui.sqlite` | `/root/.omp/webui.sqlite` | WebUI 账号凭证、会话索引与运行期数据库 |
+| `./data/agent/sessions/` | `/root/.omp/agent/sessions/` | OMP 历史会话对话与上下文数据归档目录 |
+| `./workspaces` | `/workspaces` | 挂载宿主机代码工程目录，供智能体执行分析与文件修改 |
+
+---
+
+### 🛠️ 常用运维命令
 
 ```bash
-# 1. 构建本地镜像
+# 进入容器执行 OMP 原生命令行工具
+docker compose exec omp-webui omp --version
+docker compose exec omp-webui omp config list
+
+# 容器内重置 WebUI 管理员密码
+docker compose exec omp-webui node dist/cli/reset-password.js --password 'your-new-password'
+
+# 停止并清理容器
+docker compose down
+```
+
+### 方式二：Docker 原生命令启动
+
+```bash
+# 构建本地镜像
 docker build -t oh-my-pi-webui:latest .
 
-# 2. 启动容器并挂载数据卷
+# 启动容器并挂载数据与工作区
 docker run -d \
   --name oh-my-pi-webui \
   --restart unless-stopped \
   -p 8172:8172 \
   -e WEBUI_API_KEY=change-me-to-a-long-random-string \
-  -v omp_webui_data:/root/.omp \
+  -v $(pwd)/data:/root/.omp \
   -v $(pwd)/workspaces:/workspaces \
   oh-my-pi-webui:latest
-```
-
-### 数据持久化说明
-
-| 挂载路径 | 容器内路径 | 作用说明 |
-| --- | --- | --- |
-| `omp_webui_data` (Volume) | `/root/.omp` | 持久化 WebUI SQLite 数据库、`omp` 会话记录、全局配置与认证凭据 |
-| `./workspaces` (Bind Mount) | `/workspaces` | 映射宿主机代码工作区，供智能体在容器内执行开发与文件修改 |
-
-### 容器内找回密码
-
-若在 Docker 部署中遗忘 WebUI 密码，可直接在运行中的容器内执行重置：
-```bash
-docker compose exec omp-webui node dist/cli/reset-password.js --password 'your-new-password'
 ```
 
 ## 认证

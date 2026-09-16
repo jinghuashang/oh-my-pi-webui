@@ -18,7 +18,7 @@ if (args.includes('--version') || args.includes('-v')) {
 }
 
 if (args.includes('debug') && args.includes('models')) {
-  // Output model list in codex catalog format
+  // Output model list in catalog format
   const catalog = [
     {
       id: 'gemini-3.8-flash-high',
@@ -69,7 +69,7 @@ if (args.includes('debug') && args.includes('models')) {
 
 // Main JSON-RPC bridge server
 async function main() {
-  process.stderr.write('[bridge] Starting omp-codex-bridge server...\n');
+  process.stderr.write('[bridge] Starting omp-webui-bridge server...\n');
 
   const sessionManager = new SessionManager();
   const ompClient = new OmpClient();

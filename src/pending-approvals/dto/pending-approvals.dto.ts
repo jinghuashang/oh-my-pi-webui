@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { FileUpdateChangeDto } from '../../codex/dto/v2/support.dto';
+import { FileUpdateChangeDto } from '../../omp/dto/v2/support.dto';
 import {
   InteractionPresentationDto,
   ServerRequestFailureDto,

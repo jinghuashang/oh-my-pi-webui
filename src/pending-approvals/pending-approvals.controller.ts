@@ -23,7 +23,7 @@ import {
   PatchChangeKindAddDto,
   PatchChangeKindDeleteDto,
   PatchChangeKindUpdateDto,
-} from '../codex/dto/v2/support.dto';
+} from '../omp/dto/v2/support.dto';
 
 @ApiTags('pending-approvals')
 @ApiBearerAuth()

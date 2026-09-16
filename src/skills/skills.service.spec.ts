@@ -1,7 +1,7 @@
 /** Unit tests for SkillsService JSON-RPC passthrough behavior. */
 import { Test, type TestingModule } from '@nestjs/testing';
-import { CodexService } from '../codex/codex.service';
-import type { v2 } from '../codex/codex-schema';
+import { OmpService } from '../omp/omp-engine.service';
+import type { v2 } from '../omp/omp-schema';
 import { SkillsService } from './skills.service';
 
 describe('SkillsService', () => {
@@ -15,7 +15,7 @@ describe('SkillsService', () => {
     moduleRef = await Test.createTestingModule({
       providers: [
         SkillsService,
-        { provide: CodexService, useValue: codexService },
+        { provide: OmpService, useValue: codexService },
       ],
     }).compile();
     service = moduleRef.get(SkillsService);

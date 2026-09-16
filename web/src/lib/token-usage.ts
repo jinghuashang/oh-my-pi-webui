@@ -2,7 +2,7 @@
  * Token usage formatting and ratio calculation helpers.
  * Shared by TokenUsageRing (ChatInput donut) and TurnTokenFooter.
  */
-import type { ThreadTokenUsage } from '@/types/codex-notifications';
+import type { ThreadTokenUsage } from '@/types/omp-notifications';
 
 /**
  * Calculates context window usage ratio (0–1).

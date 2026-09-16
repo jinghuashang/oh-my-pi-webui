@@ -1,6 +1,6 @@
 /**
  * WebSocket gateway for real-time thread events.
- * Clients subscribe to specific threads and receive Codex app-server
+ * Clients subscribe to specific threads and receive OMP engine
  * notifications (deltas, item lifecycle, turn lifecycle, etc.) in real time.
  */
 import {
@@ -17,8 +17,8 @@ import { Logger, OnModuleDestroy } from '@nestjs/common';
 import { merge, Subscription } from 'rxjs';
 import { Server, Socket } from 'socket.io';
 import { AuthService } from '../auth/auth.service';
-import { CodexProcessManager } from '../codex/codex-process-manager.service';
-import type { ServerNotification } from '../codex/codex-schema';
+import { OmpProcessManager } from '../omp/omp-process-manager.service';
+import type { ServerNotification } from '../omp/omp-schema';
 import { PendingApprovalsService } from '../pending-approvals/pending-approvals.service';
 import type {
   PendingServerRequestEvent,
@@ -69,7 +69,7 @@ export class ThreadsGateway
   >();
 
   constructor(
-    private readonly codexManager: CodexProcessManager,
+    private readonly codexManager: OmpProcessManager,
     private readonly authService: AuthService,
     private readonly pendingApprovals: PendingApprovalsService,
     private readonly deletionRegistry: ThreadDeletionRegistryService,
@@ -209,7 +209,7 @@ export class ThreadsGateway
   }
 
   /**
-   * Routes Codex app-server notifications to subscribed clients.
+   * Routes OMP engine notifications to subscribed clients.
    * Extracts threadId from notification params and emits to the room.
    */
   private handleCodexNotification(notification: ServerNotification): void {
@@ -220,10 +220,10 @@ export class ThreadsGateway
     if (threadId) {
       this.server
         .to(`thread:${threadId}`)
-        .emit('codex.notification', projected);
+        .emit('omp.notification', projected);
     } else {
       // Broadcast non-thread-scoped notifications to all connected clients
-      this.server.emit('codex.notification', projected);
+      this.server.emit('omp.notification', projected);
     }
   }
 

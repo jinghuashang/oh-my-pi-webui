@@ -1,5 +1,5 @@
 /** Bounded UI history reads with explicit coverage, distinct from provenance reads. */
-import type { CodexService } from '../codex/codex.service';
+import type { OmpService } from '../omp/omp-engine.service';
 import { isEmptyThreadItemsListRefusal } from './thread-errors';
 
 /** One persisted item and its owning turn from thread/items/list. */
@@ -37,7 +37,7 @@ export interface TurnItemsRead {
  * @throws Unexpected RPC failures, which must never masquerade as empty history
  */
 export async function readTurnItems(
-  codex: CodexService,
+  codex: OmpService,
   threadId: string,
   turnId: string,
   cursor?: string,
@@ -108,7 +108,7 @@ export async function readTurnItems(
 
 /** Requests one target-filtered page; both UI and strict provenance readers use it. */
 export function requestTurnItemsPage(
-  codex: CodexService,
+  codex: OmpService,
   threadId: string,
   turnId: string,
   cursor?: string,

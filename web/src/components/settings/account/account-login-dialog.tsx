@@ -72,7 +72,7 @@ export function AccountLoginDialog({
         });
         return;
       }
-      showSnackbar(t('Codex account updated'), 'success');
+      showSnackbar(t('OMP account updated'), 'success');
       onChanged();
       onOpenChange(false);
     },
@@ -106,7 +106,7 @@ export function AccountLoginDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>{t('Login to Codex')}</DialogTitle>
+          <DialogTitle>{t('Login to OMP')}</DialogTitle>
           <DialogDescription>
             {t(
               'Use API Key mode for proxies, or ChatGPT device code for account quotas.',
@@ -138,7 +138,7 @@ export function AccountLoginDialog({
             type="password"
             value={apiKey}
             onChange={(event) => setApiKey(event.target.value)}
-            placeholder={t('Codex API Key')}
+            placeholder={t('OMP API Key')}
             autoFocus
           />
         ) : deviceResponse ? (

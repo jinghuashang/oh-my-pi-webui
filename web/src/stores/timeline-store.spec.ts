@@ -6,7 +6,7 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import type { ThreadDto, TurnDto } from '../generated/api';
 import type { ApprovalRequest } from '../types/approval';
-import type { ThreadTokenUsage } from '../types/codex-notifications';
+import type { ThreadTokenUsage } from '../types/omp-notifications';
 
 const emit = vi.fn();
 

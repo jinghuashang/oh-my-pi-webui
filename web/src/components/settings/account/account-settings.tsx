@@ -72,7 +72,7 @@ export function AccountSettings() {
       setAccount(null);
       setRateLimits(null);
       invalidateAccount();
-      showSnackbar(t('Codex account logged out'), 'success');
+      showSnackbar(t('OMP account logged out'), 'success');
     },
   });
 
@@ -81,10 +81,10 @@ export function AccountSettings() {
       <div className="flex items-start justify-between gap-3">
         <div className="space-y-1">
           <h2 className="text-sm font-medium text-muted-foreground">
-            {t('Codex Account')}
+            {t('OMP Account')}
           </h2>
           <p className="text-xs text-muted-foreground">
-            {t('Manage Codex app-server auth separately from the WebUI session login.')}
+            {t('Manage OMP auth separately from the WebUI session login.')}
           </p>
         </div>
         <Button
@@ -143,7 +143,7 @@ export function AccountSettings() {
             ) : (
               <LogOut className="h-3.5 w-3.5" />
             )}
-            {t('Logout Codex account')}
+            {t('Logout OMP account')}
           </Button>
         )}
       </div>

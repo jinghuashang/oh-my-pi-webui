@@ -3,7 +3,7 @@ import { ApiProperty } from '@nestjs/swagger';
 /** Response returned after staging a browser-uploaded chat attachment. */
 export class ChatUploadResponseDto {
   @ApiProperty({
-    description: 'Absolute filesystem path readable by Codex app-server.',
+    description: 'Absolute filesystem path readable by OMP engine.',
   })
   path!: string;
 

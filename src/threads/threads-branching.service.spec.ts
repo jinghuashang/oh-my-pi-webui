@@ -1,5 +1,5 @@
-import { CodexService } from '../codex/codex.service';
-import type { v2 } from '../codex/codex-schema';
+import { OmpService } from '../omp/omp-engine.service';
+import type { v2 } from '../omp/omp-schema';
 import { ErrorCode } from '../common/error-codes';
 import { ConversationBranchesService } from '../conversation-branches/conversation-branches.service';
 import { ThreadResumeRegistryService } from './thread-resume-registry.service';
@@ -34,7 +34,7 @@ describe('ThreadsBranchingService', () => {
 
   beforeEach(() => {
     service = new ThreadsBranchingService(
-      mockCodex as unknown as CodexService,
+      mockCodex as unknown as OmpService,
       mockResumeRegistry as unknown as ThreadResumeRegistryService,
       mockBranches as unknown as ConversationBranchesService,
       mockHistory as unknown as ThreadHistoryService,

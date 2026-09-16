@@ -1,11 +1,11 @@
 /** Concurrent discovery must retain live fields without turning unrelated activity into full scans. */
 import { EventEmitter } from 'node:events';
-import type { ServerNotification, v2 } from '../codex/codex-schema';
-import type { CodexService } from '../codex/codex.service';
+import type { ServerNotification, v2 } from '../omp/omp-schema';
+import type { OmpService } from '../omp/omp-engine.service';
 import type {
   CodexLifecycleEvent,
-  CodexProcessManager,
-} from '../codex/codex-process-manager.service';
+  OmpProcessManager,
+} from '../omp/omp-process-manager.service';
 import { ThreadMetadataService } from './thread-metadata.service';
 import { makeThreadFixture } from './threads.testing';
 import { executionTurn } from './thread-execution.testing';
@@ -38,7 +38,7 @@ describe('incremental metadata during discovery', () => {
         Promise.resolve(page(params.archived ? [] : ['live'])),
       );
     service = new ThreadMetadataService(
-      { request } as unknown as CodexService,
+      { request } as unknown as OmpService,
       {
         addListener: (
           event: 'notification',
@@ -48,7 +48,7 @@ describe('incremental metadata during discovery', () => {
           events.on('lifecycle', handler),
         getGeneration: () => 1,
         getClient: () => ({}),
-      } as unknown as CodexProcessManager,
+      } as unknown as OmpProcessManager,
     );
   });
   afterEach(() => {

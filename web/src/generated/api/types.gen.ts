@@ -20,7 +20,6 @@ export type AuthStatusResponseDto = {
      * True once a WebUI account exists.
      */
     initialized: boolean;
-    username: string | null;
     /**
      * True when WEBUI_API_KEY is configured.
      */
@@ -302,7 +301,7 @@ export type ArchiveListResponseDto = {
 
 export type ChatUploadResponseDto = {
     /**
-     * Absolute filesystem path readable by Codex app-server.
+     * Absolute filesystem path readable by OMP engine.
      */
     path: string;
     /**
@@ -2847,168 +2846,168 @@ export type ChatUploadAttachmentResponses = {
 
 export type ChatUploadAttachmentResponse = ChatUploadAttachmentResponses[keyof ChatUploadAttachmentResponses];
 
-export type CodexStatusGetStatusData = {
+export type OmpStatusGetStatusData = {
     body?: never;
     path?: never;
     query?: never;
-    url: '/api/codex/status';
+    url: '/api/omp/status';
 };
 
-export type CodexStatusGetStatusErrors = {
+export type OmpStatusGetStatusErrors = {
     401: ApiErrorResponseDto;
 };
 
-export type CodexStatusGetStatusError = CodexStatusGetStatusErrors[keyof CodexStatusGetStatusErrors];
+export type OmpStatusGetStatusError = OmpStatusGetStatusErrors[keyof OmpStatusGetStatusErrors];
 
-export type CodexStatusGetStatusResponses = {
+export type OmpStatusGetStatusResponses = {
     200: CodexStatusResponseDto;
 };
 
-export type CodexStatusGetStatusResponse = CodexStatusGetStatusResponses[keyof CodexStatusGetStatusResponses];
+export type OmpStatusGetStatusResponse = OmpStatusGetStatusResponses[keyof OmpStatusGetStatusResponses];
 
-export type CodexStatusUpdateApprovalPolicyData = {
+export type OmpStatusUpdateApprovalPolicyData = {
     body: UpdateApprovalPolicyDto;
     path?: never;
     query?: never;
-    url: '/api/codex/approval-policy';
+    url: '/api/omp/approval-policy';
 };
 
-export type CodexStatusUpdateApprovalPolicyErrors = {
+export type OmpStatusUpdateApprovalPolicyErrors = {
     400: ApiErrorResponseDto;
     401: ApiErrorResponseDto;
 };
 
-export type CodexStatusUpdateApprovalPolicyError = CodexStatusUpdateApprovalPolicyErrors[keyof CodexStatusUpdateApprovalPolicyErrors];
+export type OmpStatusUpdateApprovalPolicyError = OmpStatusUpdateApprovalPolicyErrors[keyof OmpStatusUpdateApprovalPolicyErrors];
 
-export type CodexStatusUpdateApprovalPolicyResponses = {
+export type OmpStatusUpdateApprovalPolicyResponses = {
     204: void;
 };
 
-export type CodexStatusUpdateApprovalPolicyResponse = CodexStatusUpdateApprovalPolicyResponses[keyof CodexStatusUpdateApprovalPolicyResponses];
+export type OmpStatusUpdateApprovalPolicyResponse = OmpStatusUpdateApprovalPolicyResponses[keyof OmpStatusUpdateApprovalPolicyResponses];
 
-export type CodexStatusUpdateSandboxModeData = {
+export type OmpStatusUpdateSandboxModeData = {
     body: UpdateSandboxModeDto;
     path?: never;
     query?: never;
-    url: '/api/codex/sandbox-mode';
+    url: '/api/omp/sandbox-mode';
 };
 
-export type CodexStatusUpdateSandboxModeErrors = {
+export type OmpStatusUpdateSandboxModeErrors = {
     400: ApiErrorResponseDto;
     401: ApiErrorResponseDto;
 };
 
-export type CodexStatusUpdateSandboxModeError = CodexStatusUpdateSandboxModeErrors[keyof CodexStatusUpdateSandboxModeErrors];
+export type OmpStatusUpdateSandboxModeError = OmpStatusUpdateSandboxModeErrors[keyof OmpStatusUpdateSandboxModeErrors];
 
-export type CodexStatusUpdateSandboxModeResponses = {
+export type OmpStatusUpdateSandboxModeResponses = {
     204: void;
 };
 
-export type CodexStatusUpdateSandboxModeResponse = CodexStatusUpdateSandboxModeResponses[keyof CodexStatusUpdateSandboxModeResponses];
+export type OmpStatusUpdateSandboxModeResponse = OmpStatusUpdateSandboxModeResponses[keyof OmpStatusUpdateSandboxModeResponses];
 
-export type CodexConfigReadConfigData = {
+export type OmpEngineConfigReadConfigData = {
     body?: never;
     path?: never;
     query?: never;
-    url: '/api/codex/config';
+    url: '/api/omp/engine-config';
 };
 
-export type CodexConfigReadConfigErrors = {
+export type OmpEngineConfigReadConfigErrors = {
     401: ApiErrorResponseDto;
 };
 
-export type CodexConfigReadConfigError = CodexConfigReadConfigErrors[keyof CodexConfigReadConfigErrors];
+export type OmpEngineConfigReadConfigError = OmpEngineConfigReadConfigErrors[keyof OmpEngineConfigReadConfigErrors];
 
-export type CodexConfigReadConfigResponses = {
+export type OmpEngineConfigReadConfigResponses = {
     200: CodexConfigResponseDto;
 };
 
-export type CodexConfigReadConfigResponse = CodexConfigReadConfigResponses[keyof CodexConfigReadConfigResponses];
+export type OmpEngineConfigReadConfigResponse = OmpEngineConfigReadConfigResponses[keyof OmpEngineConfigReadConfigResponses];
 
-export type CodexConfigUpdateConfigData = {
+export type OmpEngineConfigUpdateConfigData = {
     body: UpdateCodexConfigDto;
     path?: never;
     query?: never;
-    url: '/api/codex/config';
+    url: '/api/omp/engine-config';
 };
 
-export type CodexConfigUpdateConfigErrors = {
+export type OmpEngineConfigUpdateConfigErrors = {
     400: ApiErrorResponseDto;
     401: ApiErrorResponseDto;
 };
 
-export type CodexConfigUpdateConfigError = CodexConfigUpdateConfigErrors[keyof CodexConfigUpdateConfigErrors];
+export type OmpEngineConfigUpdateConfigError = OmpEngineConfigUpdateConfigErrors[keyof OmpEngineConfigUpdateConfigErrors];
 
-export type CodexConfigUpdateConfigResponses = {
+export type OmpEngineConfigUpdateConfigResponses = {
     200: CodexConfigResponseDto;
 };
 
-export type CodexConfigUpdateConfigResponse = CodexConfigUpdateConfigResponses[keyof CodexConfigUpdateConfigResponses];
+export type OmpEngineConfigUpdateConfigResponse = OmpEngineConfigUpdateConfigResponses[keyof OmpEngineConfigUpdateConfigResponses];
 
-export type CodexConfigReadRawConfigData = {
+export type OmpEngineConfigReadRawConfigData = {
     body?: never;
     path?: never;
     query?: never;
-    url: '/api/codex/config/raw';
+    url: '/api/omp/engine-config/raw';
 };
 
-export type CodexConfigReadRawConfigErrors = {
+export type OmpEngineConfigReadRawConfigErrors = {
     401: ApiErrorResponseDto;
 };
 
-export type CodexConfigReadRawConfigError = CodexConfigReadRawConfigErrors[keyof CodexConfigReadRawConfigErrors];
+export type OmpEngineConfigReadRawConfigError = OmpEngineConfigReadRawConfigErrors[keyof OmpEngineConfigReadRawConfigErrors];
 
-export type CodexConfigReadRawConfigResponses = {
+export type OmpEngineConfigReadRawConfigResponses = {
     200: RawConfigResponseDto;
 };
 
-export type CodexConfigReadRawConfigResponse = CodexConfigReadRawConfigResponses[keyof CodexConfigReadRawConfigResponses];
+export type OmpEngineConfigReadRawConfigResponse = OmpEngineConfigReadRawConfigResponses[keyof OmpEngineConfigReadRawConfigResponses];
 
-export type CodexConfigUpdateRawConfigData = {
+export type OmpEngineConfigUpdateRawConfigData = {
     body: UpdateRawConfigDto;
     path?: never;
     query?: never;
-    url: '/api/codex/config/raw';
+    url: '/api/omp/engine-config/raw';
 };
 
-export type CodexConfigUpdateRawConfigErrors = {
+export type OmpEngineConfigUpdateRawConfigErrors = {
     400: ApiErrorResponseDto;
     401: ApiErrorResponseDto;
 };
 
-export type CodexConfigUpdateRawConfigError = CodexConfigUpdateRawConfigErrors[keyof CodexConfigUpdateRawConfigErrors];
+export type OmpEngineConfigUpdateRawConfigError = OmpEngineConfigUpdateRawConfigErrors[keyof OmpEngineConfigUpdateRawConfigErrors];
 
-export type CodexConfigUpdateRawConfigResponses = {
+export type OmpEngineConfigUpdateRawConfigResponses = {
     200: RawConfigWriteResponseDto;
 };
 
-export type CodexConfigUpdateRawConfigResponse = CodexConfigUpdateRawConfigResponses[keyof CodexConfigUpdateRawConfigResponses];
+export type OmpEngineConfigUpdateRawConfigResponse = OmpEngineConfigUpdateRawConfigResponses[keyof OmpEngineConfigUpdateRawConfigResponses];
 
-export type CodexFeedbackUploadFeedbackData = {
+export type OmpFeedbackUploadFeedbackData = {
     body: FeedbackUploadRequestDto;
     path?: never;
     query?: never;
-    url: '/api/codex/feedback';
+    url: '/api/omp/feedback';
 };
 
-export type CodexFeedbackUploadFeedbackErrors = {
+export type OmpFeedbackUploadFeedbackErrors = {
     400: ApiErrorResponseDto;
     401: ApiErrorResponseDto;
 };
 
-export type CodexFeedbackUploadFeedbackError = CodexFeedbackUploadFeedbackErrors[keyof CodexFeedbackUploadFeedbackErrors];
+export type OmpFeedbackUploadFeedbackError = OmpFeedbackUploadFeedbackErrors[keyof OmpFeedbackUploadFeedbackErrors];
 
-export type CodexFeedbackUploadFeedbackResponses = {
+export type OmpFeedbackUploadFeedbackResponses = {
     201: FeedbackUploadResponseDto;
 };
 
-export type CodexFeedbackUploadFeedbackResponse = CodexFeedbackUploadFeedbackResponses[keyof CodexFeedbackUploadFeedbackResponses];
+export type OmpFeedbackUploadFeedbackResponse = OmpFeedbackUploadFeedbackResponses[keyof OmpFeedbackUploadFeedbackResponses];
 
 export type CatalogStateData = {
     body?: never;
     path?: never;
     query?: never;
-    url: '/api/codex/catalog';
+    url: '/api/omp/catalog';
 };
 
 export type CatalogStateResponses = {
@@ -3021,7 +3020,7 @@ export type CatalogReadDraftData = {
     body?: never;
     path?: never;
     query?: never;
-    url: '/api/codex/catalog/draft';
+    url: '/api/omp/catalog/draft';
 };
 
 export type CatalogReadDraftResponses = {
@@ -3034,7 +3033,7 @@ export type CatalogSaveDraftData = {
     body: SaveCatalogDraftDto;
     path?: never;
     query?: never;
-    url: '/api/codex/catalog/draft';
+    url: '/api/omp/catalog/draft';
 };
 
 export type CatalogSaveDraftResponses = {
@@ -3047,7 +3046,7 @@ export type CatalogReadEffectiveData = {
     body?: never;
     path?: never;
     query?: never;
-    url: '/api/codex/catalog/effective';
+    url: '/api/omp/catalog/effective';
 };
 
 export type CatalogReadEffectiveResponses = {
@@ -3060,7 +3059,7 @@ export type CatalogValidateData = {
     body: CatalogContentDto;
     path?: never;
     query?: never;
-    url: '/api/codex/catalog/validate';
+    url: '/api/omp/catalog/validate';
 };
 
 export type CatalogValidateResponses = {
@@ -3073,7 +3072,7 @@ export type CatalogSeedData = {
     body: SeedCatalogDto;
     path?: never;
     query?: never;
-    url: '/api/codex/catalog/seed';
+    url: '/api/omp/catalog/seed';
 };
 
 export type CatalogSeedResponses = {
@@ -3086,7 +3085,7 @@ export type CatalogBlockersData = {
     body?: never;
     path?: never;
     query?: never;
-    url: '/api/codex/catalog/blockers';
+    url: '/api/omp/catalog/blockers';
 };
 
 export type CatalogBlockersResponses = {
@@ -3099,7 +3098,7 @@ export type CatalogApplyData = {
     body: ApplyCatalogDto;
     path?: never;
     query?: never;
-    url: '/api/codex/catalog/apply';
+    url: '/api/omp/catalog/apply';
 };
 
 export type CatalogApplyResponses = {
@@ -3112,7 +3111,7 @@ export type CatalogUseDefaultData = {
     body: ChangeCatalogSourceDto;
     path?: never;
     query?: never;
-    url: '/api/codex/catalog/default';
+    url: '/api/omp/catalog/default';
 };
 
 export type CatalogUseDefaultResponses = {
@@ -3125,7 +3124,7 @@ export type CatalogRestoreData = {
     body: ChangeCatalogSourceDto;
     path?: never;
     query?: never;
-    url: '/api/codex/catalog/restore';
+    url: '/api/omp/catalog/restore';
 };
 
 export type CatalogRestoreResponses = {
@@ -3138,7 +3137,7 @@ export type CatalogRestartData = {
     body?: never;
     path?: never;
     query?: never;
-    url: '/api/codex/catalog/restart';
+    url: '/api/omp/catalog/restart';
 };
 
 export type CatalogRestartResponses = {

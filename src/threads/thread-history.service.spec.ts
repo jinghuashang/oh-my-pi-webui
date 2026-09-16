@@ -1,5 +1,5 @@
-import { CodexService } from '../codex/codex.service';
-import { CodexRpcError } from '../codex/codex-errors';
+import { OmpService } from '../omp/omp-engine.service';
+import { OmpRpcError } from '../omp/omp-errors';
 import {
   InProgressTurnHistoryError,
   ThreadHistoryService,
@@ -11,7 +11,7 @@ describe('ThreadHistoryService', () => {
 
   beforeEach(() => {
     mockCodex.request.mockReset();
-    service = new ThreadHistoryService(mockCodex as unknown as CodexService);
+    service = new ThreadHistoryService(mockCodex as unknown as OmpService);
   });
 
   it('falls back to paged history when resume omits the experimental page', async () => {
@@ -126,7 +126,7 @@ describe('ThreadHistoryService', () => {
 
   it('normalizes the pinned pre-message turn-list refusal at the paging boundary', async () => {
     mockCodex.request.mockRejectedValueOnce(
-      new CodexRpcError(
+      new OmpRpcError(
         {
           code: -32600,
           message:
@@ -148,7 +148,7 @@ describe('ThreadHistoryService', () => {
     // end a provenance walk early and hand back a truncated prefix, which is
     // then committed as branch lineage — the exact failure the walk's other
     // guards exist to prevent.
-    const error = new CodexRpcError(
+    const error = new OmpRpcError(
       {
         code: -32600,
         message:
@@ -173,7 +173,7 @@ describe('ThreadHistoryService', () => {
 
   it('normalizes the pinned empty-thread item refusal without a fallback call', async () => {
     mockCodex.request.mockRejectedValueOnce(
-      new CodexRpcError(
+      new OmpRpcError(
         { code: -32601, message: 'thread/items/list is not supported yet' },
         { method: 'thread/items/list' },
       ),
@@ -189,7 +189,7 @@ describe('ThreadHistoryService', () => {
   });
 
   it('does not normalize the same item wording from another method', async () => {
-    const error = new CodexRpcError(
+    const error = new OmpRpcError(
       { code: -32601, message: 'thread/items/list is not supported yet' },
       { method: 'thread/turns/list' },
     );
@@ -235,7 +235,7 @@ describe('ThreadHistoryService', () => {
   });
 
   it('keeps item-list refusal strict for branch provenance', async () => {
-    const error = new CodexRpcError(
+    const error = new OmpRpcError(
       { code: -32601, message: 'thread/items/list is not supported yet' },
       { method: 'thread/items/list' },
     );
@@ -315,7 +315,7 @@ describe('ThreadHistoryService', () => {
 
   it('treats the pinned pre-message turn-list refusal as no IDs', async () => {
     mockCodex.request.mockRejectedValueOnce(
-      new CodexRpcError(
+      new OmpRpcError(
         {
           code: -32600,
           message:

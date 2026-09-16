@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { jsonValueSchema } from '../../codex/dto/v2/openapi.schema';
+import { jsonValueSchema } from '../../omp/dto/v2/openapi.schema';
 
 export const PLUGIN_INSTALL_POLICY_VALUES = [
   'NOT_AVAILABLE',

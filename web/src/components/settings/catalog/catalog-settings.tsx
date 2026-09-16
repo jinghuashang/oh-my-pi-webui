@@ -97,7 +97,7 @@ export function CatalogSettings() {
         <h2 className="text-sm font-semibold">{t('Model catalog')}</h2>
         <p className="text-xs text-muted-foreground">
           {t(
-            'Codex clamps model_context_window to each model’s max_context_window. A custom catalog is the only way to raise that ceiling, or to list a model Codex does not ship.',
+            'OMP clamps model_context_window to each model’s max_context_window. A custom catalog is the only way to raise that ceiling, or to list a model Codex does not ship.',
           )}
         </p>
         {/* "No user-level override" is all this endpoint can prove. A lower
@@ -112,12 +112,12 @@ export function CatalogSettings() {
         </p>}
         {running.length > 0 && (
           <p className="text-xs text-muted-foreground">
-            {t('Codex loaded: {{path}}', { path: running.join(', ') })}
+            {t('OMP loaded: {{path}}', { path: running.join(', ') })}
           </p>
         )}
         {state?.ready && !state.repairError && !pointer && running.length === 0 && (
           <p className="text-xs text-muted-foreground">
-            {t('Codex is using the catalog it ships with.')}
+            {t('OMP is using the catalog it ships with.')}
           </p>
         )}
         {state?.ready && !pointerApplied && (
@@ -140,7 +140,7 @@ export function CatalogSettings() {
           <p className="flex items-center gap-2 text-xs font-medium text-destructive">
             <AlertTriangle className="h-3.5 w-3.5" />
             {state.startupError
-              ? t('Codex could not start')
+              ? t('OMP could not start')
               : t('Catalog state could not be read')}
           </p>
           <pre className="max-h-32 overflow-auto whitespace-pre-wrap break-all text-[11px]">
@@ -339,7 +339,7 @@ export function CatalogSettings() {
             });
           }}
         >
-          {t('Apply & restart Codex')}
+          {t('Apply & restart OMP')}
         </Button>
         {managed && (
           <Button
@@ -413,7 +413,7 @@ function RestartButton({
       onClick={() => catalog.restart.mutate({})}
     >
       <RotateCcw className="mr-1.5 h-3.5 w-3.5" />
-      {t('Restart Codex')}
+      {t('Restart OMP')}
     </Button>
   );
 }

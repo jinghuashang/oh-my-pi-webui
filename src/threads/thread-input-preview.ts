@@ -1,5 +1,5 @@
 /** Derives short display labels from turn input, for branch version switchers. */
-import type { v2 } from '../codex/codex-schema';
+import type { v2 } from '../omp/omp-schema';
 
 const PREVIEW_MAX_LENGTH = 500;
 

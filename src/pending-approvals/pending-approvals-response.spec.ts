@@ -3,7 +3,7 @@ import { Logger } from '@nestjs/common';
 import { eq } from 'drizzle-orm';
 import { createTestDatabase } from '../database/database.testing';
 import { pendingServerRequests } from '../database/schema';
-import { CatalogAdmissionService } from '../codex/catalog/catalog-admission.service';
+import { CatalogAdmissionService } from '../omp/catalog/catalog-admission.service';
 import { ThreadDeletionRegistryService } from '../thread-deletion/thread-deletion-registry.service';
 import { PendingApprovalsService } from './pending-approvals.service';
 import { PendingApprovalsController } from './pending-approvals.controller';

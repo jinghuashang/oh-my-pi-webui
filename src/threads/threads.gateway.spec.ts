@@ -4,7 +4,7 @@ import { ConversationBranchesService } from '../conversation-branches/conversati
 import { ConversationBranchMutationsService } from '../conversation-branches/conversation-branch-mutations.service';
 import { Test, TestingModule } from '@nestjs/testing';
 import { ThreadsGateway } from './threads.gateway';
-import { CodexProcessManager } from '../codex/codex-process-manager.service';
+import { OmpProcessManager } from '../omp/omp-process-manager.service';
 import { AuthService } from '../auth/auth.service';
 import { PendingApprovalsService } from '../pending-approvals/pending-approvals.service';
 import { ThreadDeletionRegistryService } from '../thread-deletion/thread-deletion-registry.service';
@@ -78,7 +78,7 @@ describe('ThreadsGateway', () => {
           provide: ConversationBranchMutationsService,
           useValue: { changes: branchChanges },
         },
-        { provide: CodexProcessManager, useValue: mockManager },
+        { provide: OmpProcessManager, useValue: mockManager },
         { provide: AuthService, useValue: mockAuthService },
         { provide: PendingApprovalsService, useValue: mockPendingApprovals },
         {
@@ -166,7 +166,7 @@ describe('ThreadsGateway', () => {
 
     expect(mockServer.to).toHaveBeenCalledWith('thread:t1');
     expect(mockServer.emit).toHaveBeenCalledWith(
-      'codex.notification',
+      'omp.notification',
       notification,
     );
   });
@@ -191,7 +191,7 @@ describe('ThreadsGateway', () => {
       },
     });
 
-    expect(mockServer.emit).toHaveBeenCalledWith('codex.notification', {
+    expect(mockServer.emit).toHaveBeenCalledWith('omp.notification', {
       method: 'error',
       params: {
         threadId: 't1',
@@ -220,7 +220,7 @@ describe('ThreadsGateway', () => {
 
     expect(mockServer.to).not.toHaveBeenCalled();
     expect(mockServer.emit).toHaveBeenCalledWith(
-      'codex.notification',
+      'omp.notification',
       notification,
     );
   });

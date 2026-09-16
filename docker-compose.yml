@@ -9,18 +9,20 @@ services:
     ports:
       - "8172:8172"
     environment:
-      # WebUI 安全访问密钥，首次登录后亦可在界面中初始化独立账号密码
+      # WebUI 安全访问密钥，首次登录后亦可在界面中初始化独立管理员账号与密码
       - WEBUI_API_KEY=change-me-to-a-long-random-string
       - PORT=8172
       - HOST=0.0.0.0
       - OMP_BIN=/usr/local/bin/omp
       - OMP_CWD=/workspaces
+      # 可选：直接在此配置模型服务商 API Key，容器内 OMP 自动识别
+      # - OPENAI_API_KEY=sk-xxx
+      # - ANTHROPIC_API_KEY=sk-ant-xxx
+      # - DEEPSEEK_API_KEY=sk-xxx
+      # - GEMINI_API_KEY=xxx
     volumes:
-      # 持久化 omp 配置、会话归档与 WebUI 本地 SQLite 数据库
-      - omp_data:/root/.omp
-      # 挂载宿主机项目代码目录，供智能体在容器内执行开发任务
+      # 默认存储映射到宿主机项目根目录的 ./data 目录下
+      # 宿主机可直接查看、编辑与备份 ./data/agent/config.yml、本地数据库与会话记录
+      - ./data:/root/.omp
+      # 挂载宿主机项目代码工作区，供智能体在容器内执行开发与文件修改
       - ./workspaces:/workspaces
-
-volumes:
-  omp_data:
-    name: omp_webui_data

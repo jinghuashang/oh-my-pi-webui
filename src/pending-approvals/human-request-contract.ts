@@ -2,8 +2,8 @@
 import {
   isBrowserRequestMethod,
   InvalidServerRequest,
-} from '../codex/server-request-owner';
-import type { IncomingServerRequest } from '../codex/server-request-owner';
+} from '../omp/server-request-owner';
+import type { IncomingServerRequest } from '../omp/server-request-owner';
 import {
   encodePermissions,
   presentPermissions,

@@ -1,4 +1,4 @@
-/** REST controller for experimental Codex apps/connectors. */
+/** REST controller for experimental OMP apps/connectors. */
 import { Controller, Get, Query } from '@nestjs/common';
 import { BusinessException } from '../common/business.exception';
 import { ErrorCode } from '../common/error-codes';
@@ -11,7 +11,7 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import type { v2 } from '../codex/codex-schema';
+import type { v2 } from '../omp/omp-schema';
 import { ApiErrorResponseDto } from '../common/dto/api-responses.dto';
 import { AppsListResponseDto, AppsReadResponseDto } from './dto/apps.dto';
 import { AppsService } from './apps.service';
@@ -26,7 +26,7 @@ export class AppsController {
 
   /** Lists available apps/connectors with optional pagination. */
   @Get()
-  @ApiOperation({ summary: 'List Codex apps/connectors' })
+  @ApiOperation({ summary: 'List OMP apps/connectors' })
   @ApiQuery({ name: 'cursor', required: false })
   @ApiQuery({ name: 'limit', required: false, type: Number })
   @ApiQuery({ name: 'threadId', required: false })

@@ -7,7 +7,7 @@ import {
 } from './thread-execution.testing';
 import { makeThreadFixture } from './threads.testing';
 import { permissionApprovalFixture } from '../pending-approvals/pending-approvals.testing';
-import type { v2 } from '../codex/codex-schema';
+import type { v2 } from '../omp/omp-schema';
 
 describe('ThreadExecutionInventoryService', () => {
   let source: ReturnType<typeof managedTransportFixture>;

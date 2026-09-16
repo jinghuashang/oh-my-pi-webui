@@ -1,19 +1,19 @@
-/** Apps facade over Codex app-server JSON-RPC methods. */
+/** Apps facade over OMP engine JSON-RPC methods. */
 import { Injectable } from '@nestjs/common';
-import { CodexService } from '../codex/codex.service';
-import type { v2 } from '../codex/codex-schema';
+import { OmpService } from '../omp/omp-engine.service';
+import type { v2 } from '../omp/omp-schema';
 
 @Injectable()
 export class AppsService {
-  constructor(private readonly codex: CodexService) {}
+  constructor(private readonly ompService: OmpService) {}
 
-  /** Lists experimental apps/connectors from Codex app-server. */
+  /** Lists experimental apps/connectors from OMP engine. */
   listApps(params: v2.AppsListParams = {}): Promise<v2.AppsListResponse> {
-    return this.codex.request<v2.AppsListResponse>('app/list', params);
+    return this.ompService.request<v2.AppsListResponse>('app/list', params);
   }
 
   /** Reads fresh metadata for one or more apps/connectors. */
   readApps(params: v2.AppsReadParams): Promise<v2.AppsReadResponse> {
-    return this.codex.request<v2.AppsReadResponse>('app/read', params);
+    return this.ompService.request<v2.AppsReadResponse>('app/read', params);
   }
 }

@@ -1,6 +1,6 @@
 /** Server-side branch-collapsed projection for the conversation sidebar. */
 import { Injectable } from '@nestjs/common';
-import type { v2 } from '../codex/codex-schema';
+import type { v2 } from '../omp/omp-schema';
 import { resolve } from 'node:path';
 import {
   ThreadMetadataService,

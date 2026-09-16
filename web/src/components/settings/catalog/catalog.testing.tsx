@@ -69,18 +69,19 @@ export function catalogFixture() {
   const fetch = vi.fn(async (input: RequestInfo | URL) => {
     const request = input instanceof Request ? input : new Request(input);
     const path = new URL(request.url).pathname;
+    const normalizedPath = path.replace('/api/omp/catalog', '/api/codex/catalog');
     if (request.method !== 'GET') {
       const body = await request.clone().text();
       fixture.writes.push({
         method: request.method,
-        path,
+        path: normalizedPath,
         body: body ? (JSON.parse(body) as unknown) : null,
       });
     }
-    const override = fixture.overrides.get(`${request.method} ${path}`);
+    const override = fixture.overrides.get(`${request.method} ${path}`) ?? fixture.overrides.get(`${request.method} ${normalizedPath}`);
     if (override) return override(request);
-    if (path === '/api/codex/catalog') return json(fixture.state);
-    if (path === '/api/codex/catalog/blockers')
+    if (normalizedPath === '/api/codex/catalog') return json(fixture.state);
+    if (normalizedPath === '/api/codex/catalog/blockers')
       return json({
         scope: 'managedAppServer',
         generation: 1,
@@ -88,7 +89,7 @@ export function catalogFixture() {
         blockers: [],
         limitations: [],
       });
-    if (path === '/api/codex/catalog/draft') {
+    if (normalizedPath === '/api/codex/catalog/draft') {
       if (request.method === 'PUT') {
         const body = (await request.json()) as {
           content: string;
@@ -101,8 +102,8 @@ export function catalogFixture() {
       return json({ content: fixture.content, warnings: [] });
     }
     if (
-      path === '/api/codex/catalog/restart' ||
-      path === '/api/codex/catalog/restore'
+      normalizedPath === '/api/codex/catalog/restart' ||
+      normalizedPath === '/api/codex/catalog/restore'
     )
       return json(fixture.state);
     throw new Error(`Unexpected test request: ${request.method} ${path}`);

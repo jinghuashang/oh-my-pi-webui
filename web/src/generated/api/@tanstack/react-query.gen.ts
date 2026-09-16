@@ -3,8 +3,8 @@
 import { type DefaultError, type InfiniteData, infiniteQueryOptions, queryOptions, type UseMutationOptions } from '@tanstack/react-query';
 
 import { client } from '../client.gen.js';
-import { accountCancelLogin, accountLogin, accountLogout, accountReadAccount, accountReadRateLimits, appGetStatus, appsListApps, appsReadApps, archiveListArchive, archiveReadEntry, authLogin, authLogout, authSetup, authStatus, catalogApply, catalogBlockers, catalogReadDraft, catalogReadEffective, catalogRestart, catalogRestore, catalogSaveDraft, catalogSeed, catalogState, catalogUseDefault, catalogValidate, chatUploadAttachment, codexConfigReadConfig, codexConfigReadRawConfig, codexConfigUpdateConfig, codexConfigUpdateRawConfig, codexFeedbackUploadFeedback, codexStatusGetStatus, codexStatusUpdateApprovalPolicy, codexStatusUpdateSandboxMode, filesAddRoot, filesCopyPath, filesCreateDirectory, filesCreateFile, filesDeletePath, filesDownloadFile, filesGetMetadata, filesGetRoots, filesMovePath, filesReadFile, filesReadTree, filesRenamePath, filesServeFile, filesUploadFiles, filesWriteFile, gitCheckout, gitCommit, gitStatus, logsExportDiagnostics, logsListLogs, mcpServersListServers, mcpServersReloadAll, mcpServersStartOauthLogin, modelsListModels, ompConfigGetConfig, ompConfigUpdateConfig, onlyOfficeGetConfig, onlyOfficeHandleCallback, type Options, pendingApprovalsListPending, pendingApprovalsRespond, pluginsInstallPlugin, pluginsListPlugins, pluginsReadPlugin, pluginsReconcilePlugin, pluginsUninstallPlugin, settingsGetSetting, settingsListSettings, settingsResetSetting, settingsUpdateSetting, settingsUpdateSettings, skillsListSkills, skillsWriteSkillConfig, threadCommandsClearGoal, threadCommandsListCollaborationModes, threadCommandsReadCollaborationMode, threadCommandsReadGoal, threadCommandsSetCollaborationMode, threadCommandsSetGoal, threadCommandsStartReview, threadsArchiveThread, threadsCompactThread, threadsCountTurns, threadsCreateMessageBranch, threadsDeletionDeleteThread, threadsDeletionPreviewDelete, threadsDeletionReadBranchAdoptionStatus, threadSecurityPolicyPatchSecurityPolicy, threadSecurityPolicyReadSecurityPolicy, threadsForkThread, threadsInterruptTurn, threadsListBranchTrees, threadsListLoadedThreads, threadsListOverview, threadsListThreads, threadsListTurnItems, threadsListTurns, threadsReadBranchState, threadsReadBranchTree, threadsReadThread, threadsResumeThread, threadsSetThreadName, threadsStartThread, threadsStartTurn, threadsSteerTurn, threadsUnarchiveThread, tokenUsageReadThreadTokenUsage, turnDiffReadThreadTurnDiffs, turnErrorsReadThreadTurnErrors } from '../sdk.gen.js';
-import type { AccountCancelLoginData, AccountCancelLoginError, AccountCancelLoginResponse, AccountLoginData, AccountLoginError, AccountLoginResponse, AccountLogoutData, AccountLogoutError, AccountLogoutResponse, AccountReadAccountData, AccountReadAccountError, AccountReadAccountResponse, AccountReadRateLimitsData, AccountReadRateLimitsError, AccountReadRateLimitsResponse, AppGetStatusData, AppGetStatusResponse, AppsListAppsData, AppsListAppsError, AppsListAppsResponse, AppsReadAppsData, AppsReadAppsError, AppsReadAppsResponse, ArchiveListArchiveData, ArchiveListArchiveError, ArchiveListArchiveResponse, ArchiveReadEntryData, ArchiveReadEntryError, AuthLoginData, AuthLoginError, AuthLoginResponse, AuthLogoutData, AuthLogoutResponse, AuthSetupData, AuthSetupError, AuthSetupResponse, AuthStatusData, AuthStatusResponse, CatalogApplyData, CatalogApplyResponse, CatalogBlockersData, CatalogBlockersResponse, CatalogReadDraftData, CatalogReadDraftResponse, CatalogReadEffectiveData, CatalogReadEffectiveResponse, CatalogRestartData, CatalogRestartResponse, CatalogRestoreData, CatalogRestoreResponse, CatalogSaveDraftData, CatalogSaveDraftResponse, CatalogSeedData, CatalogSeedResponse, CatalogStateData, CatalogStateResponse, CatalogUseDefaultData, CatalogUseDefaultResponse, CatalogValidateData, CatalogValidateResponse, ChatUploadAttachmentData, ChatUploadAttachmentError, ChatUploadAttachmentResponse, CodexConfigReadConfigData, CodexConfigReadConfigError, CodexConfigReadConfigResponse, CodexConfigReadRawConfigData, CodexConfigReadRawConfigError, CodexConfigReadRawConfigResponse, CodexConfigUpdateConfigData, CodexConfigUpdateConfigError, CodexConfigUpdateConfigResponse, CodexConfigUpdateRawConfigData, CodexConfigUpdateRawConfigError, CodexConfigUpdateRawConfigResponse, CodexFeedbackUploadFeedbackData, CodexFeedbackUploadFeedbackError, CodexFeedbackUploadFeedbackResponse, CodexStatusGetStatusData, CodexStatusGetStatusError, CodexStatusGetStatusResponse, CodexStatusUpdateApprovalPolicyData, CodexStatusUpdateApprovalPolicyError, CodexStatusUpdateApprovalPolicyResponse, CodexStatusUpdateSandboxModeData, CodexStatusUpdateSandboxModeError, CodexStatusUpdateSandboxModeResponse, FilesAddRootData, FilesAddRootError, FilesAddRootResponse, FilesCopyPathData, FilesCopyPathError, FilesCopyPathResponse, FilesCreateDirectoryData, FilesCreateDirectoryError, FilesCreateDirectoryResponse, FilesCreateFileData, FilesCreateFileError, FilesCreateFileResponse, FilesDeletePathData, FilesDeletePathError, FilesDeletePathResponse, FilesDownloadFileData, FilesDownloadFileError, FilesGetMetadataData, FilesGetMetadataError, FilesGetMetadataResponse, FilesGetRootsData, FilesGetRootsError, FilesGetRootsResponse, FilesMovePathData, FilesMovePathError, FilesMovePathResponse, FilesReadFileData, FilesReadFileError, FilesReadFileResponse, FilesReadTreeData, FilesReadTreeError, FilesReadTreeResponse, FilesRenamePathData, FilesRenamePathError, FilesRenamePathResponse, FilesServeFileData, FilesServeFileError, FilesUploadFilesData, FilesUploadFilesError, FilesUploadFilesResponse, FilesWriteFileData, FilesWriteFileError, FilesWriteFileResponse, GitCheckoutData, GitCheckoutError, GitCommitData, GitCommitError, GitCommitResponse, GitStatusData, GitStatusError, GitStatusResponse, LogsExportDiagnosticsData, LogsExportDiagnosticsError, LogsExportDiagnosticsResponse, LogsListLogsData, LogsListLogsError, LogsListLogsResponse, McpServersListServersData, McpServersListServersError, McpServersListServersResponse, McpServersReloadAllData, McpServersReloadAllError, McpServersReloadAllResponse, McpServersStartOauthLoginData, McpServersStartOauthLoginError, McpServersStartOauthLoginResponse, ModelsListModelsData, ModelsListModelsError, ModelsListModelsResponse, OmpConfigGetConfigData, OmpConfigGetConfigError, OmpConfigUpdateConfigData, OmpConfigUpdateConfigError, OnlyOfficeGetConfigData, OnlyOfficeGetConfigError, OnlyOfficeGetConfigResponse, OnlyOfficeHandleCallbackData, OnlyOfficeHandleCallbackResponse, PendingApprovalsListPendingData, PendingApprovalsListPendingError, PendingApprovalsListPendingResponse, PendingApprovalsRespondData, PendingApprovalsRespondResponse, PluginsInstallPluginData, PluginsInstallPluginError, PluginsInstallPluginResponse, PluginsListPluginsData, PluginsListPluginsError, PluginsListPluginsResponse, PluginsReadPluginData, PluginsReadPluginError, PluginsReadPluginResponse, PluginsReconcilePluginData, PluginsReconcilePluginError, PluginsReconcilePluginResponse, PluginsUninstallPluginData, PluginsUninstallPluginError, PluginsUninstallPluginResponse, SettingsGetSettingData, SettingsGetSettingError, SettingsGetSettingResponse, SettingsListSettingsData, SettingsListSettingsError, SettingsListSettingsResponse, SettingsResetSettingData, SettingsResetSettingError, SettingsResetSettingResponse, SettingsUpdateSettingData, SettingsUpdateSettingError, SettingsUpdateSettingResponse, SettingsUpdateSettingsData, SettingsUpdateSettingsError, SettingsUpdateSettingsResponse, SkillsListSkillsData, SkillsListSkillsError, SkillsListSkillsResponse, SkillsWriteSkillConfigData, SkillsWriteSkillConfigError, SkillsWriteSkillConfigResponse, ThreadCommandsClearGoalData, ThreadCommandsClearGoalError, ThreadCommandsClearGoalResponse, ThreadCommandsListCollaborationModesData, ThreadCommandsListCollaborationModesError, ThreadCommandsListCollaborationModesResponse, ThreadCommandsReadCollaborationModeData, ThreadCommandsReadCollaborationModeError, ThreadCommandsReadCollaborationModeResponse, ThreadCommandsReadGoalData, ThreadCommandsReadGoalError, ThreadCommandsReadGoalResponse, ThreadCommandsSetCollaborationModeData, ThreadCommandsSetCollaborationModeError, ThreadCommandsSetCollaborationModeResponse, ThreadCommandsSetGoalData, ThreadCommandsSetGoalError, ThreadCommandsSetGoalResponse, ThreadCommandsStartReviewData, ThreadCommandsStartReviewError, ThreadCommandsStartReviewResponse, ThreadsArchiveThreadData, ThreadsArchiveThreadError, ThreadsArchiveThreadResponse, ThreadsCompactThreadData, ThreadsCompactThreadError, ThreadsCompactThreadResponse, ThreadsCountTurnsData, ThreadsCountTurnsError, ThreadsCountTurnsResponse, ThreadsCreateMessageBranchData, ThreadsCreateMessageBranchError, ThreadsCreateMessageBranchResponse, ThreadsDeletionDeleteThreadData, ThreadsDeletionDeleteThreadError, ThreadsDeletionDeleteThreadResponse, ThreadsDeletionPreviewDeleteData, ThreadsDeletionPreviewDeleteError, ThreadsDeletionPreviewDeleteResponse, ThreadsDeletionReadBranchAdoptionStatusData, ThreadsDeletionReadBranchAdoptionStatusError, ThreadsDeletionReadBranchAdoptionStatusResponse, ThreadSecurityPolicyPatchSecurityPolicyData, ThreadSecurityPolicyPatchSecurityPolicyError, ThreadSecurityPolicyPatchSecurityPolicyResponse, ThreadSecurityPolicyReadSecurityPolicyData, ThreadSecurityPolicyReadSecurityPolicyResponse, ThreadsForkThreadData, ThreadsForkThreadError, ThreadsForkThreadResponse, ThreadsInterruptTurnData, ThreadsInterruptTurnError, ThreadsInterruptTurnResponse, ThreadsListBranchTreesData, ThreadsListBranchTreesError, ThreadsListBranchTreesResponse, ThreadsListLoadedThreadsData, ThreadsListLoadedThreadsError, ThreadsListLoadedThreadsResponse, ThreadsListOverviewData, ThreadsListOverviewError, ThreadsListOverviewResponse, ThreadsListThreadsData, ThreadsListThreadsError, ThreadsListThreadsResponse, ThreadsListTurnItemsData, ThreadsListTurnItemsError, ThreadsListTurnItemsResponse, ThreadsListTurnsData, ThreadsListTurnsError, ThreadsListTurnsResponse, ThreadsReadBranchStateData, ThreadsReadBranchStateError, ThreadsReadBranchStateResponse, ThreadsReadBranchTreeData, ThreadsReadBranchTreeError, ThreadsReadBranchTreeResponse, ThreadsReadThreadData, ThreadsReadThreadError, ThreadsReadThreadResponse, ThreadsResumeThreadData, ThreadsResumeThreadError, ThreadsResumeThreadResponse, ThreadsSetThreadNameData, ThreadsSetThreadNameError, ThreadsSetThreadNameResponse, ThreadsStartThreadData, ThreadsStartThreadError, ThreadsStartThreadResponse, ThreadsStartTurnData, ThreadsStartTurnError, ThreadsStartTurnResponse, ThreadsSteerTurnData, ThreadsSteerTurnError, ThreadsSteerTurnResponse, ThreadsUnarchiveThreadData, ThreadsUnarchiveThreadError, ThreadsUnarchiveThreadResponse, TokenUsageReadThreadTokenUsageData, TokenUsageReadThreadTokenUsageError, TokenUsageReadThreadTokenUsageResponse, TurnDiffReadThreadTurnDiffsData, TurnDiffReadThreadTurnDiffsError, TurnDiffReadThreadTurnDiffsResponse, TurnErrorsReadThreadTurnErrorsData, TurnErrorsReadThreadTurnErrorsError, TurnErrorsReadThreadTurnErrorsResponse } from '../types.gen.js';
+import { accountCancelLogin, accountLogin, accountLogout, accountReadAccount, accountReadRateLimits, appGetStatus, appsListApps, appsReadApps, archiveListArchive, archiveReadEntry, authLogin, authLogout, authSetup, authStatus, catalogApply, catalogBlockers, catalogReadDraft, catalogReadEffective, catalogRestart, catalogRestore, catalogSaveDraft, catalogSeed, catalogState, catalogUseDefault, catalogValidate, chatUploadAttachment, filesAddRoot, filesCopyPath, filesCreateDirectory, filesCreateFile, filesDeletePath, filesDownloadFile, filesGetMetadata, filesGetRoots, filesMovePath, filesReadFile, filesReadTree, filesRenamePath, filesServeFile, filesUploadFiles, filesWriteFile, gitCheckout, gitCommit, gitStatus, logsExportDiagnostics, logsListLogs, mcpServersListServers, mcpServersReloadAll, mcpServersStartOauthLogin, modelsListModels, ompConfigGetConfig, ompConfigUpdateConfig, ompEngineConfigReadConfig, ompEngineConfigReadRawConfig, ompEngineConfigUpdateConfig, ompEngineConfigUpdateRawConfig, ompFeedbackUploadFeedback, ompStatusGetStatus, ompStatusUpdateApprovalPolicy, ompStatusUpdateSandboxMode, onlyOfficeGetConfig, onlyOfficeHandleCallback, type Options, pendingApprovalsListPending, pendingApprovalsRespond, pluginsInstallPlugin, pluginsListPlugins, pluginsReadPlugin, pluginsReconcilePlugin, pluginsUninstallPlugin, settingsGetSetting, settingsListSettings, settingsResetSetting, settingsUpdateSetting, settingsUpdateSettings, skillsListSkills, skillsWriteSkillConfig, threadCommandsClearGoal, threadCommandsListCollaborationModes, threadCommandsReadCollaborationMode, threadCommandsReadGoal, threadCommandsSetCollaborationMode, threadCommandsSetGoal, threadCommandsStartReview, threadsArchiveThread, threadsCompactThread, threadsCountTurns, threadsCreateMessageBranch, threadsDeletionDeleteThread, threadsDeletionPreviewDelete, threadsDeletionReadBranchAdoptionStatus, threadSecurityPolicyPatchSecurityPolicy, threadSecurityPolicyReadSecurityPolicy, threadsForkThread, threadsInterruptTurn, threadsListBranchTrees, threadsListLoadedThreads, threadsListOverview, threadsListThreads, threadsListTurnItems, threadsListTurns, threadsReadBranchState, threadsReadBranchTree, threadsReadThread, threadsResumeThread, threadsSetThreadName, threadsStartThread, threadsStartTurn, threadsSteerTurn, threadsUnarchiveThread, tokenUsageReadThreadTokenUsage, turnDiffReadThreadTurnDiffs, turnErrorsReadThreadTurnErrors } from '../sdk.gen.js';
+import type { AccountCancelLoginData, AccountCancelLoginError, AccountCancelLoginResponse, AccountLoginData, AccountLoginError, AccountLoginResponse, AccountLogoutData, AccountLogoutError, AccountLogoutResponse, AccountReadAccountData, AccountReadAccountError, AccountReadAccountResponse, AccountReadRateLimitsData, AccountReadRateLimitsError, AccountReadRateLimitsResponse, AppGetStatusData, AppGetStatusResponse, AppsListAppsData, AppsListAppsError, AppsListAppsResponse, AppsReadAppsData, AppsReadAppsError, AppsReadAppsResponse, ArchiveListArchiveData, ArchiveListArchiveError, ArchiveListArchiveResponse, ArchiveReadEntryData, ArchiveReadEntryError, AuthLoginData, AuthLoginError, AuthLoginResponse, AuthLogoutData, AuthLogoutResponse, AuthSetupData, AuthSetupError, AuthSetupResponse, AuthStatusData, AuthStatusResponse, CatalogApplyData, CatalogApplyResponse, CatalogBlockersData, CatalogBlockersResponse, CatalogReadDraftData, CatalogReadDraftResponse, CatalogReadEffectiveData, CatalogReadEffectiveResponse, CatalogRestartData, CatalogRestartResponse, CatalogRestoreData, CatalogRestoreResponse, CatalogSaveDraftData, CatalogSaveDraftResponse, CatalogSeedData, CatalogSeedResponse, CatalogStateData, CatalogStateResponse, CatalogUseDefaultData, CatalogUseDefaultResponse, CatalogValidateData, CatalogValidateResponse, ChatUploadAttachmentData, ChatUploadAttachmentError, ChatUploadAttachmentResponse, FilesAddRootData, FilesAddRootError, FilesAddRootResponse, FilesCopyPathData, FilesCopyPathError, FilesCopyPathResponse, FilesCreateDirectoryData, FilesCreateDirectoryError, FilesCreateDirectoryResponse, FilesCreateFileData, FilesCreateFileError, FilesCreateFileResponse, FilesDeletePathData, FilesDeletePathError, FilesDeletePathResponse, FilesDownloadFileData, FilesDownloadFileError, FilesGetMetadataData, FilesGetMetadataError, FilesGetMetadataResponse, FilesGetRootsData, FilesGetRootsError, FilesGetRootsResponse, FilesMovePathData, FilesMovePathError, FilesMovePathResponse, FilesReadFileData, FilesReadFileError, FilesReadFileResponse, FilesReadTreeData, FilesReadTreeError, FilesReadTreeResponse, FilesRenamePathData, FilesRenamePathError, FilesRenamePathResponse, FilesServeFileData, FilesServeFileError, FilesUploadFilesData, FilesUploadFilesError, FilesUploadFilesResponse, FilesWriteFileData, FilesWriteFileError, FilesWriteFileResponse, GitCheckoutData, GitCheckoutError, GitCommitData, GitCommitError, GitCommitResponse, GitStatusData, GitStatusError, GitStatusResponse, LogsExportDiagnosticsData, LogsExportDiagnosticsError, LogsExportDiagnosticsResponse, LogsListLogsData, LogsListLogsError, LogsListLogsResponse, McpServersListServersData, McpServersListServersError, McpServersListServersResponse, McpServersReloadAllData, McpServersReloadAllError, McpServersReloadAllResponse, McpServersStartOauthLoginData, McpServersStartOauthLoginError, McpServersStartOauthLoginResponse, ModelsListModelsData, ModelsListModelsError, ModelsListModelsResponse, OmpConfigGetConfigData, OmpConfigGetConfigError, OmpConfigUpdateConfigData, OmpConfigUpdateConfigError, OmpEngineConfigReadConfigData, OmpEngineConfigReadConfigError, OmpEngineConfigReadConfigResponse, OmpEngineConfigReadRawConfigData, OmpEngineConfigReadRawConfigError, OmpEngineConfigReadRawConfigResponse, OmpEngineConfigUpdateConfigData, OmpEngineConfigUpdateConfigError, OmpEngineConfigUpdateConfigResponse, OmpEngineConfigUpdateRawConfigData, OmpEngineConfigUpdateRawConfigError, OmpEngineConfigUpdateRawConfigResponse, OmpFeedbackUploadFeedbackData, OmpFeedbackUploadFeedbackError, OmpFeedbackUploadFeedbackResponse, OmpStatusGetStatusData, OmpStatusGetStatusError, OmpStatusGetStatusResponse, OmpStatusUpdateApprovalPolicyData, OmpStatusUpdateApprovalPolicyError, OmpStatusUpdateApprovalPolicyResponse, OmpStatusUpdateSandboxModeData, OmpStatusUpdateSandboxModeError, OmpStatusUpdateSandboxModeResponse, OnlyOfficeGetConfigData, OnlyOfficeGetConfigError, OnlyOfficeGetConfigResponse, OnlyOfficeHandleCallbackData, OnlyOfficeHandleCallbackResponse, PendingApprovalsListPendingData, PendingApprovalsListPendingError, PendingApprovalsListPendingResponse, PendingApprovalsRespondData, PendingApprovalsRespondResponse, PluginsInstallPluginData, PluginsInstallPluginError, PluginsInstallPluginResponse, PluginsListPluginsData, PluginsListPluginsError, PluginsListPluginsResponse, PluginsReadPluginData, PluginsReadPluginError, PluginsReadPluginResponse, PluginsReconcilePluginData, PluginsReconcilePluginError, PluginsReconcilePluginResponse, PluginsUninstallPluginData, PluginsUninstallPluginError, PluginsUninstallPluginResponse, SettingsGetSettingData, SettingsGetSettingError, SettingsGetSettingResponse, SettingsListSettingsData, SettingsListSettingsError, SettingsListSettingsResponse, SettingsResetSettingData, SettingsResetSettingError, SettingsResetSettingResponse, SettingsUpdateSettingData, SettingsUpdateSettingError, SettingsUpdateSettingResponse, SettingsUpdateSettingsData, SettingsUpdateSettingsError, SettingsUpdateSettingsResponse, SkillsListSkillsData, SkillsListSkillsError, SkillsListSkillsResponse, SkillsWriteSkillConfigData, SkillsWriteSkillConfigError, SkillsWriteSkillConfigResponse, ThreadCommandsClearGoalData, ThreadCommandsClearGoalError, ThreadCommandsClearGoalResponse, ThreadCommandsListCollaborationModesData, ThreadCommandsListCollaborationModesError, ThreadCommandsListCollaborationModesResponse, ThreadCommandsReadCollaborationModeData, ThreadCommandsReadCollaborationModeError, ThreadCommandsReadCollaborationModeResponse, ThreadCommandsReadGoalData, ThreadCommandsReadGoalError, ThreadCommandsReadGoalResponse, ThreadCommandsSetCollaborationModeData, ThreadCommandsSetCollaborationModeError, ThreadCommandsSetCollaborationModeResponse, ThreadCommandsSetGoalData, ThreadCommandsSetGoalError, ThreadCommandsSetGoalResponse, ThreadCommandsStartReviewData, ThreadCommandsStartReviewError, ThreadCommandsStartReviewResponse, ThreadsArchiveThreadData, ThreadsArchiveThreadError, ThreadsArchiveThreadResponse, ThreadsCompactThreadData, ThreadsCompactThreadError, ThreadsCompactThreadResponse, ThreadsCountTurnsData, ThreadsCountTurnsError, ThreadsCountTurnsResponse, ThreadsCreateMessageBranchData, ThreadsCreateMessageBranchError, ThreadsCreateMessageBranchResponse, ThreadsDeletionDeleteThreadData, ThreadsDeletionDeleteThreadError, ThreadsDeletionDeleteThreadResponse, ThreadsDeletionPreviewDeleteData, ThreadsDeletionPreviewDeleteError, ThreadsDeletionPreviewDeleteResponse, ThreadsDeletionReadBranchAdoptionStatusData, ThreadsDeletionReadBranchAdoptionStatusError, ThreadsDeletionReadBranchAdoptionStatusResponse, ThreadSecurityPolicyPatchSecurityPolicyData, ThreadSecurityPolicyPatchSecurityPolicyError, ThreadSecurityPolicyPatchSecurityPolicyResponse, ThreadSecurityPolicyReadSecurityPolicyData, ThreadSecurityPolicyReadSecurityPolicyResponse, ThreadsForkThreadData, ThreadsForkThreadError, ThreadsForkThreadResponse, ThreadsInterruptTurnData, ThreadsInterruptTurnError, ThreadsInterruptTurnResponse, ThreadsListBranchTreesData, ThreadsListBranchTreesError, ThreadsListBranchTreesResponse, ThreadsListLoadedThreadsData, ThreadsListLoadedThreadsError, ThreadsListLoadedThreadsResponse, ThreadsListOverviewData, ThreadsListOverviewError, ThreadsListOverviewResponse, ThreadsListThreadsData, ThreadsListThreadsError, ThreadsListThreadsResponse, ThreadsListTurnItemsData, ThreadsListTurnItemsError, ThreadsListTurnItemsResponse, ThreadsListTurnsData, ThreadsListTurnsError, ThreadsListTurnsResponse, ThreadsReadBranchStateData, ThreadsReadBranchStateError, ThreadsReadBranchStateResponse, ThreadsReadBranchTreeData, ThreadsReadBranchTreeError, ThreadsReadBranchTreeResponse, ThreadsReadThreadData, ThreadsReadThreadError, ThreadsReadThreadResponse, ThreadsResumeThreadData, ThreadsResumeThreadError, ThreadsResumeThreadResponse, ThreadsSetThreadNameData, ThreadsSetThreadNameError, ThreadsSetThreadNameResponse, ThreadsStartThreadData, ThreadsStartThreadError, ThreadsStartThreadResponse, ThreadsStartTurnData, ThreadsStartTurnError, ThreadsStartTurnResponse, ThreadsSteerTurnData, ThreadsSteerTurnError, ThreadsSteerTurnResponse, ThreadsUnarchiveThreadData, ThreadsUnarchiveThreadError, ThreadsUnarchiveThreadResponse, TokenUsageReadThreadTokenUsageData, TokenUsageReadThreadTokenUsageError, TokenUsageReadThreadTokenUsageResponse, TurnDiffReadThreadTurnDiffsData, TurnDiffReadThreadTurnDiffsError, TurnDiffReadThreadTurnDiffsResponse, TurnErrorsReadThreadTurnErrorsData, TurnErrorsReadThreadTurnErrorsError, TurnErrorsReadThreadTurnErrorsResponse } from '../types.gen.js';
 
 export type QueryKey<TOptions extends Options> = [
     Pick<TOptions, 'baseUrl' | 'body' | 'headers' | 'path' | 'query'> & {
@@ -614,14 +614,14 @@ export const chatUploadAttachmentMutation = (options?: Partial<Options<ChatUploa
     return mutationOptions;
 };
 
-export const codexStatusGetStatusQueryKey = (options?: Options<CodexStatusGetStatusData>) => createQueryKey('codexStatusGetStatus', options);
+export const ompStatusGetStatusQueryKey = (options?: Options<OmpStatusGetStatusData>) => createQueryKey('ompStatusGetStatus', options);
 
 /**
  * Get aggregated Codex runtime status
  */
-export const codexStatusGetStatusOptions = (options?: Options<CodexStatusGetStatusData>) => queryOptions<CodexStatusGetStatusResponse, CodexStatusGetStatusError, CodexStatusGetStatusResponse, ReturnType<typeof codexStatusGetStatusQueryKey>>({
+export const ompStatusGetStatusOptions = (options?: Options<OmpStatusGetStatusData>) => queryOptions<OmpStatusGetStatusResponse, OmpStatusGetStatusError, OmpStatusGetStatusResponse, ReturnType<typeof ompStatusGetStatusQueryKey>>({
     queryFn: async ({ queryKey, signal }) => {
-        const { data } = await codexStatusGetStatus({
+        const { data } = await ompStatusGetStatus({
             ...options,
             ...queryKey[0],
             signal,
@@ -629,16 +629,16 @@ export const codexStatusGetStatusOptions = (options?: Options<CodexStatusGetStat
         });
         return data;
     },
-    queryKey: codexStatusGetStatusQueryKey(options)
+    queryKey: ompStatusGetStatusQueryKey(options)
 });
 
 /**
  * Update approval policy default for new threads
  */
-export const codexStatusUpdateApprovalPolicyMutation = (options?: Partial<Options<CodexStatusUpdateApprovalPolicyData>>): UseMutationOptions<CodexStatusUpdateApprovalPolicyResponse, CodexStatusUpdateApprovalPolicyError, Options<CodexStatusUpdateApprovalPolicyData>> => {
-    const mutationOptions: UseMutationOptions<CodexStatusUpdateApprovalPolicyResponse, CodexStatusUpdateApprovalPolicyError, Options<CodexStatusUpdateApprovalPolicyData>> = {
+export const ompStatusUpdateApprovalPolicyMutation = (options?: Partial<Options<OmpStatusUpdateApprovalPolicyData>>): UseMutationOptions<OmpStatusUpdateApprovalPolicyResponse, OmpStatusUpdateApprovalPolicyError, Options<OmpStatusUpdateApprovalPolicyData>> => {
+    const mutationOptions: UseMutationOptions<OmpStatusUpdateApprovalPolicyResponse, OmpStatusUpdateApprovalPolicyError, Options<OmpStatusUpdateApprovalPolicyData>> = {
         mutationFn: async (fnOptions) => {
-            const { data } = await codexStatusUpdateApprovalPolicy({
+            const { data } = await ompStatusUpdateApprovalPolicy({
                 ...options,
                 ...fnOptions,
                 throwOnError: true
@@ -652,10 +652,10 @@ export const codexStatusUpdateApprovalPolicyMutation = (options?: Partial<Option
 /**
  * Update sandbox mode default for new threads
  */
-export const codexStatusUpdateSandboxModeMutation = (options?: Partial<Options<CodexStatusUpdateSandboxModeData>>): UseMutationOptions<CodexStatusUpdateSandboxModeResponse, CodexStatusUpdateSandboxModeError, Options<CodexStatusUpdateSandboxModeData>> => {
-    const mutationOptions: UseMutationOptions<CodexStatusUpdateSandboxModeResponse, CodexStatusUpdateSandboxModeError, Options<CodexStatusUpdateSandboxModeData>> = {
+export const ompStatusUpdateSandboxModeMutation = (options?: Partial<Options<OmpStatusUpdateSandboxModeData>>): UseMutationOptions<OmpStatusUpdateSandboxModeResponse, OmpStatusUpdateSandboxModeError, Options<OmpStatusUpdateSandboxModeData>> => {
+    const mutationOptions: UseMutationOptions<OmpStatusUpdateSandboxModeResponse, OmpStatusUpdateSandboxModeError, Options<OmpStatusUpdateSandboxModeData>> = {
         mutationFn: async (fnOptions) => {
-            const { data } = await codexStatusUpdateSandboxMode({
+            const { data } = await ompStatusUpdateSandboxMode({
                 ...options,
                 ...fnOptions,
                 throwOnError: true
@@ -666,14 +666,14 @@ export const codexStatusUpdateSandboxModeMutation = (options?: Partial<Options<C
     return mutationOptions;
 };
 
-export const codexConfigReadConfigQueryKey = (options?: Options<CodexConfigReadConfigData>) => createQueryKey('codexConfigReadConfig', options);
+export const ompEngineConfigReadConfigQueryKey = (options?: Options<OmpEngineConfigReadConfigData>) => createQueryKey('ompEngineConfigReadConfig', options);
 
 /**
  * Read Codex config with origin metadata
  */
-export const codexConfigReadConfigOptions = (options?: Options<CodexConfigReadConfigData>) => queryOptions<CodexConfigReadConfigResponse, CodexConfigReadConfigError, CodexConfigReadConfigResponse, ReturnType<typeof codexConfigReadConfigQueryKey>>({
+export const ompEngineConfigReadConfigOptions = (options?: Options<OmpEngineConfigReadConfigData>) => queryOptions<OmpEngineConfigReadConfigResponse, OmpEngineConfigReadConfigError, OmpEngineConfigReadConfigResponse, ReturnType<typeof ompEngineConfigReadConfigQueryKey>>({
     queryFn: async ({ queryKey, signal }) => {
-        const { data } = await codexConfigReadConfig({
+        const { data } = await ompEngineConfigReadConfig({
             ...options,
             ...queryKey[0],
             signal,
@@ -681,16 +681,16 @@ export const codexConfigReadConfigOptions = (options?: Options<CodexConfigReadCo
         });
         return data;
     },
-    queryKey: codexConfigReadConfigQueryKey(options)
+    queryKey: ompEngineConfigReadConfigQueryKey(options)
 });
 
 /**
  * Update curated Codex config fields
  */
-export const codexConfigUpdateConfigMutation = (options?: Partial<Options<CodexConfigUpdateConfigData>>): UseMutationOptions<CodexConfigUpdateConfigResponse, CodexConfigUpdateConfigError, Options<CodexConfigUpdateConfigData>> => {
-    const mutationOptions: UseMutationOptions<CodexConfigUpdateConfigResponse, CodexConfigUpdateConfigError, Options<CodexConfigUpdateConfigData>> = {
+export const ompEngineConfigUpdateConfigMutation = (options?: Partial<Options<OmpEngineConfigUpdateConfigData>>): UseMutationOptions<OmpEngineConfigUpdateConfigResponse, OmpEngineConfigUpdateConfigError, Options<OmpEngineConfigUpdateConfigData>> => {
+    const mutationOptions: UseMutationOptions<OmpEngineConfigUpdateConfigResponse, OmpEngineConfigUpdateConfigError, Options<OmpEngineConfigUpdateConfigData>> = {
         mutationFn: async (fnOptions) => {
-            const { data } = await codexConfigUpdateConfig({
+            const { data } = await ompEngineConfigUpdateConfig({
                 ...options,
                 ...fnOptions,
                 throwOnError: true
@@ -701,14 +701,14 @@ export const codexConfigUpdateConfigMutation = (options?: Partial<Options<CodexC
     return mutationOptions;
 };
 
-export const codexConfigReadRawConfigQueryKey = (options?: Options<CodexConfigReadRawConfigData>) => createQueryKey('codexConfigReadRawConfig', options);
+export const ompEngineConfigReadRawConfigQueryKey = (options?: Options<OmpEngineConfigReadRawConfigData>) => createQueryKey('ompEngineConfigReadRawConfig', options);
 
 /**
  * Read raw user config.toml
  */
-export const codexConfigReadRawConfigOptions = (options?: Options<CodexConfigReadRawConfigData>) => queryOptions<CodexConfigReadRawConfigResponse, CodexConfigReadRawConfigError, CodexConfigReadRawConfigResponse, ReturnType<typeof codexConfigReadRawConfigQueryKey>>({
+export const ompEngineConfigReadRawConfigOptions = (options?: Options<OmpEngineConfigReadRawConfigData>) => queryOptions<OmpEngineConfigReadRawConfigResponse, OmpEngineConfigReadRawConfigError, OmpEngineConfigReadRawConfigResponse, ReturnType<typeof ompEngineConfigReadRawConfigQueryKey>>({
     queryFn: async ({ queryKey, signal }) => {
-        const { data } = await codexConfigReadRawConfig({
+        const { data } = await ompEngineConfigReadRawConfig({
             ...options,
             ...queryKey[0],
             signal,
@@ -716,16 +716,16 @@ export const codexConfigReadRawConfigOptions = (options?: Options<CodexConfigRea
         });
         return data;
     },
-    queryKey: codexConfigReadRawConfigQueryKey(options)
+    queryKey: ompEngineConfigReadRawConfigQueryKey(options)
 });
 
 /**
  * Write raw user config.toml and reload Codex config
  */
-export const codexConfigUpdateRawConfigMutation = (options?: Partial<Options<CodexConfigUpdateRawConfigData>>): UseMutationOptions<CodexConfigUpdateRawConfigResponse, CodexConfigUpdateRawConfigError, Options<CodexConfigUpdateRawConfigData>> => {
-    const mutationOptions: UseMutationOptions<CodexConfigUpdateRawConfigResponse, CodexConfigUpdateRawConfigError, Options<CodexConfigUpdateRawConfigData>> = {
+export const ompEngineConfigUpdateRawConfigMutation = (options?: Partial<Options<OmpEngineConfigUpdateRawConfigData>>): UseMutationOptions<OmpEngineConfigUpdateRawConfigResponse, OmpEngineConfigUpdateRawConfigError, Options<OmpEngineConfigUpdateRawConfigData>> => {
+    const mutationOptions: UseMutationOptions<OmpEngineConfigUpdateRawConfigResponse, OmpEngineConfigUpdateRawConfigError, Options<OmpEngineConfigUpdateRawConfigData>> = {
         mutationFn: async (fnOptions) => {
-            const { data } = await codexConfigUpdateRawConfig({
+            const { data } = await ompEngineConfigUpdateRawConfig({
                 ...options,
                 ...fnOptions,
                 throwOnError: true
@@ -737,12 +737,12 @@ export const codexConfigUpdateRawConfigMutation = (options?: Partial<Options<Cod
 };
 
 /**
- * Upload a Codex feedback report
+ * Upload a OMP feedback report
  */
-export const codexFeedbackUploadFeedbackMutation = (options?: Partial<Options<CodexFeedbackUploadFeedbackData>>): UseMutationOptions<CodexFeedbackUploadFeedbackResponse, CodexFeedbackUploadFeedbackError, Options<CodexFeedbackUploadFeedbackData>> => {
-    const mutationOptions: UseMutationOptions<CodexFeedbackUploadFeedbackResponse, CodexFeedbackUploadFeedbackError, Options<CodexFeedbackUploadFeedbackData>> = {
+export const ompFeedbackUploadFeedbackMutation = (options?: Partial<Options<OmpFeedbackUploadFeedbackData>>): UseMutationOptions<OmpFeedbackUploadFeedbackResponse, OmpFeedbackUploadFeedbackError, Options<OmpFeedbackUploadFeedbackData>> => {
+    const mutationOptions: UseMutationOptions<OmpFeedbackUploadFeedbackResponse, OmpFeedbackUploadFeedbackError, Options<OmpFeedbackUploadFeedbackData>> = {
         mutationFn: async (fnOptions) => {
-            const { data } = await codexFeedbackUploadFeedback({
+            const { data } = await ompFeedbackUploadFeedback({
                 ...options,
                 ...fnOptions,
                 throwOnError: true
@@ -914,7 +914,7 @@ export const catalogRestartMutation = (options?: Partial<Options<CatalogRestartD
 export const accountReadAccountQueryKey = (options?: Options<AccountReadAccountData>) => createQueryKey('accountReadAccount', options);
 
 /**
- * Read Codex account state and provider metadata
+ * Read OMP account state and provider metadata
  */
 export const accountReadAccountOptions = (options?: Options<AccountReadAccountData>) => queryOptions<AccountReadAccountResponse, AccountReadAccountError, AccountReadAccountResponse, ReturnType<typeof accountReadAccountQueryKey>>({
     queryFn: async ({ queryKey, signal }) => {
@@ -930,7 +930,7 @@ export const accountReadAccountOptions = (options?: Options<AccountReadAccountDa
 });
 
 /**
- * Start Codex account login
+ * Start OMP account login
  */
 export const accountLoginMutation = (options?: Partial<Options<AccountLoginData>>): UseMutationOptions<AccountLoginResponse, AccountLoginError, Options<AccountLoginData>> => {
     const mutationOptions: UseMutationOptions<AccountLoginResponse, AccountLoginError, Options<AccountLoginData>> = {
@@ -947,7 +947,7 @@ export const accountLoginMutation = (options?: Partial<Options<AccountLoginData>
 };
 
 /**
- * Cancel a pending Codex account login
+ * Cancel a pending OMP account login
  */
 export const accountCancelLoginMutation = (options?: Partial<Options<AccountCancelLoginData>>): UseMutationOptions<AccountCancelLoginResponse, AccountCancelLoginError, Options<AccountCancelLoginData>> => {
     const mutationOptions: UseMutationOptions<AccountCancelLoginResponse, AccountCancelLoginError, Options<AccountCancelLoginData>> = {
@@ -964,7 +964,7 @@ export const accountCancelLoginMutation = (options?: Partial<Options<AccountCanc
 };
 
 /**
- * Logout Codex account
+ * Logout OMP account
  */
 export const accountLogoutMutation = (options?: Partial<Options<AccountLogoutData>>): UseMutationOptions<AccountLogoutResponse, AccountLogoutError, Options<AccountLogoutData>> => {
     const mutationOptions: UseMutationOptions<AccountLogoutResponse, AccountLogoutError, Options<AccountLogoutData>> = {
@@ -983,7 +983,7 @@ export const accountLogoutMutation = (options?: Partial<Options<AccountLogoutDat
 export const accountReadRateLimitsQueryKey = (options?: Options<AccountReadRateLimitsData>) => createQueryKey('accountReadRateLimits', options);
 
 /**
- * Read Codex account rate limits
+ * Read OMP account rate limits
  */
 export const accountReadRateLimitsOptions = (options?: Options<AccountReadRateLimitsData>) => queryOptions<AccountReadRateLimitsResponse, AccountReadRateLimitsError, AccountReadRateLimitsResponse, ReturnType<typeof accountReadRateLimitsQueryKey>>({
     queryFn: async ({ queryKey, signal }) => {
@@ -1001,7 +1001,7 @@ export const accountReadRateLimitsOptions = (options?: Options<AccountReadRateLi
 export const appsListAppsQueryKey = (options?: Options<AppsListAppsData>) => createQueryKey('appsListApps', options);
 
 /**
- * List Codex apps/connectors
+ * List OMP apps/connectors
  */
 export const appsListAppsOptions = (options?: Options<AppsListAppsData>) => queryOptions<AppsListAppsResponse, AppsListAppsError, AppsListAppsResponse, ReturnType<typeof appsListAppsQueryKey>>({
     queryFn: async ({ queryKey, signal }) => {
@@ -1048,7 +1048,7 @@ const createInfiniteParams = <K extends Pick<QueryKey<Options>[0], 'body' | 'hea
 export const appsListAppsInfiniteQueryKey = (options?: Options<AppsListAppsData>): QueryKey<Options<AppsListAppsData>> => createQueryKey('appsListApps', options, true);
 
 /**
- * List Codex apps/connectors
+ * List OMP apps/connectors
  */
 export const appsListAppsInfiniteOptions = (options?: Options<AppsListAppsData>) => infiniteQueryOptions<AppsListAppsResponse, AppsListAppsError, InfiniteData<AppsListAppsResponse>, QueryKey<Options<AppsListAppsData>>, string | Pick<QueryKey<Options<AppsListAppsData>>[0], 'body' | 'headers' | 'path' | 'query'>>(
 // @ts-ignore

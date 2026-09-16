@@ -3,8 +3,8 @@
  * { statusCode, errorCode, message, params? }
  *
  * - BusinessException: uses its errorCode + params directly.
- * - CodexUnavailableError: 503, app-server not connected.
- * - CodexRpcError: 400 or 502 depending on the JSON-RPC code, with the
+ * - OmpUnavailableError: 503, app-server not connected.
+ * - OmpRpcError: 400 or 502 depending on the JSON-RPC code, with the
  *   app-server message forwarded so the client can explain the refusal.
  * - Other HttpException: falls back to a status-based error code.
  * - Unknown errors: 500 + http.internal_error.
@@ -17,7 +17,7 @@ import {
   Logger,
 } from '@nestjs/common';
 import type { FastifyReply } from 'fastify';
-import { CodexRpcError, CodexUnavailableError } from '../codex/codex-errors';
+import { OmpRpcError, OmpUnavailableError } from '../omp/omp-errors';
 import { ErrorCode } from './error-codes';
 import type { ErrorCodeValue } from './error-codes';
 import { BusinessException } from './business.exception';
@@ -65,16 +65,16 @@ export class AllExceptionsFilter implements ExceptionFilter {
       return;
     }
 
-    if (exception instanceof CodexUnavailableError) {
+    if (exception instanceof OmpUnavailableError) {
       void response.status(503).send({
         statusCode: 503,
-        errorCode: ErrorCode.codex.serverUnavailable,
+        errorCode: ErrorCode.omp.serverUnavailable,
         message: exception.message,
       } satisfies ErrorResponseBody);
       return;
     }
 
-    if (exception instanceof CodexRpcError) {
+    if (exception instanceof OmpRpcError) {
       // -32600 is app-server refusing the request as posed (a client problem);
       // anything else is a transport or internal fault on its side.
       const status = exception.code === JSONRPC_INVALID_REQUEST ? 400 : 502;
@@ -84,7 +84,7 @@ export class AllExceptionsFilter implements ExceptionFilter {
       if (exception.method) params.method = exception.method;
       void response.status(status).send({
         statusCode: status,
-        errorCode: ErrorCode.codex.rpcError,
+        errorCode: ErrorCode.omp.rpcError,
         message: exception.rpcMessage,
         params,
       } satisfies ErrorResponseBody);

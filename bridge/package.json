@@ -1,11 +1,11 @@
 {
   "name": "omp-webui-bridge",
   "version": "0.1.0",
-  "description": "Bridge translating codex app-server JSON-RPC to Oh My Pi (omp) RPC",
+  "description": "Bridge translating app-server JSON-RPC to Oh My Pi (omp) RPC",
   "private": true,
   "main": "dist/index.js",
   "bin": {
-    "omp-codex-bridge": "./dist/index.js"
+    "omp-webui-bridge": "./dist/index.js"
   },
   "scripts": {
     "build": "tsc",

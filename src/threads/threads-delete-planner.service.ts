@@ -1,7 +1,7 @@
 /** Builds exact topology-based delete previews for thread cascades. */
 import { Injectable } from '@nestjs/common';
-import { CodexService } from '../codex/codex.service';
-import type { v2 } from '../codex/codex-schema';
+import { OmpService } from '../omp/omp-engine.service';
+import type { v2 } from '../omp/omp-schema';
 import { ConversationBranchAdoptionService } from '../conversation-branches/conversation-branch-adoption.service';
 import { ConversationBranchMutationsService } from '../conversation-branches/conversation-branch-mutations.service';
 import { PendingApprovalsService } from '../pending-approvals/pending-approvals.service';
@@ -27,7 +27,7 @@ interface PlanEdge {
 @Injectable()
 export class ThreadsDeletePlannerService {
   constructor(
-    private readonly codex: CodexService,
+    private readonly ompService: OmpService,
     private readonly adoption: ConversationBranchAdoptionService,
     private readonly branchMutations: ConversationBranchMutationsService,
     private readonly pendingApprovals: PendingApprovalsService,
@@ -127,7 +127,7 @@ export class ThreadsDeletePlannerService {
     for (const archived of [false, true]) {
       let cursor: string | null | undefined;
       do {
-        const response = await this.codex.request<v2.ThreadListResponse>(
+        const response = await this.ompService.request<v2.ThreadListResponse>(
           'thread/list',
           { cursor, limit: 200, archived, modelProviders: [] },
         );

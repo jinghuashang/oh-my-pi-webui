@@ -1,12 +1,12 @@
 /** Observes thread settings that app-server only exposes through notifications. */
 import { Injectable, Logger } from '@nestjs/common';
-import { CodexProcessManager } from '../codex/codex-process-manager.service';
+import { OmpProcessManager } from '../omp/omp-process-manager.service';
 import type {
   CollaborationMode,
   ReasoningEffort,
   ServerNotification,
   v2,
-} from '../codex/codex-schema';
+} from '../omp/omp-schema';
 import type { ThreadCollaborationModeStateDto } from './dto/threads.dto';
 import type { ThreadSecurityPolicyDto } from './dto/thread-security-policy.dto';
 
@@ -51,7 +51,7 @@ export class ThreadSettingsObserverService {
    */
   private readonly displacedEffort = new Map<string, DisplacedEffort>();
 
-  constructor(private readonly codexManager: CodexProcessManager) {
+  constructor(private readonly codexManager: OmpProcessManager) {
     this.codexManager.addListener(
       'notification',
       (notification: ServerNotification) => {

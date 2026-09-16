@@ -1,7 +1,7 @@
 /** Real ingress, persistence and gateway delivery across browser/deletion lifetimes. */
 import { Subject } from 'rxjs';
 import { createTestDatabase } from '../database/database.testing';
-import { CatalogAdmissionService } from '../codex/catalog/catalog-admission.service';
+import { CatalogAdmissionService } from '../omp/catalog/catalog-admission.service';
 import type { AuthService } from '../auth/auth.service';
 import { BusinessException } from '../common/business.exception';
 import { ThreadDeletionRegistryService } from '../thread-deletion/thread-deletion-registry.service';
@@ -103,7 +103,7 @@ describe('global human attention', () => {
     ]);
     expect(events).toContainEqual({
       room: 'thread:t1',
-      event: 'codex.notification',
+      event: 'omp.notification',
       payload: fixture.started,
     });
   });

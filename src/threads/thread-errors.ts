@@ -15,7 +15,7 @@
 import {
   isCodexRpcError,
   isCodexUnavailableError,
-} from '../codex/codex-errors';
+} from '../omp/omp-errors';
 
 /** JSON-RPC "Invalid Request"; app-server's catch-all for rejected calls. */
 const INVALID_REQUEST = -32600;

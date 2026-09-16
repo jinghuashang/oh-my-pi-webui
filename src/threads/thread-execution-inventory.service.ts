@@ -1,12 +1,12 @@
 /** Backend-owned execution obligations survive child replacement, never a full NestJS restart. */
 import { Injectable, Logger } from '@nestjs/common';
-import { CodexProcessManager } from '../codex/codex-process-manager.service';
+import { OmpProcessManager } from '../omp/omp-process-manager.service';
 import type {
   ServerNotification,
   ServerRequest,
   v2,
-} from '../codex/codex-schema';
-import type { CodexJsonRpcClientEvents } from '../codex/codex-jsonrpc-client';
+} from '../omp/omp-schema';
+import type { CodexJsonRpcClientEvents } from '../omp/omp-jsonrpc-client';
 
 interface ExecutionObligation {
   parentThreadId: string | null;
@@ -59,7 +59,7 @@ export class ThreadExecutionInventoryService {
   private readonly deleted = new Set<string>();
   private readonly goalReads = new Map<string, Promise<void>>();
 
-  constructor(private readonly manager: CodexProcessManager) {
+  constructor(private readonly manager: OmpProcessManager) {
     manager.addListener('notification', (note: ServerNotification) =>
       this.observeNotification(note),
     );

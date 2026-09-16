@@ -1,5 +1,5 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { nullableStringEnumSchema } from '../../codex/dto/v2/openapi.schema';
+import { nullableStringEnumSchema } from '../../omp/dto/v2/openapi.schema';
 
 export const ACCOUNT_LOGIN_TYPES = [
   'apiKey',
@@ -30,7 +30,7 @@ export const PLAN_TYPE_VALUES = [
   'unknown',
 ] as const;
 
-/** Codex account state (apiKey or chatgpt). */
+/** OMP account state (apiKey or chatgpt). */
 export class AccountDto {
   @ApiProperty({ enum: ACCOUNT_TYPES })
   type!: (typeof ACCOUNT_TYPES)[number];
@@ -138,7 +138,7 @@ export class LoginAccountResponseDto {
   userCode?: string;
 }
 
-/** Codex account/login/completed notification payload mirrored for frontend typing. */
+/** OMP account/login/completed notification payload mirrored for frontend typing. */
 export class AccountLoginCompletedDto {
   @ApiProperty({ type: String, nullable: true })
   loginId!: string | null;

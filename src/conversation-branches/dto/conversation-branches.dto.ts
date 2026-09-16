@@ -1,6 +1,6 @@
 /** Request and response shapes for locally tracked conversation branches. */
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { ThreadForkResponseDto } from '../../codex/dto/v2';
+import { ThreadForkResponseDto } from '../../omp/dto/v2';
 
 export type BranchMetadataSource = 'local' | 'adopted';
 

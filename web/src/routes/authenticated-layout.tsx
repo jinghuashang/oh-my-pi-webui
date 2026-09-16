@@ -15,9 +15,9 @@ import {
 import { ChatHeader } from '@/components/chat/chat-header';
 import { ThreadSidebar } from '@/components/chat/thread-sidebar';
 import { SnackbarContainer } from '@/components/snackbar/snackbar-container';
-import { CodexStatusBanner } from '@/components/codex-status-banner';
+import { OmpStatusBanner } from '@/components/omp-status-banner';
 import { useBreakpoint } from '@/hooks/use-breakpoint';
-import { useCodexSocket } from '@/hooks/use-codex-socket';
+import { useOmpSocket } from '@/hooks/use-omp-socket';
 import { useFilesStore } from '@/stores/files-store';
 import { useLayoutStore } from '@/stores/layout-store';
 import { useTimelineStore } from '@/stores/timeline-store';
@@ -77,7 +77,7 @@ export function AuthenticatedLayout() {
     generalSettingsQuery.data?.settings,
   );
 
-  useCodexSocket(true);
+  useOmpSocket(true);
 
   useEffect(() => {
     setMaxIdleSubscriptions(maxIdleSubscriptions);
@@ -184,7 +184,7 @@ export function AuthenticatedLayout() {
 
         <div className="flex min-h-0 min-w-0 flex-1 flex-col isolate">
           <ChatHeader dark={dark} onToggleDark={toggleDark} />
-          <CodexStatusBanner />
+          <OmpStatusBanner />
           <Outlet />
         </div>
       </div>

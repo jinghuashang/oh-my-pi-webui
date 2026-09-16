@@ -1,6 +1,6 @@
 import { ThreadSettingsObserverService } from './thread-settings-observer.service';
-import { CodexRpcError } from '../codex/codex-errors';
-import { CodexProcessManager } from '../codex/codex-process-manager.service';
+import { OmpRpcError } from '../omp/omp-errors';
+import { OmpProcessManager } from '../omp/omp-process-manager.service';
 import { ThreadHistoryService } from './thread-history.service';
 import { ThreadResumeRegistryService } from './thread-resume-registry.service';
 
@@ -23,9 +23,9 @@ describe('ThreadResumeRegistryService', () => {
     mockManager.getGeneration.mockReturnValue(1);
     service = new ThreadResumeRegistryService(
       mockHistory as unknown as ThreadHistoryService,
-      mockManager as unknown as CodexProcessManager,
+      mockManager as unknown as OmpProcessManager,
       new ThreadSettingsObserverService(
-        mockManager as unknown as CodexProcessManager,
+        mockManager as unknown as OmpProcessManager,
       ),
     );
   });
@@ -94,7 +94,7 @@ describe('ThreadResumeRegistryService', () => {
     // downgrade path is only correct if it recognises the message the server
     // actually sends.
     mockHistory.resumeMetadataFirst.mockRejectedValue(
-      new CodexRpcError({
+      new OmpRpcError({
         code: -32600,
         message: 'thread t1 already has an active writer',
       }),
@@ -122,7 +122,7 @@ describe('ThreadResumeRegistryService', () => {
     // unhandled error: the user gets a conversation they cannot type into and
     // a banner blaming another client that does not exist.
     mockHistory.resumeMetadataFirst.mockRejectedValue(
-      new CodexRpcError({
+      new OmpRpcError({
         code: -32600,
         message: 'thread t1 owner record is corrupt',
       }),

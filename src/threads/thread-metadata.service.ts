@@ -7,9 +7,9 @@ import {
   ServiceUnavailableException,
 } from '@nestjs/common';
 import { Subject } from 'rxjs';
-import { CodexService } from '../codex/codex.service';
-import { CodexProcessManager } from '../codex/codex-process-manager.service';
-import type { ServerNotification, v2 } from '../codex/codex-schema';
+import { OmpService } from '../omp/omp-engine.service';
+import { OmpProcessManager } from '../omp/omp-process-manager.service';
+import type { ServerNotification, v2 } from '../omp/omp-schema';
 
 /** A stored conversation together with the archive partition that listed it. */
 export interface ThreadMetadataEntry {
@@ -91,8 +91,8 @@ export class ThreadMetadataService implements OnModuleInit, OnModuleDestroy {
   private readonly pendingListing = new Map<string, number>();
 
   constructor(
-    private readonly codex: CodexService,
-    private readonly manager: CodexProcessManager,
+    private readonly ompService: OmpService,
+    private readonly manager: OmpProcessManager,
   ) {
     manager.addListener('notification', (notification: ServerNotification) => {
       if (notification.method === 'thread/deleted' && this.collection) {
@@ -336,7 +336,7 @@ export class ThreadMetadataService implements OnModuleInit, OnModuleDestroy {
           let cursor: string | undefined;
           const cursors = new Set<string>();
           do {
-            const page = await this.codex.request<v2.ThreadListResponse>(
+            const page = await this.ompService.request<v2.ThreadListResponse>(
               'thread/list',
               {
                 cursor,

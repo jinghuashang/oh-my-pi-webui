@@ -55,6 +55,12 @@ lerna-debug.log*
 *.sqlite-shm
 *.sqlite-wal
 
+# Data persistence & local workspaces
+/data/*
+!/data/.gitkeep
+/workspaces/*
+!/workspaces/.gitkeep
+
 # Runtime data
 pids
 *.pid

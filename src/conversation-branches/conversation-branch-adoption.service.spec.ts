@@ -2,7 +2,7 @@ import type Database from 'better-sqlite3';
 import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
-import { CodexProcessManager } from '../codex/codex-process-manager.service';
+import { OmpProcessManager } from '../omp/omp-process-manager.service';
 import { createTestDatabase } from '../database/database.testing';
 import { ConversationBranchAdoptionService } from './conversation-branch-adoption.service';
 import { ConversationBranchMutationsService } from './conversation-branch-mutations.service';
@@ -25,7 +25,7 @@ describe('ConversationBranchAdoptionService', () => {
         addLifecycleListener: vi.fn(),
         getInitResult: vi.fn().mockReturnValue(null),
         getGeneration: vi.fn().mockReturnValue(1),
-      } as unknown as CodexProcessManager,
+      } as unknown as OmpProcessManager,
       mutations,
     );
     codexHome = mkdtempSync(join(tmpdir(), 'codex-webui-scan-'));

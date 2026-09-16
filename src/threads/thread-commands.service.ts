@@ -5,8 +5,8 @@ import type {
   ModeKind,
   ReasoningEffort,
   v2,
-} from '../codex/codex-schema';
-import { CodexService } from '../codex/codex.service';
+} from '../omp/omp-schema';
+import { OmpService } from '../omp/omp-engine.service';
 import { BusinessException } from '../common/business.exception';
 import { ErrorCode } from '../common/error-codes';
 import { ThreadDeletionRegistryService } from '../thread-deletion/thread-deletion-registry.service';
@@ -30,17 +30,17 @@ type ThreadSettingsUpdateParams = {
 @Injectable()
 export class ThreadCommandsService {
   constructor(
-    private readonly codex: CodexService,
+    private readonly ompService: OmpService,
     private readonly resumeRegistry: ThreadResumeRegistryService,
     private readonly deletionRegistry: ThreadDeletionRegistryService,
     private readonly settingsObserver: ThreadSettingsObserverService,
   ) {}
 
-  /** Lists collaboration mode presets provided by the Codex app-server. */
+  /** Lists collaboration mode presets provided by the OMP engine. */
   async listCollaborationModes(): Promise<CollaborationModesResponseDto> {
     // app-server rejects this method outright when `params` is absent, even
     // though it takes no arguments: it fails with "missing field `params`".
-    const response = await this.codex.request<CollaborationModeListResponse>(
+    const response = await this.ompService.request<CollaborationModeListResponse>(
       'collaborationMode/list',
       {},
     );
@@ -115,7 +115,7 @@ export class ThreadCommandsService {
     };
 
     const before = this.settingsObserver.readSettings(threadId);
-    await this.codex.request<Record<string, never>>('thread/settings/update', {
+    await this.ompService.request<Record<string, never>>('thread/settings/update', {
       threadId,
       collaborationMode,
     } satisfies ThreadSettingsUpdateParams);
@@ -130,7 +130,7 @@ export class ThreadCommandsService {
 
   /** Reads the persisted goal for a thread without mutating it. */
   async readGoal(threadId: string): Promise<v2.ThreadGoalGetResponse> {
-    return this.codex.request<v2.ThreadGoalGetResponse>('thread/goal/get', {
+    return this.ompService.request<v2.ThreadGoalGetResponse>('thread/goal/get', {
       threadId,
     });
   }
@@ -140,7 +140,7 @@ export class ThreadCommandsService {
     params: v2.ThreadGoalSetParams,
   ): Promise<v2.ThreadGoalSetResponse> {
     this.deletionRegistry.assertMutable(params.threadId);
-    return this.codex.request<v2.ThreadGoalSetResponse>(
+    return this.ompService.request<v2.ThreadGoalSetResponse>(
       'thread/goal/set',
       params,
     );
@@ -149,7 +149,7 @@ export class ThreadCommandsService {
   /** Clears the persisted goal for a thread. */
   async clearGoal(threadId: string): Promise<v2.ThreadGoalClearResponse> {
     this.deletionRegistry.assertMutable(threadId);
-    return this.codex.request<v2.ThreadGoalClearResponse>('thread/goal/clear', {
+    return this.ompService.request<v2.ThreadGoalClearResponse>('thread/goal/clear', {
       threadId,
     });
   }
@@ -165,7 +165,7 @@ export class ThreadCommandsService {
     target: v2.ReviewTarget,
   ): Promise<v2.ReviewStartResponse> {
     this.deletionRegistry.assertMutable(threadId);
-    return this.codex.request<v2.ReviewStartResponse>('review/start', {
+    return this.ompService.request<v2.ReviewStartResponse>('review/start', {
       threadId,
       target,
       delivery: 'inline',

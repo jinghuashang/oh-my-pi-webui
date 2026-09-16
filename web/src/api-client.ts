@@ -10,8 +10,8 @@ const clientAny = client as Record<string, unknown>;
 
 /** Call once at app startup. Idempotent — safe to call during HMR. */
 export function configureApiClient() {
-  if (clientAny.__codexWebuiConfigured) return;
-  clientAny.__codexWebuiConfigured = true;
+  if (clientAny.__ompWebuiConfigured) return;
+  clientAny.__ompWebuiConfigured = true;
 
   client.setConfig({ baseUrl: BASE_PATH });
 

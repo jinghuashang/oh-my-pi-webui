@@ -7,7 +7,7 @@
  * migration is a single edit here, and it stays fully typed rather than being
  * silenced with a cast that would also hide genuinely wrong fixtures.
  */
-import type { v2 } from '../codex/codex-schema';
+import type { v2 } from '../omp/omp-schema';
 
 /**
  * Builds a complete thread with sensible idle defaults.

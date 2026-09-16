@@ -1,13 +1,13 @@
 /** Reattaches backend-observed execution after child replacement; never replays user input. */
 import { Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import {
-  CodexProcessManager,
+  OmpProcessManager,
   type CodexLifecycleEvent,
-} from '../codex/codex-process-manager.service';
+} from '../omp/omp-process-manager.service';
 import { ThreadExecutionInventoryService } from './thread-execution-inventory.service';
 import { ThreadsGateway } from './threads.gateway';
 import { ThreadsService } from './threads.service';
-import { CatalogAdmissionService } from '../codex/catalog/catalog-admission.service';
+import { CatalogAdmissionService } from '../omp/catalog/catalog-admission.service';
 
 @Injectable()
 export class AutoResumeService implements OnModuleInit {
@@ -15,7 +15,7 @@ export class AutoResumeService implements OnModuleInit {
   private handledGeneration = 0;
 
   constructor(
-    private readonly codexManager: CodexProcessManager,
+    private readonly codexManager: OmpProcessManager,
     private readonly inventory: ThreadExecutionInventoryService,
     private readonly threadsService: ThreadsService,
     private readonly gateway: ThreadsGateway,

@@ -1,4 +1,4 @@
-import { CodexService } from '../codex/codex.service';
+import { OmpService } from '../omp/omp-engine.service';
 import { ErrorCode } from '../common/error-codes';
 import { ThreadDeletionRegistryService } from '../thread-deletion/thread-deletion-registry.service';
 import { ThreadCommandsService } from './thread-commands.service';
@@ -25,7 +25,7 @@ describe('ThreadCommandsService', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     service = new ThreadCommandsService(
-      codex as unknown as CodexService,
+      codex as unknown as OmpService,
       resumeRegistry as unknown as ThreadResumeRegistryService,
       deletionRegistry as unknown as ThreadDeletionRegistryService,
       settingsObserver as unknown as ThreadSettingsObserverService,

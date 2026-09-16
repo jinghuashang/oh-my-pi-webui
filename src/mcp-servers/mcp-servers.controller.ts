@@ -29,7 +29,7 @@ import {
   McpServerOauthLoginResponseDto,
   McpServersListResponseDto,
 } from './dto/mcp-servers.dto';
-import type { v2 } from '../codex/codex-schema';
+import type { v2 } from '../omp/omp-schema';
 
 @ApiTags('mcp-servers')
 @ApiBearerAuth()

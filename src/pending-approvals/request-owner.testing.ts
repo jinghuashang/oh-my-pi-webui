@@ -1,16 +1,16 @@
 /** Real ingress ownership around a mocked child transport for backend integration tests. */
 import { EventEmitter } from 'node:events';
 import type {
-  CodexProcessManager,
+  OmpProcessManager,
   CodexLifecycleEvent,
-} from '../codex/codex-process-manager.service';
-import type { ServerNotification } from '../codex/codex-schema';
+} from '../omp/omp-process-manager.service';
+import type { ServerNotification } from '../omp/omp-schema';
 import {
   ServerRequestOwner,
   type IncomingServerRequest,
   type OwnedServerRequest,
   type ServerRequestHandler,
-} from '../codex/server-request-owner';
+} from '../omp/server-request-owner';
 
 /** Supplies real admission, retirement, and connection replacement without a model process. */
 export function createRequestManager() {
@@ -47,7 +47,7 @@ export function createRequestManager() {
       events.on('lifecycle', listener);
       return () => events.off('lifecycle', listener);
     },
-  } as unknown as CodexProcessManager;
+  } as unknown as OmpProcessManager;
   return {
     manager,
     wire,

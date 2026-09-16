@@ -12,18 +12,18 @@ import {
 } from '@/components/ui/sheet';
 import {
   appsListAppsQueryKey,
-  codexConfigReadConfigOptions,
-  codexConfigUpdateConfigMutation,
-  codexStatusGetStatusOptions,
+  ompEngineConfigReadConfigOptions,
+  ompEngineConfigUpdateConfigMutation,
+  ompStatusGetStatusOptions,
 } from '@/generated/api/@tanstack/react-query.gen';
 import type { ConfigEditDto } from '@/generated/api/types.gen';
 import {
   ApprovalReviewerControl,
   ConfigBooleanOverrideControl,
   ConfigSelectOverrideControl,
-} from '@/components/codex-config/config-override-controls';
-import type { ConfigRecord } from '@/lib/codex-config';
-import { isUserConfigOrigin } from '@/lib/codex-config';
+} from '@/components/omp-config/config-override-controls';
+import type { ConfigRecord } from '@/lib/omp-config';
+import { isUserConfigOrigin } from '@/lib/omp-config';
 import { getApiErrorMessage } from '@/lib/api-error';
 import { showSnackbar } from '@/stores/snackbar-store';
 import { PolicySection, WarningBanner } from './app-detail-layout';
@@ -51,18 +51,18 @@ export function AppDefaultsSheet({ open, onClose }: AppDefaultsSheetProps) {
   const { t } = useTranslation();
   const queryClient = useQueryClient();
   const configQuery = useQuery({
-    ...codexConfigReadConfigOptions(),
+    ...ompEngineConfigReadConfigOptions(),
     enabled: open,
   });
   const updateMutation = useMutation({
-    ...codexConfigUpdateConfigMutation(),
+    ...ompEngineConfigUpdateConfigMutation(),
     onSuccess: (data) => {
-      queryClient.setQueryData(codexConfigReadConfigOptions().queryKey, data);
+      queryClient.setQueryData(ompEngineConfigReadConfigOptions().queryKey, data);
       void queryClient.invalidateQueries({
-        queryKey: codexConfigReadConfigOptions().queryKey,
+        queryKey: ompEngineConfigReadConfigOptions().queryKey,
       });
       void queryClient.invalidateQueries({
-        queryKey: codexStatusGetStatusOptions().queryKey,
+        queryKey: ompStatusGetStatusOptions().queryKey,
       });
       void queryClient.invalidateQueries({ queryKey: appsListAppsQueryKey() });
       void queryClient.invalidateQueries({
@@ -128,7 +128,7 @@ export function AppDefaultsSheet({ open, onClose }: AppDefaultsSheetProps) {
           </div>
         ) : configQuery.isError || !config ? (
           <div className="px-4 pt-2">
-            <WarningBanner message={t('Failed to load Codex config.')} />
+            <WarningBanner message={t('Failed to load OMP config.')} />
           </div>
         ) : (
           <ScrollArea className="h-[calc(var(--app-vh,100dvh)_-_8rem)] px-4 pr-2">

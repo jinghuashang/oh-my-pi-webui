@@ -4,7 +4,7 @@ import { PendingApprovalsService } from './pending-approvals.service';
 import { permissionApprovalFixture } from './pending-approvals.testing';
 import { createRequestManager } from './request-owner.testing';
 import { ThreadDeletionRegistryService } from '../thread-deletion/thread-deletion-registry.service';
-import { CatalogAdmissionService } from '../codex/catalog/catalog-admission.service';
+import { CatalogAdmissionService } from '../omp/catalog/catalog-admission.service';
 
 it('round-trips permission entries and network-only context without inventing grants', () => {
   const database = createTestDatabase();

@@ -12,10 +12,10 @@ import { Switch } from '@/components/ui/switch';
 import {
   appsListAppsOptions,
   appsListAppsQueryKey,
-  codexConfigReadConfigOptions,
-  codexStatusGetStatusOptions,
+  ompEngineConfigReadConfigOptions,
+  ompStatusGetStatusOptions,
 } from '@/generated/api/@tanstack/react-query.gen';
-import { codexConfigUpdateConfig } from '@/generated/api/sdk.gen';
+import { ompEngineConfigUpdateConfig } from '@/generated/api/sdk.gen';
 import type { AppInfoDto } from '@/generated/api/types.gen';
 import { showSnackbar } from '@/stores/snackbar-store';
 import { getApiErrorMessage } from '@/lib/api-error';
@@ -44,10 +44,10 @@ export function AppsTab() {
   const invalidateAppsConfig = () => {
     void queryClient.invalidateQueries({ queryKey: appsListAppsQueryKey() });
     void queryClient.invalidateQueries({
-      queryKey: codexConfigReadConfigOptions().queryKey,
+      queryKey: ompEngineConfigReadConfigOptions().queryKey,
     });
     void queryClient.invalidateQueries({
-      queryKey: codexStatusGetStatusOptions().queryKey,
+      queryKey: ompStatusGetStatusOptions().queryKey,
     });
     void queryClient.invalidateQueries({
       predicate: (query) => queryHasId(query, 'appsReadApps'),
@@ -164,7 +164,7 @@ function AppRow({
   const handleToggle = async (enabled: boolean) => {
     setToggling(true);
     try {
-      await codexConfigUpdateConfig({
+      await ompEngineConfigUpdateConfig({
         body: {
           edits: [{ keyPath: `apps.${app.id}.enabled`, value: enabled }],
         },

@@ -19,8 +19,8 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import type { v2 } from '../codex/codex-schema';
-import { CODEX_V2_EXTRA_MODELS } from '../codex/dto/v2';
+import type { v2 } from '../omp/omp-schema';
+import { CODEX_V2_EXTRA_MODELS } from '../omp/dto/v2';
 import { BusinessException } from '../common/business.exception';
 import { ApiErrorResponseDto } from '../common/dto/api-responses.dto';
 import { ErrorCode } from '../common/error-codes';

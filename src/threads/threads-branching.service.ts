@@ -1,7 +1,7 @@
 /** Implements tracked message-level branching on top of thread/fork. */
 import { HttpStatus, Injectable, Logger } from '@nestjs/common';
-import { CodexService } from '../codex/codex.service';
-import type { v2 } from '../codex/codex-schema';
+import { OmpService } from '../omp/omp-engine.service';
+import type { v2 } from '../omp/omp-schema';
 import { BusinessException } from '../common/business.exception';
 import { ErrorCode } from '../common/error-codes';
 import { ConversationBranchesService } from '../conversation-branches/conversation-branches.service';
@@ -53,7 +53,7 @@ export class ThreadsBranchingService {
   private readonly logger = new Logger(ThreadsBranchingService.name);
 
   constructor(
-    private readonly codex: CodexService,
+    private readonly ompService: OmpService,
     private readonly resumeRegistry: ThreadResumeRegistryService,
     private readonly branches: ConversationBranchesService,
     private readonly history: ThreadHistoryService,
@@ -245,7 +245,7 @@ export class ThreadsBranchingService {
       beforeTurnId: editedTurnId,
       excludeTurns: true,
     };
-    return this.codex.request<v2.ThreadForkResponse>('thread/fork', params);
+    return this.ompService.request<v2.ThreadForkResponse>('thread/fork', params);
   }
 
   private readEditedTurnId(body: CreateMessageBranchDto): string {
@@ -292,9 +292,9 @@ export class ThreadsBranchingService {
   private throwBranchForkError(err: unknown): never {
     if (isThreadServerUnavailableError(err)) {
       throw new BusinessException(
-        ErrorCode.codex.serverUnavailable,
+        ErrorCode.omp.serverUnavailable,
         HttpStatus.SERVICE_UNAVAILABLE,
-        'Codex app-server is not connected',
+        'OMP engine is not connected',
       );
     }
     if (isUnsupportedForkBoundaryFieldError(err)) {
@@ -314,7 +314,7 @@ export class ThreadsBranchingService {
 
   private async deleteUntrackedThread(threadId: string): Promise<Error | null> {
     try {
-      await this.codex.request<v2.ThreadDeleteResponse>('thread/delete', {
+      await this.ompService.request<v2.ThreadDeleteResponse>('thread/delete', {
         threadId,
       });
       this.resumeRegistry.forget(threadId);

@@ -1,8 +1,8 @@
-/** Persists final turn errors from Codex app-server notifications for hydration after refresh. */
+/** Persists final turn errors from OMP engine notifications for hydration after refresh. */
 import { Inject, Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { inArray, sql } from 'drizzle-orm';
-import { CodexProcessManager } from '../codex/codex-process-manager.service';
-import type { ServerNotification, v2 } from '../codex/codex-schema';
+import { OmpProcessManager } from '../omp/omp-process-manager.service';
+import type { ServerNotification, v2 } from '../omp/omp-schema';
 import { ConversationBranchesService } from '../conversation-branches/conversation-branches.service';
 import { selectProvenanceRows } from '../conversation-branches/provenance';
 import { DRIZZLE_DB, type AppDatabase } from '../database/database.constants';
@@ -21,7 +21,7 @@ export class TurnErrorsService implements OnModuleInit {
   private readonly logger = new Logger(TurnErrorsService.name);
 
   constructor(
-    private readonly codexManager: CodexProcessManager,
+    private readonly codexManager: OmpProcessManager,
     private readonly branches: ConversationBranchesService,
     @Inject(DRIZZLE_DB) private readonly db: AppDatabase,
   ) {}

@@ -1,11 +1,11 @@
 /** Typed managed-transport events shared by execution inventory and recovery tests. */
 import { EventEmitter } from 'node:events';
-import type { v2 } from '../codex/codex-schema';
-import type { CodexJsonRpcClientEvents } from '../codex/codex-jsonrpc-client';
+import type { v2 } from '../omp/omp-schema';
+import type { CodexJsonRpcClientEvents } from '../omp/omp-jsonrpc-client';
 import type {
   CodexLifecycleEvent,
-  CodexProcessManager,
-} from '../codex/codex-process-manager.service';
+  OmpProcessManager,
+} from '../omp/omp-process-manager.service';
 
 /** Supplies a controllable child generation without involving any browser registry. */
 export function managedTransportFixture() {
@@ -33,7 +33,7 @@ export function managedTransportFixture() {
       request,
       getObservationSequence: () => observationSequence,
     }),
-  } as unknown as CodexProcessManager;
+  } as unknown as OmpProcessManager;
   return {
     events,
     manager,

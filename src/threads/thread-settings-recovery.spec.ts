@@ -1,5 +1,5 @@
 /** Tests the real observer/registry interaction across asynchronous open boundaries. */
-import type { v2 } from '../codex/codex-schema';
+import type { v2 } from '../omp/omp-schema';
 import { makeThreadFixture } from './threads.testing';
 import { ThreadResumeRegistryService } from './thread-resume-registry.service';
 import { ThreadSettingsObserverService } from './thread-settings-observer.service';

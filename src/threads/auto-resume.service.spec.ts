@@ -3,7 +3,7 @@ import { AutoResumeService } from './auto-resume.service';
 import { ThreadExecutionInventoryService } from './thread-execution-inventory.service';
 import { Server } from 'socket.io';
 import { makeThreadFixture } from './threads.testing';
-import { CatalogAdmissionService } from '../codex/catalog/catalog-admission.service';
+import { CatalogAdmissionService } from '../omp/catalog/catalog-admission.service';
 import type { ThreadsService } from './threads.service';
 import type { ThreadsGateway } from './threads.gateway';
 import {

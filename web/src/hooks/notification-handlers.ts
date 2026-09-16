@@ -8,7 +8,7 @@ import {
   accountReadAccountQueryKey,
   accountReadRateLimitsQueryKey,
   appsListAppsQueryKey,
-  codexStatusGetStatusQueryKey,
+  ompStatusGetStatusQueryKey,
   mcpServersListServersQueryKey,
   threadCommandsReadCollaborationModeQueryKey,
   threadCommandsReadGoalQueryKey,
@@ -26,7 +26,7 @@ import { useMcpStore } from '@/stores/mcp-store';
 import { useModelStore, type ReasoningEffort } from '@/stores/model-store';
 import { showSnackbar } from '@/stores/snackbar-store';
 import type { AuthMode, PlanType } from '@/types/account';
-import type { ThreadTokenUsage, ThreadStatusType } from '@/types/codex-notifications';
+import type { ThreadTokenUsage, ThreadStatusType } from '@/types/omp-notifications';
 import type { McpServerStartupState } from '@/types/mcp';
 import type { TurnItem, TurnPlanState, TurnPlanStepStatus } from '@/types/timeline';
 import type { ApprovalRequest } from '@/types/approval';
@@ -146,7 +146,7 @@ function debouncedInvalidateMcpServers(queryClient: QueryClient): void {
 function invalidateAccountQueries(queryClient: QueryClient): void {
   void queryClient.invalidateQueries({ queryKey: accountReadAccountQueryKey() });
   void queryClient.invalidateQueries({ queryKey: accountReadRateLimitsQueryKey() });
-  void queryClient.invalidateQueries({ queryKey: codexStatusGetStatusQueryKey() });
+  void queryClient.invalidateQueries({ queryKey: ompStatusGetStatusQueryKey() });
 }
 
 function isPlanStepStatus(value: unknown): value is TurnPlanStepStatus {

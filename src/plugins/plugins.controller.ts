@@ -12,7 +12,7 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import type { v2 } from '../codex/codex-schema';
+import type { v2 } from '../omp/omp-schema';
 import { ApiErrorResponseDto } from '../common/dto/api-responses.dto';
 import {
   PluginInstallRequestDto,

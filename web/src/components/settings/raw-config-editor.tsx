@@ -16,8 +16,8 @@ import { useThemeStore } from '@/stores/theme-store';
 import { showSnackbar } from '@/stores/snackbar-store';
 import { getApiErrorMessage } from '@/lib/api-error';
 import {
-  codexConfigReadRawConfigOptions,
-  codexConfigUpdateRawConfigMutation,
+  ompEngineConfigReadRawConfigOptions,
+  ompEngineConfigUpdateRawConfigMutation,
 } from '@/generated/api/@tanstack/react-query.gen';
 import type { CatalogWarningDto } from '@/generated/api';
 
@@ -33,7 +33,7 @@ export function RawConfigEditor({ onSaved }: { onSaved?: () => void }) {
   const monacoRef = useRef<Parameters<OnMount>[0] | null>(null);
 
   const rawQuery = useQuery({
-    ...codexConfigReadRawConfigOptions(),
+    ...ompEngineConfigReadRawConfigOptions(),
     enabled: false,
   });
 
@@ -53,7 +53,7 @@ export function RawConfigEditor({ onSaved }: { onSaved?: () => void }) {
   }, [expanded, rawQuery]);
 
   const mutation = useMutation({
-    ...codexConfigUpdateRawConfigMutation(),
+    ...ompEngineConfigUpdateRawConfigMutation(),
     onSuccess: (data, variables) => {
       // The saved text becomes the next precondition; re-reading would race a
       // concurrent edit into the baseline without the user ever seeing it.

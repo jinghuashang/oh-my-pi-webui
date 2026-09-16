@@ -5,9 +5,8 @@ import { dirname, join } from 'node:path';
 
 function resolveDatabaseUrl(): string {
   const explicit = process.env.WEBUI_DB_PATH?.trim();
-  if (explicit) return explicit;
-  const codexHome = process.env.CODEX_HOME?.trim();
-  return join(codexHome || join(homedir(), '.codex'), 'codex-webui.sqlite');
+  const webuiHome = process.env.WEBUI_HOME?.trim();
+  return join(webuiHome || join(homedir(), '.omp'), 'webui.sqlite');
 }
 
 const dbPath = resolveDatabaseUrl();

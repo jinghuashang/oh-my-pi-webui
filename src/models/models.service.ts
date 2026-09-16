@@ -1,16 +1,16 @@
 /**
- * Handles model listing by delegating to Codex app-server.
+ * Handles model listing by delegating to OMP engine.
  */
 import { Injectable } from '@nestjs/common';
-import { CodexService } from '../codex/codex.service';
-import type { v2 } from '../codex/codex-schema';
+import { OmpService } from '../omp/omp-engine.service';
+import type { v2 } from '../omp/omp-schema';
 
 @Injectable()
 export class ModelsService {
-  constructor(private readonly codex: CodexService) {}
+  constructor(private readonly ompService: OmpService) {}
 
   /**
-   * Lists available models from the Codex app-server.
+   * Lists available models from the OMP engine.
    *
    * @param params - Optional pagination and filter parameters
    * @returns Paginated model list
@@ -18,6 +18,6 @@ export class ModelsService {
   async listModels(
     params: v2.ModelListParams = {},
   ): Promise<v2.ModelListResponse> {
-    return this.codex.request<v2.ModelListResponse>('model/list', params);
+    return this.ompService.request<v2.ModelListResponse>('model/list', params);
   }
 }

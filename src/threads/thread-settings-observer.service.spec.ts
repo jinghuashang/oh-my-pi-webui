@@ -1,5 +1,5 @@
-import type { CodexLifecycleEvent } from '../codex/codex-process-manager.service';
-import type { ServerNotification, v2 } from '../codex/codex-schema';
+import type { CodexLifecycleEvent } from '../omp/omp-process-manager.service';
+import type { ServerNotification, v2 } from '../omp/omp-schema';
 import { ThreadSettingsObserverService } from './thread-settings-observer.service';
 
 describe('ThreadSettingsObserverService', () => {

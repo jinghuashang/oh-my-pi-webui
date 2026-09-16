@@ -234,23 +234,30 @@ export const ErrorCode = {
     fileInvalid: 'chat.file_invalid',
   },
 
-  // ── Codex Config ───────────────────────────────────────────────────
+  // ── OMP Config & Engine ─────────────────────────────────────────────
+  omp: {
+    rpcError: 'omp.rpc_error',
+    serverUnavailable: 'omp.server_unavailable',
+    rawContentInvalid: 'omp.raw_content_invalid',
+    editsNotArray: 'omp.edits_not_array',
+    editInvalid: 'omp.edit_invalid',
+    keyUnsupported: 'omp.key_unsupported',
+    valueInvalid: 'omp.value_invalid',
+    valueInvalidJson: 'omp.value_invalid_json',
+    writeFailed: 'omp.write_failed',
+    invalidFeedback: 'omp.invalid_feedback',
+  },
   codex: {
-    rpcError: 'codex.rpc_error',
-    serverUnavailable: 'codex.server_unavailable',
-    rawContentInvalid: 'codex.raw_content_invalid',
-    editsNotArray: 'codex.edits_not_array',
-    /** Params: { index } */
-    editInvalid: 'codex.edit_invalid',
-    /** Params: { key } */
-    keyUnsupported: 'codex.key_unsupported',
-    /** Params: { key } */
-    valueInvalid: 'codex.value_invalid',
-    /** Params: { key } */
-    valueInvalidJson: 'codex.value_invalid_json',
-    /** Codex config write failed. */
-    writeFailed: 'codex.write_failed',
-    invalidFeedback: 'codex.invalid_feedback',
+    rpcError: 'omp.rpc_error',
+    serverUnavailable: 'omp.server_unavailable',
+    rawContentInvalid: 'omp.raw_content_invalid',
+    editsNotArray: 'omp.edits_not_array',
+    editInvalid: 'omp.edit_invalid',
+    keyUnsupported: 'omp.key_unsupported',
+    valueInvalid: 'omp.value_invalid',
+    valueInvalidJson: 'omp.value_invalid_json',
+    writeFailed: 'omp.write_failed',
+    invalidFeedback: 'omp.invalid_feedback',
   },
 
   // ── Pending Approvals ──────────────────────────────────────────────

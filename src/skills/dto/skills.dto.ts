@@ -1,7 +1,7 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
-import { jsonValueSchema } from '../../codex/dto/v2/openapi.schema';
+import { jsonValueSchema } from '../../omp/dto/v2/openapi.schema';
 
-/** Raw skills/list response passthrough from Codex app-server. */
+/** Raw skills/list response passthrough from OMP engine. */
 export class SkillsListResponseDto {
   @ApiProperty({
     type: 'array',

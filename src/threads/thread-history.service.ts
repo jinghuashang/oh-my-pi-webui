@@ -1,7 +1,7 @@
 /** Experimental paged thread-history access isolated from stable Codex types. */
 import { Injectable, Logger } from '@nestjs/common';
-import type { v2 } from '../codex/codex-schema';
-import { CodexService } from '../codex/codex.service';
+import type { v2 } from '../omp/omp-schema';
+import { OmpService } from '../omp/omp-engine.service';
 import { isUnmaterializedTurnsListError } from './thread-errors';
 import {
   readTurnItems,
@@ -105,7 +105,7 @@ const TURN_COUNT_MAX_PAGES = 50;
 export class ThreadHistoryService {
   private readonly logger = new Logger(ThreadHistoryService.name);
 
-  constructor(private readonly codex: CodexService) {}
+  constructor(private readonly ompService: OmpService) {}
 
   /**
    * Acquires writer ownership without materializing the entire history.
@@ -126,7 +126,7 @@ export class ThreadHistoryService {
         itemsView: params.itemsView,
       },
     };
-    const response = await this.codex.request<MetadataFirstResumeResponse>(
+    const response = await this.ompService.request<MetadataFirstResumeResponse>(
       'thread/resume',
       request,
     );
@@ -162,7 +162,7 @@ export class ThreadHistoryService {
 
   /** Reads one metadata-only thread snapshot without acquiring writer ownership. */
   async readThreadMetadata(threadId: string): Promise<v2.ThreadReadResponse> {
-    const response = await this.codex.request<v2.ThreadReadResponse>(
+    const response = await this.ompService.request<v2.ThreadReadResponse>(
       'thread/read',
       {
         threadId,
@@ -176,7 +176,7 @@ export class ThreadHistoryService {
   /** Pages turn history without resuming the thread. */
   async listTurns(params: TurnsListParams): Promise<TurnsPage> {
     try {
-      const response = await this.codex.request<TurnsPage>(
+      const response = await this.ompService.request<TurnsPage>(
         'thread/turns/list',
         {
           threadId: params.threadId,
@@ -204,7 +204,7 @@ export class ThreadHistoryService {
     turnId: string,
     cursor?: string,
   ): Promise<TurnItemsRead> {
-    const result = await readTurnItems(this.codex, threadId, turnId, cursor);
+    const result = await readTurnItems(this.ompService, threadId, turnId, cursor);
     if (!result.complete) {
       this.logger.warn(
         `Incomplete thread/items/list for thread=${threadId} turn=${turnId}: ${result.incompleteReason}`,
@@ -236,7 +236,7 @@ export class ThreadHistoryService {
 
     for (let page = 0; page < TURN_ITEMS_MAX_PAGES; page += 1) {
       const response = await requestTurnItemsPage(
-        this.codex,
+        this.ompService,
         threadId,
         turnId,
         cursor,

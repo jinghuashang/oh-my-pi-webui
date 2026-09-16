@@ -153,7 +153,7 @@ function TokenBreakdown({
   usage,
   t,
 }: {
-  usage: import('@/types/codex-notifications').ThreadTokenUsage;
+  usage: import('@/types/omp-notifications').ThreadTokenUsage;
   t: (key: string) => string;
 }) {
   const { last, total, modelContextWindow } = usage;
@@ -184,7 +184,7 @@ function TokenBreakdown({
       {hasWindow && (
         <p className="max-w-[15rem] pt-1 text-[10px] leading-snug text-muted-foreground">
           {t(
-            'Effective window reported by Codex. It can be smaller than model_context_window in config.toml, which is capped by the model.',
+            'Effective window reported by OMP. It can be smaller than model_context_window in config.toml, which is capped by the model.',
           )}
         </p>
       )}

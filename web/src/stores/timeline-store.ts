@@ -25,7 +25,7 @@ import type {
 import type {
   ThreadTokenUsage,
   ThreadStatusType,
-} from '../types/codex-notifications';
+} from '../types/omp-notifications';
 import {
   normalizeThreadItem,
   type ThreadItemNormalization,

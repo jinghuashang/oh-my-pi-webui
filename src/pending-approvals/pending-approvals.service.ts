@@ -2,15 +2,15 @@
 import { Inject, Injectable, Logger, OnModuleInit } from '@nestjs/common';
 import { Subject } from 'rxjs';
 import { and, eq, inArray } from 'drizzle-orm';
-import { CatalogAdmissionService } from '../codex/catalog/catalog-admission.service';
+import { CatalogAdmissionService } from '../omp/catalog/catalog-admission.service';
 import { BusinessException } from '../common/business.exception';
 import { ErrorCode } from '../common/error-codes';
-import { CodexProcessManager } from '../codex/codex-process-manager.service';
+import { OmpProcessManager } from '../omp/omp-process-manager.service';
 import type {
   OwnedServerRequest,
   ServerRequestRetirement,
-} from '../codex/server-request-owner';
-import type { ServerNotification } from '../codex/codex-schema';
+} from '../omp/server-request-owner';
+import type { ServerNotification } from '../omp/omp-schema';
 import { DRIZZLE_DB, type AppDatabase } from '../database/database.constants';
 import {
   pendingServerRequests,
@@ -53,7 +53,7 @@ export class PendingApprovalsService implements OnModuleInit {
 
   constructor(
     @Inject(DRIZZLE_DB) private readonly db: AppDatabase,
-    private readonly codexManager: CodexProcessManager,
+    private readonly codexManager: OmpProcessManager,
     private readonly deletionRegistry: ThreadDeletionRegistryService,
     private readonly catalogAdmission: CatalogAdmissionService,
   ) {

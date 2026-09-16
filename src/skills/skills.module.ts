@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
-import { CodexModule } from '../codex/codex.module';
+import { OmpEngineModule } from '../omp/omp-engine.module';
 import { SkillsController } from './skills.controller';
 import { SkillsService } from './skills.service';
 
 @Module({
-  imports: [CodexModule],
+  imports: [OmpEngineModule],
   controllers: [SkillsController],
   providers: [SkillsService],
   exports: [SkillsService],

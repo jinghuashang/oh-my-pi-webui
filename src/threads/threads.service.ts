@@ -1,9 +1,9 @@
 /**
- * Handles thread and turn operations by delegating to Codex app-server.
+ * Handles thread and turn operations by delegating to OMP engine.
  */
 import { HttpStatus, Injectable, Logger } from '@nestjs/common';
-import { CodexService } from '../codex/codex.service';
-import type { v2 } from '../codex/codex-schema';
+import { OmpService } from '../omp/omp-engine.service';
+import type { v2 } from '../omp/omp-schema';
 import { BusinessException } from '../common/business.exception';
 import { ErrorCode } from '../common/error-codes';
 import { ConversationBranchesService } from '../conversation-branches/conversation-branches.service';
@@ -63,7 +63,7 @@ export class ThreadsService {
   private readonly logger = new Logger(ThreadsService.name);
 
   constructor(
-    private readonly codex: CodexService,
+    private readonly ompService: OmpService,
     private readonly resumeRegistry: ThreadResumeRegistryService,
     private readonly branches: ConversationBranchesService,
     private readonly branchMutations: ConversationBranchMutationsService,
@@ -87,7 +87,7 @@ export class ThreadsService {
       historyMode: REQUIRED_HISTORY_MODE,
     };
     const settingsGeneration = this.resumeRegistry.getGeneration();
-    const response = await this.codex.request<v2.ThreadStartResponse>(
+    const response = await this.ompService.request<v2.ThreadStartResponse>(
       'thread/start',
       requestParams,
     );
@@ -121,7 +121,7 @@ export class ThreadsService {
   async listThreads(
     params: v2.ThreadListParams,
   ): Promise<v2.ThreadListResponse> {
-    return this.codex.request<v2.ThreadListResponse>('thread/list', params);
+    return this.ompService.request<v2.ThreadListResponse>('thread/list', params);
   }
 
   /** Lists branch-collapsed conversation overview rows for the sidebar. */
@@ -132,7 +132,7 @@ export class ThreadsService {
   }
 
   /**
-   * Lists thread IDs currently loaded in the Codex app-server memory.
+   * Lists thread IDs currently loaded in the OMP engine memory.
    *
    * @param params - Optional pagination cursor and limit
    * @returns Paginated loaded thread IDs
@@ -140,7 +140,7 @@ export class ThreadsService {
   async listLoadedThreads(
     params: v2.ThreadLoadedListParams,
   ): Promise<v2.ThreadLoadedListResponse> {
-    return this.codex.request<v2.ThreadLoadedListResponse>(
+    return this.ompService.request<v2.ThreadLoadedListResponse>(
       'thread/loaded/list',
       params,
     );
@@ -251,7 +251,7 @@ export class ThreadsService {
    */
   async startTurn(params: v2.TurnStartParams): Promise<v2.TurnStartResponse> {
     this.deletionRegistry.assertMutable(params.threadId);
-    const response = await this.codex.request<v2.TurnStartResponse>(
+    const response = await this.ompService.request<v2.TurnStartResponse>(
       'turn/start',
       params,
     );
@@ -271,7 +271,7 @@ export class ThreadsService {
    */
   async steerTurn(params: v2.TurnSteerParams): Promise<v2.TurnSteerResponse> {
     this.deletionRegistry.assertMutable(params.threadId);
-    return this.codex.request<v2.TurnSteerResponse>('turn/steer', params);
+    return this.ompService.request<v2.TurnSteerResponse>('turn/steer', params);
   }
 
   /**
@@ -282,7 +282,7 @@ export class ThreadsService {
    */
   async interruptTurn(threadId: string, turnId: string): Promise<void> {
     this.deletionRegistry.assertMutable(threadId);
-    await this.codex.request('turn/interrupt', { threadId, turnId });
+    await this.ompService.request('turn/interrupt', { threadId, turnId });
   }
 
   /**
@@ -294,7 +294,7 @@ export class ThreadsService {
     this.deletionRegistry.assertMutable(threadId);
     await this.applyToBranchTree(threadId, async (treeThreadId) => {
       this.deletionRegistry.assertMutable(treeThreadId);
-      await this.codex.request<v2.ThreadArchiveResponse>('thread/archive', {
+      await this.ompService.request<v2.ThreadArchiveResponse>('thread/archive', {
         threadId: treeThreadId,
       });
       this.resumeRegistry.forget(treeThreadId);
@@ -312,7 +312,7 @@ export class ThreadsService {
     let requested: v2.ThreadUnarchiveResponse | undefined;
     await this.applyToBranchTree(threadId, async (treeThreadId) => {
       this.deletionRegistry.assertMutable(treeThreadId);
-      const response = await this.codex.request<v2.ThreadUnarchiveResponse>(
+      const response = await this.ompService.request<v2.ThreadUnarchiveResponse>(
         'thread/unarchive',
         { threadId: treeThreadId },
       );
@@ -358,7 +358,7 @@ export class ThreadsService {
         { threadId },
       );
     }
-    await this.codex.request<v2.ThreadCompactStartResponse>(
+    await this.ompService.request<v2.ThreadCompactStartResponse>(
       'thread/compact/start',
       { threadId },
     );
@@ -400,7 +400,7 @@ export class ThreadsService {
       ...(options.carryGoal && { deferGoalContinuation: true }),
     };
     const settingsGeneration = this.resumeRegistry.getGeneration();
-    const response = await this.codex.request<v2.ThreadForkResponse>(
+    const response = await this.ompService.request<v2.ThreadForkResponse>(
       'thread/fork',
       params,
     );
@@ -516,7 +516,7 @@ export class ThreadsService {
    */
   async setThreadName(threadId: string, name: string): Promise<void> {
     this.deletionRegistry.assertMutable(threadId);
-    await this.codex.request<v2.ThreadSetNameResponse>('thread/name/set', {
+    await this.ompService.request<v2.ThreadSetNameResponse>('thread/name/set', {
       threadId,
       name,
     });
@@ -661,7 +661,7 @@ export class ThreadsService {
     const data: v2.Thread[] = [];
     let cursor: string | null | undefined;
     do {
-      const response = await this.codex.request<v2.ThreadListResponse>(
+      const response = await this.ompService.request<v2.ThreadListResponse>(
         'thread/list',
         {
           cursor,
@@ -678,7 +678,7 @@ export class ThreadsService {
 
   private async deleteUntrackedThread(threadId: string): Promise<Error | null> {
     try {
-      await this.codex.request<v2.ThreadDeleteResponse>('thread/delete', {
+      await this.ompService.request<v2.ThreadDeleteResponse>('thread/delete', {
         threadId,
       });
       this.resumeRegistry.forget(threadId);

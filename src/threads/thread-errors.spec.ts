@@ -1,4 +1,4 @@
-import { CodexRpcError, CodexUnavailableError } from '../codex/codex-errors';
+import { OmpRpcError, OmpUnavailableError } from '../omp/omp-errors';
 import {
   isDescendantRejectedError,
   isEmptyThreadItemsListRefusal,
@@ -13,8 +13,8 @@ function rpc(
   code: number,
   message: string,
   method = 'thread/read',
-): CodexRpcError {
-  return new CodexRpcError({ code, message }, { method });
+): OmpRpcError {
+  return new OmpRpcError({ code, message }, { method });
 }
 
 describe('thread-errors', () => {
@@ -121,7 +121,7 @@ describe('thread-errors', () => {
 
   describe('isThreadServerUnavailableError', () => {
     it('matches only the transport-level error', () => {
-      expect(isThreadServerUnavailableError(new CodexUnavailableError())).toBe(
+      expect(isThreadServerUnavailableError(new OmpUnavailableError())).toBe(
         true,
       );
       expect(isThreadServerUnavailableError(rpc(-32600, 'anything'))).toBe(

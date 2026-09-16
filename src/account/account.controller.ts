@@ -1,4 +1,4 @@
-/** REST controller for Codex account state, login, logout, and quota reads. */
+/** REST controller for OMP account state, login, logout, and quota reads. */
 import {
   Body,
   Controller,
@@ -26,7 +26,7 @@ import {
   LoginAccountResponseDto,
   AccountRateLimitsResponseDto,
 } from './dto/account.dto';
-import type { v2 } from '../codex/codex-schema';
+import type { v2 } from '../omp/omp-schema';
 
 @ApiTags('account')
 @ApiBearerAuth()
@@ -38,16 +38,16 @@ export class AccountController {
 
   /** Returns account/read plus safe provider metadata for custom API proxy mode. */
   @Get()
-  @ApiOperation({ summary: 'Read Codex account state and provider metadata' })
+  @ApiOperation({ summary: 'Read OMP account state and provider metadata' })
   @ApiOkResponse({ type: AccountReadResponseDto })
   readAccount(): Promise<AccountReadResponse> {
     return this.accountService.readAccount();
   }
 
-  /** Starts a Codex account login flow. */
+  /** Starts a OMP account login flow. */
   @Post('login')
   @HttpCode(HttpStatus.OK)
-  @ApiOperation({ summary: 'Start Codex account login' })
+  @ApiOperation({ summary: 'Start OMP account login' })
   @ApiBody({ type: LoginAccountDto })
   @ApiOkResponse({ type: LoginAccountResponseDto })
   login(@Body() body: LoginAccountDto): Promise<v2.LoginAccountResponse> {
@@ -57,17 +57,17 @@ export class AccountController {
   /** Cancels a pending ChatGPT browser/device-code login flow. */
   @Post('login/cancel')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiOperation({ summary: 'Cancel a pending Codex account login' })
+  @ApiOperation({ summary: 'Cancel a pending OMP account login' })
   @ApiBody({ type: CancelLoginAccountDto })
   @ApiNoContentResponse()
   cancelLogin(@Body() body: CancelLoginAccountDto | undefined): Promise<void> {
     return this.accountService.cancelLogin(body?.loginId);
   }
 
-  /** Logs out the Codex account tracked by app-server. */
+  /** Logs out the OMP account tracked by app-server. */
   @Post('logout')
   @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiOperation({ summary: 'Logout Codex account' })
+  @ApiOperation({ summary: 'Logout OMP account' })
   @ApiNoContentResponse()
   logout(): Promise<void> {
     return this.accountService.logout();
@@ -75,7 +75,7 @@ export class AccountController {
 
   /** Reads ChatGPT rate-limit and credit snapshots. */
   @Get('rate-limits')
-  @ApiOperation({ summary: 'Read Codex account rate limits' })
+  @ApiOperation({ summary: 'Read OMP account rate limits' })
   @ApiOkResponse({ type: AccountRateLimitsResponseDto })
   readRateLimits(): Promise<v2.GetAccountRateLimitsResponse> {
     return this.accountService.readRateLimits();

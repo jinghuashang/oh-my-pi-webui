@@ -1,5 +1,5 @@
 /** Pure projections for app-server turn errors at persistence and browser boundaries. */
-import type { ServerNotification, v2 } from '../codex/codex-schema';
+import type { ServerNotification, v2 } from '../omp/omp-schema';
 
 /** Turn-error fields that are safe to retain in the local database. */
 export interface PersistableTurnError {

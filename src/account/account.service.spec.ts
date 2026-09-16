@@ -1,8 +1,8 @@
 /** Unit tests for AccountService: account read, login flows, logout, rate limits. */
 import { Test, type TestingModule } from '@nestjs/testing';
 import { BusinessException } from '../common/business.exception';
-import { CodexStatusService } from '../codex/codex-status.service';
-import { CodexService } from '../codex/codex.service';
+import { OmpStatusService } from '../omp/omp-status.service';
+import { OmpService } from '../omp/omp-engine.service';
 import { AccountService } from './account.service';
 
 describe('AccountService', () => {
@@ -29,8 +29,8 @@ describe('AccountService', () => {
     moduleRef = await Test.createTestingModule({
       providers: [
         AccountService,
-        { provide: CodexService, useValue: codexService },
-        { provide: CodexStatusService, useValue: codexStatusService },
+        { provide: OmpService, useValue: codexService },
+        { provide: OmpStatusService, useValue: codexStatusService },
       ],
     }).compile();
     service = moduleRef.get(AccountService);

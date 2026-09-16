@@ -95,7 +95,7 @@ export function CatalogBlockerList({
         <div className="space-y-0.5">
           <p>
             {t(
-              'Covers this Codex process and the work this server started. Another client using the same Codex home is not visible here.',
+              'Covers this OMP process and the work this server started. Another client using the same Codex home is not visible here.',
             )}
           </p>
           {data.limitations.map((limitation, index) => (

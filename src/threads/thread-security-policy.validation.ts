@@ -1,6 +1,6 @@
 /** Strict validation for the small policy patch accepted by this REST boundary. */
 import { isAbsolute } from 'node:path';
-import type { v2 } from '../codex/codex-schema';
+import type { v2 } from '../omp/omp-schema';
 import { BusinessException } from '../common/business.exception';
 import { ErrorCode } from '../common/error-codes';
 import type { PatchThreadSecurityPolicyDto } from './dto/thread-security-policy.dto';

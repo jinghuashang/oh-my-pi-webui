@@ -11,8 +11,8 @@ import {
   OnModuleInit,
 } from '@nestjs/common';
 import { inArray } from 'drizzle-orm';
-import { CodexProcessManager } from '../codex/codex-process-manager.service';
-import type { ServerNotification } from '../codex/codex-schema';
+import { OmpProcessManager } from '../omp/omp-process-manager.service';
+import type { ServerNotification } from '../omp/omp-schema';
 import { ConversationBranchesService } from '../conversation-branches/conversation-branches.service';
 import { selectProvenanceRows } from '../conversation-branches/provenance';
 import { DRIZZLE_DB, type AppDatabase } from '../database/database.constants';
@@ -35,7 +35,7 @@ export class TurnDiffService implements OnModuleInit, OnModuleDestroy {
   >();
 
   constructor(
-    private readonly codexManager: CodexProcessManager,
+    private readonly codexManager: OmpProcessManager,
     private readonly branches: ConversationBranchesService,
     @Inject(DRIZZLE_DB) private readonly db: AppDatabase,
   ) {}

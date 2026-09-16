@@ -13,7 +13,7 @@ import { ArchiveModule } from './archive/archive.module';
 import { AuthModule } from './auth/auth.module';
 import { GitModule } from './git/git.module';
 import { ChatModule } from './chat/chat.module';
-import { CodexModule } from './codex/codex.module';
+import { OmpEngineModule } from './omp/omp-engine.module';
 import { ConversationBranchesModule } from './conversation-branches/conversation-branches.module';
 import { DatabaseModule } from './database/database.module';
 import { FilesModule } from './files/files.module';
@@ -117,7 +117,7 @@ const PINO_REDACT = {
     ArchiveModule,
     ChatModule,
     DatabaseModule,
-    CodexModule,
+    OmpEngineModule,
     ConversationBranchesModule,
     AccountModule,
     AppsModule,

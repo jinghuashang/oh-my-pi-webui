@@ -1,4 +1,4 @@
-import type { v2 } from '../codex/codex-schema';
+import type { v2 } from '../omp/omp-schema';
 import { ThreadSecurityPolicyController } from './thread-security-policy.controller';
 
 describe('ThreadSecurityPolicyController', () => {

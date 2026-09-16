@@ -20,7 +20,7 @@ import {
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import {
-  codexFeedbackUploadFeedbackMutation,
+  ompFeedbackUploadFeedbackMutation,
   threadCommandsReadGoalQueryKey,
   threadCommandsSetGoalMutation,
   threadCommandsStartReviewMutation,
@@ -100,7 +100,7 @@ function GoalDialog({ open, threadId, onClose, onError }: DialogProps) {
           <DialogTitle>{t('Set a goal')}</DialogTitle>
           <DialogDescription>
             {t(
-              'Codex keeps working toward this objective across turns until it finishes, pauses, or needs input.',
+              'OMP keeps working toward this objective across turns until it finishes, pauses, or needs input.',
             )}
           </DialogDescription>
         </DialogHeader>
@@ -151,7 +151,7 @@ const REVIEW_KINDS: { kind: ReviewKind; label: string; hint?: string }[] = [
   { kind: 'uncommittedChanges', label: 'Uncommitted changes' },
   { kind: 'baseBranch', label: 'Against a base branch', hint: 'Branch name' },
   { kind: 'commit', label: 'A specific commit', hint: 'Commit SHA' },
-  { kind: 'custom', label: 'Custom instructions', hint: 'What should Codex look for?' },
+  { kind: 'custom', label: 'Custom instructions', hint: 'What should OMP look for?' },
 ];
 
 function ReviewDialog({ open, threadId, onClose, onError }: DialogProps) {
@@ -193,7 +193,7 @@ function ReviewDialog({ open, threadId, onClose, onError }: DialogProps) {
         <DialogHeader>
           <DialogTitle>{t('Start a code review')}</DialogTitle>
           <DialogDescription>
-            {t('Codex reviews the checked-out project and reports findings in this thread.')}
+            {t('OMP reviews the checked-out project and reports findings in this thread.')}
           </DialogDescription>
         </DialogHeader>
 
@@ -253,7 +253,7 @@ function FeedbackDialog({ open, threadId, onClose, onError }: DialogProps) {
   const [includeLogs, setIncludeLogs] = useState(false);
 
   const upload = useMutation({
-    ...codexFeedbackUploadFeedbackMutation(),
+    ...ompFeedbackUploadFeedbackMutation(),
     onSuccess: () => {
       setReason('');
       setIncludeLogs(false);
@@ -270,7 +270,7 @@ function FeedbackDialog({ open, threadId, onClose, onError }: DialogProps) {
         <DialogHeader>
           <DialogTitle>{t('Send feedback')}</DialogTitle>
           <DialogDescription>
-            {t('Your report goes to the Codex maintainers.')}
+            {t('Your report goes to the OMP maintainers.')}
           </DialogDescription>
         </DialogHeader>
         <Textarea
@@ -289,7 +289,7 @@ function FeedbackDialog({ open, threadId, onClose, onError }: DialogProps) {
             onChange={(e) => setIncludeLogs(e.target.checked)}
             className="h-3.5 w-3.5"
           />
-          {t('Attach Codex logs (may include file paths and command output)')}
+          {t('Attach OMP logs (may include file paths and command output)')}
         </label>
         <DialogFooter>
           <Button variant="ghost" onClick={onClose}>

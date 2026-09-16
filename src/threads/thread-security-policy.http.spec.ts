@@ -5,7 +5,7 @@ import {
   type NestFastifyApplication,
 } from '@nestjs/platform-fastify';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { CodexService } from '../codex/codex.service';
+import { OmpService } from '../omp/omp-engine.service';
 import { ThreadDeletionRegistryService } from '../thread-deletion/thread-deletion-registry.service';
 import { ThreadSettingsObserverService } from './thread-settings-observer.service';
 import { ThreadSecurityPolicyController } from './thread-security-policy.controller';
@@ -18,7 +18,7 @@ describe('security policy HTTP contract', () => {
     const module = await Test.createTestingModule({
       controllers: [ThreadSecurityPolicyController],
       providers: [
-        { provide: CodexService, useValue: codex },
+        { provide: OmpService, useValue: codex },
         {
           provide: ThreadSettingsObserverService,
           useValue: { readSecurityPolicy: vi.fn() },

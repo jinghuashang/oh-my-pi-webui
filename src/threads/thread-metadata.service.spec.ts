@@ -1,11 +1,11 @@
 /** Shared discovery publishes complete collections and survives failures without request amplification. */
 import { EventEmitter } from 'node:events';
-import type { ServerNotification, v2 } from '../codex/codex-schema';
-import type { CodexService } from '../codex/codex.service';
+import type { ServerNotification, v2 } from '../omp/omp-schema';
+import type { OmpService } from '../omp/omp-engine.service';
 import type {
   CodexLifecycleEvent,
-  CodexProcessManager,
-} from '../codex/codex-process-manager.service';
+  OmpProcessManager,
+} from '../omp/omp-process-manager.service';
 import { ThreadMetadataService } from './thread-metadata.service';
 import { makeThreadFixture } from './threads.testing';
 
@@ -42,7 +42,7 @@ describe('ThreadMetadataService', () => {
         Promise.resolve(page(params.archived ? ['archived'] : ['active'])),
       );
     service = new ThreadMetadataService(
-      { request } as unknown as CodexService,
+      { request } as unknown as OmpService,
       {
         addListener: (
           event: 'notification',
@@ -52,7 +52,7 @@ describe('ThreadMetadataService', () => {
           events.on('lifecycle', handler),
         getGeneration: () => generation,
         getClient: () => ({}),
-      } as unknown as CodexProcessManager,
+      } as unknown as OmpProcessManager,
     );
   });
   afterEach(() => {
@@ -246,7 +246,7 @@ describe('ThreadMetadataService incremental maintenance', () => {
         Promise.resolve(params.archived ? listed('archived') : listed('live')),
       );
     service = new ThreadMetadataService(
-      { request } as unknown as CodexService,
+      { request } as unknown as OmpService,
       {
         addListener: (
           event: 'notification',
@@ -256,7 +256,7 @@ describe('ThreadMetadataService incremental maintenance', () => {
           events.on('lifecycle', handler),
         getGeneration: () => 1,
         getClient: () => ({}),
-      } as unknown as CodexProcessManager,
+      } as unknown as OmpProcessManager,
     );
     service.onModuleInit();
     await settle();

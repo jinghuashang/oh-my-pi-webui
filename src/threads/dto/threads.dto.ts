@@ -3,16 +3,16 @@ import {
   ApiPropertyOptional,
   getSchemaPath,
 } from '@nestjs/swagger';
-import type { ModeKind, ReasoningEffort, v2 } from '../../codex/codex-schema';
-import { approvalPolicySchema, userInputSchema } from '../../codex/dto/v2';
+import type { ModeKind, ReasoningEffort, v2 } from '../../omp/omp-schema';
+import { approvalPolicySchema, userInputSchema } from '../../omp/dto/v2';
 import {
   NULLABLE_STRING_SCHEMA,
   REASONING_EFFORT_VALUES,
   oneOfSchema,
   nullableStringEnumSchema,
-} from '../../codex/dto/v2/openapi.schema';
-import { ThreadDto } from '../../codex/dto/v2/thread.dto';
-import { TurnDto } from '../../codex/dto/v2/turn.dto';
+} from '../../omp/dto/v2/openapi.schema';
+import { ThreadDto } from '../../omp/dto/v2/thread.dto';
+import { TurnDto } from '../../omp/dto/v2/turn.dto';
 
 export const COLLABORATION_MODE_VALUES = ['plan', 'default'] as const;
 
@@ -495,4 +495,4 @@ export {
   ThreadStartResponseDto,
   ThreadUnarchiveResponseDto,
   TurnStartResponseDto,
-} from '../../codex/dto/v2';
+} from '../../omp/dto/v2';

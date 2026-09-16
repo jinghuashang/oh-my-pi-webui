@@ -1,6 +1,6 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ThreadsService } from './threads.service';
-import { CodexService } from '../codex/codex.service';
+import { OmpService } from '../omp/omp-engine.service';
 import { ThreadResumeRegistryService } from './thread-resume-registry.service';
 import { ConversationBranchesService } from '../conversation-branches/conversation-branches.service';
 import { ConversationBranchMutationsService } from '../conversation-branches/conversation-branch-mutations.service';
@@ -64,7 +64,7 @@ describe('ThreadsService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ThreadsService,
-        { provide: CodexService, useValue: mockCodex },
+        { provide: OmpService, useValue: mockCodex },
         { provide: ThreadResumeRegistryService, useValue: mockResumeRegistry },
         { provide: ConversationBranchesService, useValue: mockBranches },
         {

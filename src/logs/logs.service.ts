@@ -6,7 +6,7 @@ import { existsSync, readdirSync, statSync } from 'node:fs';
 import { readFile } from 'node:fs/promises';
 import { basename, join, resolve } from 'node:path';
 import { promisify } from 'node:util';
-import { CodexStatusService } from '../codex/codex-status.service';
+import { OmpStatusService } from '../omp/omp-status.service';
 
 const execFileAsync = promisify(execFile);
 const DEFAULT_LIMIT = 50;
@@ -61,7 +61,7 @@ export class LogsService {
   private cachedWebuiVersion: string | null = null;
 
   constructor(
-    private readonly statusService: CodexStatusService,
+    private readonly statusService: OmpStatusService,
     private readonly config: ConfigService,
   ) {}
 
