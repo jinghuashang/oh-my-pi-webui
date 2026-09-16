@@ -149,9 +149,13 @@ export class FilesService implements OnModuleDestroy {
         this.logger.warn(`Skipping invalid workspace root: ${root}`);
       }
     }
-    // Home directory is always included
-    next.add(fsSync.realpathSync(os.homedir()));
-
+    // Home directory and process working directory are always included
+    try {
+      next.add(fsSync.realpathSync(os.homedir()));
+    } catch {}
+    try {
+      next.add(fsSync.realpathSync(process.cwd()));
+    } catch {}
     // Prune dynamic roots that no longer fall within any configured root
     for (const dynamicRoot of this.dynamicRoots) {
       const stillAllowed = [...next].some((root) =>

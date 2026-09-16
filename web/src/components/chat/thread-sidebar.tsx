@@ -4,7 +4,8 @@
  * state, queries, mutations, and view routing.
  */
 import { useMemo, useState } from 'react';
-import { FolderOpen, PanelLeftClose, Puzzle, Plus, Settings, Terminal } from 'lucide-react';
+import { FolderOpen, FolderPlus, PanelLeftClose, Puzzle, Settings, Terminal } from 'lucide-react';
+import { CreateProjectDialog } from './sidebar/create-project-dialog';
 import { useNavigate, useRouterState } from '@tanstack/react-router';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
@@ -94,6 +95,7 @@ export function ThreadSidebar() {
   const [renameValue, setRenameValue] = useState('');
   const [confirmAction, setConfirmAction] = useState<ConfirmAction>(null);
   const [dirPickerOpen, setDirPickerOpen] = useState(false);
+  const [createProjectOpen, setCreateProjectOpen] = useState(false);
   const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
   const [graphTargetId, setGraphTargetId] = useState<string | null>(null);
 
@@ -507,18 +509,32 @@ export function ThreadSidebar() {
       <Separator />
 
       {/* Thread list header */}
+      {/* Thread list header with New Project and Open Directory actions */}
       <div className="flex items-center justify-between px-3 py-2">
         <span className="text-xs font-medium text-muted-foreground">{t('Threads')}</span>
-        <Button
-          size="icon"
-          variant="ghost"
-          className="h-6 w-6"
-          aria-label={t('New workspace thread')}
-          title={t('New workspace thread')}
-          onClick={() => setDirPickerOpen(true)}
-        >
-          <Plus className="h-3.5 w-3.5" />
-        </Button>
+        <div className="flex items-center gap-1">
+          <Button
+            size="sm"
+            variant="ghost"
+            className="h-6 gap-1 px-1.5 text-[11px] font-medium text-primary hover:bg-primary/10 hover:text-primary"
+            aria-label={t('New project session')}
+            title={t('New project session')}
+            onClick={() => setCreateProjectOpen(true)}
+          >
+            <FolderPlus className="h-3.5 w-3.5" />
+            <span>{t('New project')}</span>
+          </Button>
+          <Button
+            size="icon"
+            variant="ghost"
+            className="h-6 w-6 text-muted-foreground hover:text-foreground"
+            aria-label={t('Open existing directory')}
+            title={t('Open existing directory')}
+            onClick={() => setDirPickerOpen(true)}
+          >
+            <FolderOpen className="h-3.5 w-3.5" />
+          </Button>
+        </div>
       </div>
 
       <ScrollArea className="min-h-0 flex-1 px-2 [&_[data-slot=scroll-area-viewport]>div]:block!">
@@ -580,8 +596,11 @@ export function ThreadSidebar() {
         onClose={() => setDirPickerOpen(false)}
         onSelect={(cwd) => createThread.mutate({ body: { cwd } })}
       />
+      <CreateProjectDialog
+        open={createProjectOpen}
+        onClose={() => setCreateProjectOpen(false)}
+      />
       <ForkGoalDialog
-        key={fork.prompt?.threadId ?? 'idle'}
         prompt={fork.prompt}
         pending={forkThread.isPending}
         onConfirm={fork.confirm}

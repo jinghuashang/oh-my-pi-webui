@@ -30,7 +30,7 @@ import { ThreadsModule } from './threads/threads.module';
 import { TokenUsageModule } from './token-usage/token-usage.module';
 import { TurnDiffModule } from './turn-diff/turn-diff.module';
 import { TurnErrorsModule } from './turn-errors/turn-errors.module';
-
+import { ProjectsModule } from './projects/projects.module';
 const isDev = process.env.NODE_ENV !== 'production';
 
 /** Rotated file log: bounded so a long-lived server cannot fill the disk. */
@@ -135,6 +135,7 @@ const PINO_REDACT = {
     ModelsModule,
     LogsModule,
     McpServersModule,
+    ProjectsModule,
   ],
   controllers: [AppController],
   providers: [

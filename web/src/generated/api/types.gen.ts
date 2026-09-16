@@ -2148,6 +2148,75 @@ export type McpServerOauthLoginResponseDto = {
     authorizationUrl: string;
 };
 
+export type ProjectItemDto = {
+    /**
+     * Project directory name
+     */
+    name: string;
+    /**
+     * Absolute path to project directory
+     */
+    path: string;
+    /**
+     * Last modified timestamp in epoch ms
+     */
+    mtime: number;
+    /**
+     * Whether the project directory is a Git repository
+     */
+    isGit: boolean;
+    /**
+     * Number of items directly inside the project directory
+     */
+    fileCount: number;
+};
+
+export type ProjectsListResponseDto = {
+    /**
+     * Base directory path where projects are stored under data
+     */
+    baseDir: string;
+    projects: Array<ProjectItemDto>;
+};
+
+export type CreateProjectDto = {
+    /**
+     * Project name (folder name under data/projects)
+     */
+    name: string;
+    /**
+     * Optional model to use for the initial session
+     */
+    model?: string;
+    /**
+     * Optional initial prompt message to start the project session
+     */
+    initialPrompt?: string;
+    /**
+     * Whether to automatically initialize a git repository in the new project (default true)
+     */
+    initGit?: boolean;
+};
+
+export type CreateProjectResponseDto = {
+    /**
+     * Created project name
+     */
+    name: string;
+    /**
+     * Absolute directory path of the project
+     */
+    path: string;
+    /**
+     * ID of the initial session thread created for this project
+     */
+    threadId: string;
+    /**
+     * Whether a git repository was initialized in the project
+     */
+    isGit: boolean;
+};
+
 export type AppGetStatusData = {
     body?: never;
     path?: never;
@@ -4447,3 +4516,41 @@ export type McpServersStartOauthLoginResponses = {
 };
 
 export type McpServersStartOauthLoginResponse = McpServersStartOauthLoginResponses[keyof McpServersStartOauthLoginResponses];
+
+export type ProjectsListProjectsData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/projects';
+};
+
+export type ProjectsListProjectsErrors = {
+    401: ApiErrorResponseDto;
+};
+
+export type ProjectsListProjectsError = ProjectsListProjectsErrors[keyof ProjectsListProjectsErrors];
+
+export type ProjectsListProjectsResponses = {
+    200: ProjectsListResponseDto;
+};
+
+export type ProjectsListProjectsResponse = ProjectsListProjectsResponses[keyof ProjectsListProjectsResponses];
+
+export type ProjectsCreateProjectData = {
+    body: CreateProjectDto;
+    path?: never;
+    query?: never;
+    url: '/api/projects';
+};
+
+export type ProjectsCreateProjectErrors = {
+    401: ApiErrorResponseDto;
+};
+
+export type ProjectsCreateProjectError = ProjectsCreateProjectErrors[keyof ProjectsCreateProjectErrors];
+
+export type ProjectsCreateProjectResponses = {
+    201: CreateProjectResponseDto;
+};
+
+export type ProjectsCreateProjectResponse = ProjectsCreateProjectResponses[keyof ProjectsCreateProjectResponses];

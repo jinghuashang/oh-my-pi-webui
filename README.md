@@ -163,12 +163,14 @@ pnpm reset-password -- --db ./webui.sqlite      # 指定数据库文件
 | `OMP_SESSION_DIR` | `~/.omp/agent/sessions` | 会话文件目录 |
 | `LOG_LEVEL` | `info` | 日志级别 |
 | `WEBUI_TRACE_RPC` | 关 | 置为 `1` 时把协议帧写入 `logs/rpc-trace.jsonl`（32 MB 自动轮转） |
+| `WEBUI_PROJECTS_DIR` | `./data/projects` | 新建项目时的基础存储目录 |
 
 ## 功能
 
-**对话**
-- 多会话并发，按工作区分组，支持归档、重命名与消息级分支
-- 过程展示与 omp TUI 一致：思考为暗色正文，工具调用为「标题行 + 输出 + 耗时页脚」
+**项目与会话管理**
+- **创建项目会话**：侧边栏支持一键新建项目并开启开发会话；新项目自动在 `./data/projects/<项目名>` 建立物理文件夹，并自动初始化 Git 仓库 (`git init`)
+- 支持输入初始需求自动派发首轮对话，亦可无缝打开已有目录
+- 多会话并发，按工作区自动分组展示，支持归档、重命名与消息级分支
 - 流式增量、追问（steer）、中断（stop），命令与文件变更走审批卡片
 
 **会话侧栏**
