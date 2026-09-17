@@ -8,6 +8,7 @@ import { homedir } from 'node:os';
 import {
   AddCustomMirrorDto,
   OmpMirrorsResponseDto,
+  OmpUpdateProgressDto,
   OmpUpgradeRequestDto,
   OmpUpgradeResponseDto,
   OmpVersionResponseDto,
@@ -29,7 +30,13 @@ export const DEFAULT_UPDATE_MIRRORS: UpdateMirrorDto[] = [
 export class OmpUpdateService {
   private readonly logger = new Logger(OmpUpdateService.name);
   private cachedCheck: { result: OmpVersionResponseDto; expiresAt: number } | null = null;
-
+  private progress: OmpUpdateProgressDto = {
+    status: 'idle',
+    stage: '',
+    percent: 0,
+    downloadedBytes: 0,
+    totalBytes: 0,
+  };
   constructor(private readonly configService: ConfigService) {}
 
   private get ompBin(): string {
@@ -40,6 +47,174 @@ export class OmpUpdateService {
     const webuiHome = this.configService.get<string>('WEBUI_HOME')?.trim();
     const baseDir = webuiHome || path.join(homedir(), '.omp');
     return path.join(baseDir, 'agent', 'update-mirrors.json');
+  }
+
+  getProgress(): OmpUpdateProgressDto {
+    return this.progress;
+  }
+
+  /**
+   * Computes the release asset binary name based on operating system and architecture.
+   */
+  resolveBinaryName(): string {
+    const platform = process.platform;
+    const arch = process.arch;
+    let osPart: string;
+    if (platform === 'linux') {
+      const isMusl = fs.existsSync('/etc/alpine-release');
+      osPart = isMusl ? 'linux-musl' : 'linux';
+    } else if (platform === 'darwin') {
+      osPart = 'darwin';
+    } else if (platform === 'win32') {
+      osPart = 'windows';
+    } else {
+      osPart = platform;
+    }
+    const ext = platform === 'win32' ? '.exe' : '';
+    return `omp-${osPart}-${arch}${ext}`;
+  }
+
+  /**
+   * Resolves the real absolute path to the local omp binary.
+   */
+  async resolveBinaryPath(): Promise<string> {
+    const ompBin = this.ompBin;
+    if (path.isAbsolute(ompBin) && fs.existsSync(ompBin)) {
+      return ompBin;
+    }
+    try {
+      const cmd = process.platform === 'win32' ? 'where' : 'which';
+      const { stdout } = await execFileAsync(cmd, [ompBin], { timeout: 4000 });
+      const firstPath = stdout.trim().split(/\r?\n/)[0]?.trim();
+      if (firstPath && fs.existsSync(firstPath)) {
+        return firstPath;
+      }
+    } catch {}
+    if (process.platform === 'win32') {
+      const localAppData = process.env.LOCALAPPDATA || path.join(homedir(), 'AppData', 'Local');
+      const defaultWin = path.join(localAppData, 'omp', 'omp.exe');
+      if (fs.existsSync(defaultWin)) return defaultWin;
+    } else {
+      const linuxPath = path.join(homedir(), '.local', 'bin', 'omp');
+      if (fs.existsSync(linuxPath)) return linuxPath;
+      const usrBin = '/usr/local/bin/omp';
+      if (fs.existsSync(usrBin)) return usrBin;
+    }
+    return ompBin;
+  }
+
+  /**
+   * Downloads release binary with real-time speed, bytes calculation and atomic install.
+   */
+  async downloadBinaryWithProgress(downloadUrl: string, targetPath: string): Promise<void> {
+    this.progress = {
+      status: 'downloading',
+      stage: 'Connecting to update server...',
+      percent: 0,
+      downloadedBytes: 0,
+      totalBytes: 0,
+    };
+
+    const res = await fetch(downloadUrl, {
+      headers: { 'User-Agent': 'oh-my-pi-webui' },
+      redirect: 'follow',
+    });
+
+    if (!res.ok || !res.body) {
+      throw new Error(`Download failed: HTTP ${res.status} ${res.statusText}`);
+    }
+
+    const totalBytes = parseInt(res.headers.get('content-length') || '0', 10);
+    const totalFormatted = totalBytes > 0 ? `${(totalBytes / 1024 / 1024).toFixed(1)} MB` : undefined;
+    this.progress.totalBytes = totalBytes;
+    this.progress.totalFormatted = totalFormatted;
+
+    const tempPath = `${targetPath}.${Date.now()}.${process.pid}.tmp`;
+    const fileStream = fs.createWriteStream(tempPath);
+
+    let downloadedBytes = 0;
+    const startTime = Date.now();
+    let lastSampleTime = startTime;
+    let lastSampleBytes = 0;
+
+    const reader = res.body.getReader();
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      if (value) {
+        downloadedBytes += value.byteLength;
+        fileStream.write(Buffer.from(value));
+
+        const now = Date.now();
+        const elapsed = now - lastSampleTime;
+        if (elapsed >= 250 || downloadedBytes === totalBytes) {
+          const speedBytesPerSec = ((downloadedBytes - lastSampleBytes) / (elapsed || 1)) * 1000;
+          const speedMb = speedBytesPerSec / (1024 * 1024);
+          const percent = totalBytes > 0 ? Math.min(100, Math.round((downloadedBytes / totalBytes) * 100)) : 0;
+
+          this.progress = {
+            status: 'downloading',
+            stage: `Downloading binary... (${(downloadedBytes / 1024 / 1024).toFixed(1)} MB / ${totalFormatted || '...'})`,
+            percent,
+            speedFormatted: `${speedMb.toFixed(2)} MB/s`,
+            downloadedBytes,
+            totalBytes,
+            downloadedFormatted: `${(downloadedBytes / 1024 / 1024).toFixed(1)} MB`,
+            totalFormatted,
+          };
+
+          lastSampleTime = now;
+          lastSampleBytes = downloadedBytes;
+        }
+      }
+    }
+
+    await new Promise<void>((resolve, reject) => {
+      fileStream.end((err: Error | null) => {
+        if (err) reject(err);
+        else resolve();
+      });
+    });
+
+    this.progress = {
+      ...this.progress,
+      status: 'installing',
+      stage: 'Installing binary update...',
+      percent: 99,
+    };
+
+    if (process.platform !== 'win32') {
+      fs.chmodSync(tempPath, 0o755);
+    }
+
+    const backupPath = `${targetPath}.${Date.now()}.bak`;
+    try {
+      if (fs.existsSync(targetPath)) {
+        try {
+          fs.renameSync(targetPath, backupPath);
+        } catch {}
+      }
+      fs.renameSync(tempPath, targetPath);
+      if (process.platform !== 'win32') {
+        fs.chmodSync(targetPath, 0o755);
+      }
+      try {
+        if (fs.existsSync(backupPath)) fs.unlinkSync(backupPath);
+      } catch {}
+    } catch (err) {
+      if (fs.existsSync(backupPath) && !fs.existsSync(targetPath)) {
+        try { fs.renameSync(backupPath, targetPath); } catch {}
+      }
+      throw err;
+    }
+
+    this.progress = {
+      ...this.progress,
+      status: 'completed',
+      stage: 'Update installed successfully!',
+      percent: 100,
+    };
   }
 
   private loadCustomMirrors(): UpdateMirrorDto[] {
@@ -298,6 +473,35 @@ export class OmpUpdateService {
    * Executes `omp update` command to upgrade the CLI binary with optional mirror/proxy support.
    */
   async upgrade(dto: OmpUpgradeRequestDto): Promise<OmpUpgradeResponseDto> {
+    const check = await this.checkUpdate();
+    const targetBinary = await this.resolveBinaryPath();
+    const binaryName = this.resolveBinaryName();
+
+    // If mirror is specified or user wants mirror-accelerated download
+    const isMirrorPrefix = dto.mirrorUrl && dto.mirrorUrl !== 'direct' && !dto.mirrorUrl.startsWith('http://127.0.0.1');
+    if (isMirrorPrefix || (!dto.canary && check.latestVersion)) {
+      let downloadUrl = `https://github.com/can1357/oh-my-pi/releases/download/v${check.latestVersion}/${binaryName}`;
+      if (isMirrorPrefix && dto.mirrorUrl) {
+        const prefix = dto.mirrorUrl.endsWith('/') ? dto.mirrorUrl : `${dto.mirrorUrl}/`;
+        downloadUrl = `${prefix}${downloadUrl}`;
+      }
+
+      this.logger.log(`Downloading OMP binary directly via mirror: ${downloadUrl} to ${targetBinary}`);
+      try {
+        await this.downloadBinaryWithProgress(downloadUrl, targetBinary);
+        this.cachedCheck = null;
+        const newVersion = await this.getCurrentVersion();
+        return {
+          success: true,
+          message: `Successfully downloaded and updated OMP to v${newVersion} via mirror acceleration.`,
+          output: `Downloaded ${binaryName} from ${downloadUrl}\nInstalled to ${targetBinary}\nVerified version: v${newVersion}`,
+        };
+      } catch (err) {
+        this.logger.warn(`Direct mirror binary download failed, falling back to CLI update: ${String(err)}`);
+      }
+    }
+
+    // Fallback to CLI update
     const args = ['update'];
     if (dto.canary) {
       args.push('--canary');
@@ -331,7 +535,7 @@ export class OmpUpdateService {
       });
 
       const output = `${stdout}\n${stderr}`.trim();
-      this.cachedCheck = null; // Clear cache so next check sees new version
+      this.cachedCheck = null;
       const newVersion = await this.getCurrentVersion();
 
       return {

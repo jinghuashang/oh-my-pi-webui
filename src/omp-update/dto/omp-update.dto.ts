@@ -85,3 +85,32 @@ export class OmpUpgradeResponseDto {
   @ApiProperty()
   output!: string;
 }
+
+export class OmpUpdateProgressDto {
+  @ApiProperty({ enum: ['idle', 'downloading', 'installing', 'completed', 'failed'] })
+  status!: 'idle' | 'downloading' | 'installing' | 'completed' | 'failed';
+
+  @ApiProperty()
+  stage!: string;
+
+  @ApiProperty({ description: 'Download progress percentage (0 - 100)' })
+  percent!: number;
+
+  @ApiPropertyOptional({ description: 'Current download speed formatted, e.g. 2.5 MB/s' })
+  speedFormatted?: string;
+
+  @ApiProperty({ description: 'Downloaded bytes so far' })
+  downloadedBytes!: number;
+
+  @ApiProperty({ description: 'Total expected bytes' })
+  totalBytes!: number;
+
+  @ApiPropertyOptional({ description: 'Formatted downloaded bytes, e.g. 45.2 MB' })
+  downloadedFormatted?: string;
+
+  @ApiPropertyOptional({ description: 'Formatted total bytes, e.g. 240.2 MB' })
+  totalFormatted?: string;
+
+  @ApiPropertyOptional()
+  error?: string;
+}

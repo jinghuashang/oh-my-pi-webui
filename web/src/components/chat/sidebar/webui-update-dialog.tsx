@@ -28,6 +28,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
+import { Progress } from '@/components/ui/progress';
 import { cn } from '@/lib/utils';
 import {
   ompUpdateAddCustomMirrorMutation,
@@ -35,6 +36,7 @@ import {
   webuiUpdateCheckUpdateQueryKey,
   webuiUpdateGetMirrorsOptions,
   webuiUpdateGetMirrorsQueryKey,
+  webuiUpdateGetProgressOptions,
   webuiUpdateUpgradeMutation,
 } from '@/generated/api/@tanstack/react-query.gen';
 import { showSnackbar } from '@/stores/snackbar-store';
@@ -58,6 +60,7 @@ export function WebuiUpdateDialog({ open, onClose }: Props) {
   const [cmdTab, setCmdTab] = useState<'git' | 'docker'>('git');
 
   // WebUI version check query
+
   const updateQuery = useQuery(webuiUpdateCheckUpdateOptions());
   const updateData = updateQuery.data;
 
@@ -110,6 +113,13 @@ export function WebuiUpdateDialog({ open, onClose }: Props) {
     onError: (err) => {
       showSnackbar(getApiErrorMessage(err), 'error');
     },
+  });
+
+  // Real-time progress polling query while upgrading
+  const progressQuery = useQuery({
+    ...webuiUpdateGetProgressOptions(),
+    refetchInterval: upgradeMutation.isPending ? 400 : false,
+    enabled: upgradeMutation.isPending,
   });
 
   // Add custom mirror mutation
@@ -414,6 +424,32 @@ export function WebuiUpdateDialog({ open, onClose }: Props) {
                 <Copy className="h-3 w-3" />
               </Button>
             </div>
+
+          {/* Real-time WebUI Upgrade Progress Card */}
+          {upgradeMutation.isPending && (
+            <div className="rounded-xl border border-primary/20 bg-primary/5 p-3.5 space-y-2">
+              <div className="flex items-center justify-between text-xs">
+                <div className="flex items-center gap-1.5 font-medium text-foreground">
+                  <Loader2 className="h-3.5 w-3.5 animate-spin text-primary" />
+                  <span className="truncate">
+                    {progressQuery.data?.stage || t('Updating WebUI...')}
+                  </span>
+                </div>
+                {progressQuery.data?.speedFormatted && (
+                  <span className="font-mono text-[11px] text-emerald-600 dark:text-emerald-400 font-semibold">
+                    {progressQuery.data.speedFormatted}
+                  </span>
+                )}
+              </div>
+
+              <Progress value={progressQuery.data?.percent || 0} className="h-2" />
+
+              <div className="flex items-center justify-between text-[10px] text-muted-foreground font-mono">
+                <span>{progressQuery.data?.stage || ''}</span>
+                <span>{progressQuery.data?.percent || 0}%</span>
+              </div>
+            </div>
+          )}
           </div>
 
           {/* Output Log if upgrade was executed */}

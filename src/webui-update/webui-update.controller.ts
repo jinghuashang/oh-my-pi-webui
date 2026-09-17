@@ -9,12 +9,13 @@ import {
 } from '@nestjs/swagger';
 import { ApiErrorResponseDto } from '../common/dto/api-responses.dto';
 import {
+  WebuiUpdateProgressDto,
   WebuiUpgradeRequestDto,
   WebuiUpgradeResponseDto,
   WebuiVersionResponseDto,
 } from './dto/webui-update.dto';
-import { WebuiUpdateService } from './webui-update.service';
 import { OmpMirrorsResponseDto } from '../omp-update/dto/omp-update.dto';
+import { WebuiUpdateService } from './webui-update.service';
 
 @ApiTags('webui-update')
 @ApiBearerAuth()
@@ -47,6 +48,16 @@ export class WebuiUpdateController {
   @ApiOkResponse({ type: OmpMirrorsResponseDto })
   getMirrors(@Query('ping') ping?: string): Promise<OmpMirrorsResponseDto> {
     return this.webuiUpdateService.getMirrors(ping === 'true' || ping === '1' || ping === undefined);
+  }
+
+  /**
+   * Gets current progress and output for WebUI update.
+   */
+  @Get('progress')
+  @ApiOperation({ summary: 'Get real-time WebUI update pull/build progress' })
+  @ApiOkResponse({ type: WebuiUpdateProgressDto })
+  getProgress(): WebuiUpdateProgressDto {
+    return this.webuiUpdateService.getProgress();
   }
 
   /**

@@ -20,6 +20,7 @@ import { ApiErrorResponseDto } from '../common/dto/api-responses.dto';
 import {
   AddCustomMirrorDto,
   OmpMirrorsResponseDto,
+  OmpUpdateProgressDto,
   OmpUpgradeRequestDto,
   OmpUpgradeResponseDto,
   OmpVersionResponseDto,
@@ -77,6 +78,16 @@ export class OmpUpdateController {
     @Query('mirrorUrl') mirrorUrl?: string,
   ): Promise<OmpVersionResponseDto> {
     return this.ompUpdateService.checkUpdate(refresh === 'true' || refresh === '1', mirrorUrl);
+  }
+
+  /**
+   * Gets current real-time download and install progress for OMP update.
+   */
+  @Get('progress')
+  @ApiOperation({ summary: 'Get real-time OMP update download progress and speed' })
+  @ApiOkResponse({ type: OmpUpdateProgressDto })
+  getProgress(): OmpUpdateProgressDto {
+    return this.ompUpdateService.getProgress();
   }
   /**
    * Triggers `omp update` command to upgrade the OMP CLI.

@@ -2402,6 +2402,36 @@ export type OmpVersionResponseDto = {
     checkedAt: number;
 };
 
+export type OmpUpdateProgressDto = {
+    status: 'idle' | 'downloading' | 'installing' | 'completed' | 'failed';
+    stage: string;
+    /**
+     * Download progress percentage (0 - 100)
+     */
+    percent: number;
+    /**
+     * Current download speed formatted, e.g. 2.5 MB/s
+     */
+    speedFormatted?: string;
+    /**
+     * Downloaded bytes so far
+     */
+    downloadedBytes: number;
+    /**
+     * Total expected bytes
+     */
+    totalBytes: number;
+    /**
+     * Formatted downloaded bytes, e.g. 45.2 MB
+     */
+    downloadedFormatted?: string;
+    /**
+     * Formatted total bytes, e.g. 240.2 MB
+     */
+    totalFormatted?: string;
+    error?: string;
+};
+
 export type OmpUpgradeRequestDto = {
     /**
      * Switch to canary channel
@@ -2484,6 +2514,21 @@ export type WebuiVersionResponseDto = {
      * Fastest detected mirror URL
      */
     fastestMirrorUrl?: string;
+};
+
+export type WebuiUpdateProgressDto = {
+    status: 'idle' | 'pulling' | 'building' | 'completed' | 'failed';
+    stage: string;
+    /**
+     * Progress percentage (0 - 100)
+     */
+    percent: number;
+    /**
+     * Formatted transfer/build speed or step
+     */
+    speedFormatted?: string;
+    outputLog?: string;
+    error?: string;
 };
 
 export type WebuiUpgradeRequestDto = {
@@ -5055,6 +5100,25 @@ export type OmpUpdateCheckUpdateResponses = {
 
 export type OmpUpdateCheckUpdateResponse = OmpUpdateCheckUpdateResponses[keyof OmpUpdateCheckUpdateResponses];
 
+export type OmpUpdateGetProgressData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/omp/update/progress';
+};
+
+export type OmpUpdateGetProgressErrors = {
+    401: ApiErrorResponseDto;
+};
+
+export type OmpUpdateGetProgressError = OmpUpdateGetProgressErrors[keyof OmpUpdateGetProgressErrors];
+
+export type OmpUpdateGetProgressResponses = {
+    200: OmpUpdateProgressDto;
+};
+
+export type OmpUpdateGetProgressResponse = OmpUpdateGetProgressResponses[keyof OmpUpdateGetProgressResponses];
+
 export type OmpUpdateUpgradeData = {
     body: OmpUpgradeRequestDto;
     path?: never;
@@ -5116,6 +5180,25 @@ export type WebuiUpdateGetMirrorsResponses = {
 };
 
 export type WebuiUpdateGetMirrorsResponse = WebuiUpdateGetMirrorsResponses[keyof WebuiUpdateGetMirrorsResponses];
+
+export type WebuiUpdateGetProgressData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/webui/update/progress';
+};
+
+export type WebuiUpdateGetProgressErrors = {
+    401: ApiErrorResponseDto;
+};
+
+export type WebuiUpdateGetProgressError = WebuiUpdateGetProgressErrors[keyof WebuiUpdateGetProgressErrors];
+
+export type WebuiUpdateGetProgressResponses = {
+    200: WebuiUpdateProgressDto;
+};
+
+export type WebuiUpdateGetProgressResponse = WebuiUpdateGetProgressResponses[keyof WebuiUpdateGetProgressResponses];
 
 export type WebuiUpdateUpgradeData = {
     body: WebuiUpgradeRequestDto;

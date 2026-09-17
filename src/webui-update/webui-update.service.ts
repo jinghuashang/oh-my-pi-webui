@@ -5,12 +5,13 @@ import { promisify } from 'node:util';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
 import {
+  WebuiUpdateProgressDto,
   WebuiUpgradeRequestDto,
   WebuiUpgradeResponseDto,
   WebuiVersionResponseDto,
 } from './dto/webui-update.dto';
-import { OmpUpdateService } from '../omp-update/omp-update.service';
 import { OmpMirrorsResponseDto } from '../omp-update/dto/omp-update.dto';
+import { OmpUpdateService } from '../omp-update/omp-update.service';
 
 const execFileAsync = promisify(execFile);
 
@@ -18,6 +19,12 @@ const execFileAsync = promisify(execFile);
 export class WebuiUpdateService {
   private readonly logger = new Logger(WebuiUpdateService.name);
   private cachedCheck: { result: WebuiVersionResponseDto; expiresAt: number } | null = null;
+  private progress: WebuiUpdateProgressDto = {
+    status: 'idle',
+    stage: '',
+    percent: 0,
+    outputLog: '',
+  };
 
   constructor(
     private readonly configService: ConfigService,
@@ -28,6 +35,10 @@ export class WebuiUpdateService {
     return process.cwd();
   }
 
+
+  getProgress(): WebuiUpdateProgressDto {
+    return this.progress;
+  }
   /**
    * Reads current WebUI version from package.json.
    */
@@ -199,8 +210,13 @@ export class WebuiUpdateService {
         pullTarget = `${prefix}https://github.com/jinghuashang/oh-my-pi-webui.git`;
       }
     }
-
     this.logger.log(`Pulling WebUI updates from ${pullTarget}...`);
+    this.progress = {
+      status: 'pulling',
+      stage: 'Pulling latest git changes from remote...',
+      percent: 25,
+      outputLog: '',
+    };
     let outputLog = '';
 
     try {
@@ -214,9 +230,16 @@ export class WebuiUpdateService {
         },
       );
       outputLog += `${pullOut}\n${pullErr}`.trim();
+      this.progress.outputLog = outputLog;
 
       if (dto.rebuild !== false) {
         this.logger.log('Rebuilding WebUI after pull...');
+        this.progress = {
+          status: 'building',
+          stage: 'Building production assets (Vite & NestJS)...',
+          percent: 65,
+          outputLog,
+        };
         const { stdout: buildOut, stderr: buildErr } = await execFileAsync(
           'pnpm',
           ['build'],
@@ -227,10 +250,18 @@ export class WebuiUpdateService {
           },
         );
         outputLog += `\n\n[Build Output]\n${buildOut}\n${buildErr}`.trim();
+        this.progress.outputLog = outputLog;
       }
 
       this.cachedCheck = null;
       const newCommit = await this.getCurrentCommit();
+
+      this.progress = {
+        status: 'completed',
+        stage: `WebUI successfully updated to commit ${newCommit}!`,
+        percent: 100,
+        outputLog,
+      };
 
       return {
         success: true,
@@ -245,6 +276,13 @@ export class WebuiUpdateService {
         errStr = String(err);
       }
       this.logger.error(`WebUI upgrade failed: ${errStr}`);
+      this.progress = {
+        status: 'failed',
+        stage: 'Update failed',
+        percent: 100,
+        outputLog: `${outputLog}\n${errStr}`.trim(),
+        error: errStr,
+      };
       return {
         success: false,
         message: `Update failed: ${errStr}`,

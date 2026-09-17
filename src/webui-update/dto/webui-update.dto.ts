@@ -65,3 +65,23 @@ export class WebuiUpgradeResponseDto {
   @ApiProperty()
   output!: string;
 }
+
+export class WebuiUpdateProgressDto {
+  @ApiProperty({ enum: ['idle', 'pulling', 'building', 'completed', 'failed'] })
+  status!: 'idle' | 'pulling' | 'building' | 'completed' | 'failed';
+
+  @ApiProperty()
+  stage!: string;
+
+  @ApiProperty({ description: 'Progress percentage (0 - 100)' })
+  percent!: number;
+
+  @ApiPropertyOptional({ description: 'Formatted transfer/build speed or step' })
+  speedFormatted?: string;
+
+  @ApiPropertyOptional()
+  outputLog?: string;
+
+  @ApiPropertyOptional()
+  error?: string;
+}
