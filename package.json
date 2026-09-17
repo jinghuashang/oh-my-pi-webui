@@ -7,9 +7,9 @@
   "license": "AGPL-3.0-or-later",
   "scripts": {
     "build:bridge": "pnpm --filter omp-webui-bridge build",
-    "build:backend": "nest build",
+    "build:backend": "node scripts/stamp-version.js && nest build",
     "build:web": "pnpm --filter web build",
-    "build": "pnpm build:bridge && pnpm build:backend && pnpm build:web",
+    "build": "node scripts/stamp-version.js && pnpm build:bridge && pnpm build:backend && pnpm build:web",
     "format": "prettier --write \"src/**/*.ts\"",
     "start": "pnpm build:bridge && nest start",
     "start:dev": "pnpm build:bridge && nest start --watch",

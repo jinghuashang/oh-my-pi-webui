@@ -215,6 +215,22 @@ export function WebuiUpdateDialog({ open, onClose }: Props) {
                 <Loader2 className="h-3.5 w-3.5 animate-spin text-primary" />
                 <span>{t('Checking for WebUI updates...')}</span>
               </div>
+            ) : updateData?.currentCommit === 'unknown' ? (
+              <div className="rounded-lg border border-amber-500/30 bg-amber-500/10 p-2.5 space-y-1.5">
+                <div className="flex items-start gap-2">
+                  <Flame className="h-4 w-4 text-amber-500 shrink-0 mt-0.5" />
+                  <div className="text-xs text-amber-700 dark:text-amber-300 space-y-1 flex-1">
+                    <p className="font-semibold">
+                      {t('Running in lean/container environment without local Git commit tag')}
+                    </p>
+                    <p className="text-[11px] text-muted-foreground leading-relaxed">
+                      {t('Remote latest commit is {{commit}}. You can pull the latest update or rebuild below.', {
+                        commit: updateData?.latestCommit,
+                      })}
+                    </p>
+                  </div>
+                </div>
+              </div>
             ) : updateData?.hasUpdate ? (
               <div className="rounded-lg border border-emerald-500/30 bg-emerald-500/10 p-2.5 space-y-1.5">
                 <div className="flex items-start gap-2">
@@ -480,7 +496,7 @@ export function WebuiUpdateDialog({ open, onClose }: Props) {
             <Button type="button" variant="ghost" size="sm" onClick={onClose} className="text-xs">
               {t('Close')}
             </Button>
-            {updateData?.hasUpdate && (
+            {(updateData?.hasUpdate || updateData?.currentCommit === 'unknown') && (
               <Button
                 type="button"
                 size="sm"

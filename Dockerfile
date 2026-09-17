@@ -68,6 +68,7 @@ ENV NODE_ENV=production \
 # Copy built dependencies and distribution artifacts from builder
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/package.json ./package.json
+COPY --from=builder /app/version.json* ./
 COPY --from=builder /app/dist ./dist
 COPY --from=builder /app/drizzle ./drizzle
 COPY --from=builder /app/public ./public

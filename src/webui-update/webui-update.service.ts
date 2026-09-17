@@ -56,18 +56,73 @@ export class WebuiUpdateService {
   }
 
   /**
-   * Gets current short Git commit hash.
+   * Gets current short Git commit hash with multi-tier fallback (env, version.json, .git directory, git CLI).
    */
   async getCurrentCommit(): Promise<string> {
+    // 1. Check environment variables (e.g. Docker build arg or runtime env)
+    const envCommit =
+      this.configService.get<string>('WEBUI_COMMIT_SHA')?.trim() ||
+      this.configService.get<string>('GIT_COMMIT')?.trim() ||
+      process.env.WEBUI_COMMIT_SHA?.trim() ||
+      process.env.GIT_COMMIT?.trim();
+    if (envCommit && envCommit.length >= 7) {
+      return envCommit.slice(0, 7);
+    }
+
+    // 2. Check version.json in repoRoot, dist, or parent directory
+    for (const vPath of [
+      path.join(this.repoRoot, 'version.json'),
+      path.join(this.repoRoot, 'dist', 'version.json'),
+      path.join(__dirname, '..', '..', 'version.json'),
+    ]) {
+      try {
+        if (fs.existsSync(vPath)) {
+          const v = JSON.parse(fs.readFileSync(vPath, 'utf-8')) as { commit?: string };
+          if (v.commit && v.commit !== 'unknown') {
+            return v.commit.slice(0, 7);
+          }
+        }
+      } catch {}
+    }
+
+    // 3. Read .git directly from file system (no git binary needed)
+    try {
+      const gitDir = path.join(this.repoRoot, '.git');
+      if (fs.existsSync(gitDir)) {
+        const headPath = path.join(gitDir, 'HEAD');
+        if (fs.existsSync(headPath)) {
+          const headContent = fs.readFileSync(headPath, 'utf-8').trim();
+          if (!headContent.startsWith('ref:')) {
+            return headContent.slice(0, 7);
+          }
+          const refRelative = headContent.slice('ref:'.length).trim();
+          const refPath = path.join(gitDir, refRelative);
+          if (fs.existsSync(refPath)) {
+            return fs.readFileSync(refPath, 'utf-8').trim().slice(0, 7);
+          }
+          const packedPath = path.join(gitDir, 'packed-refs');
+          if (fs.existsSync(packedPath)) {
+            const packed = fs.readFileSync(packedPath, 'utf-8');
+            const line = packed.split('\n').find((l) => l.includes(refRelative));
+            if (line) return line.trim().split(' ')[0].slice(0, 7);
+          }
+        }
+      }
+    } catch {}
+
+    // 4. Try git CLI
     try {
       const { stdout } = await execFileAsync('git', ['rev-parse', '--short', 'HEAD'], {
         cwd: this.repoRoot,
-        timeout: 5000,
+        timeout: 4000,
       });
-      return stdout.trim();
-    } catch {
-      return 'unknown';
-    }
+      const trimmed = stdout.trim();
+      if (trimmed) {
+        return trimmed;
+      }
+    } catch {}
+
+    return 'unknown';
   }
 
   /**
@@ -151,8 +206,7 @@ export class WebuiUpdateService {
 
     const hasUpdate =
       latestCommit !== 'unknown' &&
-      currentCommit !== 'unknown' &&
-      latestCommit.toLowerCase() !== currentCommit.toLowerCase();
+      (currentCommit === 'unknown' || latestCommit.toLowerCase() !== currentCommit.toLowerCase());
 
     // Determine fastest mirror for command display
     let fastestMirrorUrl: string | undefined;
@@ -253,8 +307,25 @@ export class WebuiUpdateService {
         this.progress.outputLog = outputLog;
       }
 
+      const targetCommit = this.cachedCheck?.result.latestCommit;
       this.cachedCheck = null;
       const newCommit = await this.getCurrentCommit();
+      try {
+        const vPath = path.join(this.repoRoot, 'version.json');
+        fs.writeFileSync(
+          vPath,
+          JSON.stringify(
+            {
+              version: this.getCurrentVersion(),
+              commit: newCommit !== 'unknown' ? newCommit : (targetCommit || 'updated'),
+              builtAt: new Date().toISOString(),
+            },
+            null,
+            2,
+          ),
+          'utf-8',
+        );
+      } catch {}
 
       this.progress = {
         status: 'completed',

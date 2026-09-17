@@ -1276,5 +1276,7 @@
   "Your WebUI is up to date with the latest commit": "当前 WebUI 已是最新提交版本",
   "Upgrade WebUI": "立即更新 WebUI",
   "WebUI updated successfully! Please refresh or restart.": "WebUI 更新成功！请刷新页面或重启服务。",
-  "Update available": "有更新可用"
+  "Update available": "有更新可用",
+  "Running in lean/container environment without local Git commit tag": "当前运行在容器或精简环境中，未挂载本地 Git 提交元数据",
+  "Remote latest commit is {{commit}}. You can pull the latest update or rebuild below.": "远端最新提交为 {{commit}}。您可以点击下方按钮更新至最新提交，或拉取新镜像。"
 }
