@@ -29,16 +29,16 @@ interface RoleDefinition {
 
 /** Roles omp assigns models to, in the order they matter to a user. */
 const ROLES: RoleDefinition[] = [
-  { key: 'default', label: '主模型', hint: '对话与实现的主力模型' },
-  { key: 'smol', label: '快速模型', hint: '轻量任务与预热执行' },
-  { key: 'slow', label: '深度推理模型', hint: '疑难问题的慢速推理' },
-  { key: 'plan', label: '规划模型', hint: '架构规划与只读探索' },
-  { key: 'task', label: '子代理模型', hint: '后台并行子智能体' },
-  { key: 'vision', label: '视觉模型', hint: '图片理解与描述生成' },
-  { key: 'designer', label: '设计模型', hint: 'UI 与视觉方案设计' },
-  { key: 'commit', label: '提交信息模型', hint: '生成提交说明文本' },
-  { key: 'tiny', label: '轻量任务模型', hint: '离线小任务与会话标题' },
-  { key: 'advisor', label: '顾问模型', hint: '审查主模型的每轮输出' },
+  { key: 'default', label: 'Primary Model', hint: 'Main model for conversation and implementation' },
+  { key: 'smol', label: 'Fast Model', hint: 'Lightweight tasks and prewalk execution' },
+  { key: 'slow', label: 'Deep Reasoning Model', hint: 'Thorough reasoning for complex problems' },
+  { key: 'plan', label: 'Plan Model', hint: 'Architectural planning and read-only exploration' },
+  { key: 'task', label: 'Subagent Model', hint: 'Background parallel subagents' },
+  { key: 'vision', label: 'Vision Model', hint: 'Image understanding and description generation' },
+  { key: 'designer', label: 'Designer Model', hint: 'UI and visual design planning' },
+  { key: 'commit', label: 'Commit Model', hint: 'Commit message generation' },
+  { key: 'tiny', label: 'Lightweight Task Model', hint: 'Offline small tasks and session titles' },
+  { key: 'advisor', label: 'Advisor Model', hint: 'Reviews each turn of the primary model' },
 ];
 
 const ROLE_KEY = 'modelRoles';

@@ -5,6 +5,7 @@ import {
   Bot,
   CheckCircle2,
   Download,
+  ExternalLink,
   Flame,
   Globe,
   Loader2,
@@ -20,8 +21,8 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Switch } from '@/components/ui/switch';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Switch } from '@/components/ui/switch';
 import {
   Dialog,
   DialogContent,
@@ -63,19 +64,24 @@ export function McpStoreTab() {
 
   // Search filter
   const [search, setSearch] = useState('');
+  const [activeSource, setActiveSource] = useState<'official' | 'mcpservers-org'>('official');
 
   // Custom MCP modal
   const [customOpen, setCustomOpen] = useState(false);
 
   // Store query
-  const storeQuery = useQuery(mcpServersGetStoreOptions());
+  const storeQuery = useQuery(
+    mcpServersGetStoreOptions({
+      query: { source: activeSource },
+    }),
+  );
   const storeItems = storeQuery.data?.items ?? [];
   const defaultMirrors = [
-    { id: 'direct', name: '官方直连 (Direct)', url: 'https://github.com/' },
-    { id: 'ghfast', name: 'ghfast.top (极速代理)', url: 'https://ghfast.top/' },
-    { id: 'ghproxy', name: 'ghproxy.net (节点加速)', url: 'https://ghproxy.net/' },
-    { id: 'gitmirror', name: 'gitmirror.com (镜像站)', url: 'https://hub.gitmirror.com/' },
-    { id: 'kkgithub', name: 'kkgithub.com (海外节点)', url: 'https://kkgithub.com/' },
+    { id: 'ghproxy', name: 'ghproxy.net (Fast Proxy)', url: 'https://ghproxy.net/' },
+    { id: 'ghddlc', name: 'gh.ddlc.top (Node Proxy)', url: 'https://gh.ddlc.top/' },
+    { id: 'ghfast', name: 'ghfast.top (Proxy)', url: 'https://ghfast.top/' },
+    { id: 'gitmirror', name: 'hub.gitmirror.com (Mirror)', url: 'https://hub.gitmirror.com/' },
+    { id: 'kkgithub', name: 'kkgithub.com (Overseas Node)', url: 'https://kkgithub.com/' },
   ];
   const rawMirrors = storeQuery.data?.mirrors;
   const mirrors: Array<{ id: string; name: string; url: string }> =
@@ -194,7 +200,6 @@ export function McpStoreTab() {
               {t('Accelerate git/github package downloads for MCPs like Serena')}
             </span>
           </div>
-
           <div className="flex items-center gap-1.5 overflow-x-auto">
             {mirrors.map((m) => (
               <button
@@ -208,7 +213,7 @@ export function McpStoreTab() {
                     : 'border-transparent text-muted-foreground hover:bg-muted hover:text-foreground',
                 )}
               >
-                {m.name}
+                {t(m.name)}
               </button>
             ))}
           </div>
@@ -223,6 +228,52 @@ export function McpStoreTab() {
             placeholder={t('Search MCP servers by name, description, or category...')}
             className="pl-8 text-xs h-9"
           />
+        </div>
+
+        {/* Store Source Selector */}
+        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between rounded-lg border bg-muted/40 p-1.5">
+          <div className="flex items-center gap-1.5">
+            <button
+              type="button"
+              onClick={() => setActiveSource('official')}
+              className={cn(
+                'flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium transition-colors',
+                activeSource === 'official'
+                  ? 'bg-background text-foreground shadow-sm font-semibold'
+                  : 'text-muted-foreground hover:text-foreground',
+              )}
+            >
+              <Sparkles className="h-3.5 w-3.5 text-primary" />
+              <span>{t('OMP WebUI Official Store')}</span>
+              <Badge variant="secondary" className="text-[10px] px-1.5 py-0 font-mono">5</Badge>
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveSource('mcpservers-org')}
+              className={cn(
+                'flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium transition-colors',
+                activeSource === 'mcpservers-org'
+                  ? 'bg-background text-foreground shadow-sm font-semibold'
+                  : 'text-muted-foreground hover:text-foreground',
+              )}
+            >
+              <Globe className="h-3.5 w-3.5 text-blue-500" />
+              <span>{t('MCPServers.org Community')}</span>
+              <Badge variant="secondary" className="text-[10px] px-1.5 py-0 font-mono">10+</Badge>
+            </button>
+          </div>
+
+          {activeSource === 'mcpservers-org' && (
+            <a
+              href="https://mcpservers.org/zh-CN/"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-1 text-[11px] text-muted-foreground hover:text-foreground underline px-2 py-0.5"
+            >
+              <span>{t('Explore mcpservers.org')}</span>
+              <ExternalLink className="h-3 w-3" />
+            </a>
+          )}
         </div>
       </div>
 
@@ -360,19 +411,19 @@ function McpStoreCard({
             </div>
             <div>
               <div className="flex items-center gap-1.5">
-                <h3 className="text-sm font-semibold text-foreground">{item.title}</h3>
+                <h3 className="text-sm font-semibold text-foreground">{t(item.title)}</h3>
                 <span className="font-mono text-[10px] text-muted-foreground">({item.name})</span>
               </div>
               <div className="flex flex-wrap items-center gap-1 mt-0.5">
                 <Badge variant="outline" className="text-[10px] px-1.5 py-0">
-                  {item.category}
+                  {t(item.category)}
                 </Badge>
                 <Badge variant="secondary" className="text-[10px] font-mono px-1.5 py-0 uppercase">
                   {item.type}
                 </Badge>
                 {item.hasGithubSource && (
                   <Badge variant="outline" className="text-[10px] px-1.5 py-0 border-amber-500/40 text-amber-600 dark:text-amber-400">
-                    GitHub 加速可用
+                    {t('GitHub Acceleration Available')}
                   </Badge>
                 )}
               </div>
@@ -402,7 +453,7 @@ function McpStoreCard({
 
         {/* Description */}
         <p className="text-xs text-muted-foreground leading-relaxed line-clamp-2">
-          {item.description}
+          {t(item.description)}
         </p>
 
         {/* Collapsible Config Preview */}
@@ -607,7 +658,7 @@ function CustomMcpDialog({
                     type === 'stdio' ? 'bg-background font-semibold shadow-sm' : 'text-muted-foreground',
                   )}
                 >
-                  stdio (CLI / Command)
+                  {t('stdio (CLI / Command)')}
                 </button>
                 <button
                   type="button"
@@ -617,7 +668,7 @@ function CustomMcpDialog({
                     type === 'http' ? 'bg-background font-semibold shadow-sm' : 'text-muted-foreground',
                   )}
                 >
-                  http / sse (Remote URL)
+                  {t('http / sse (Remote URL)')}
                 </button>
               </div>
             </div>

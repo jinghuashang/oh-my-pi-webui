@@ -11,17 +11,178 @@ import {
   McpConfigResponseDto,
   McpStoreItemDto,
   McpStoreResponseDto,
+  McpStoreSourceDto,
   ToggleMcpServerDto,
 } from './dto/mcp-servers.dto';
 import { BusinessException } from '../common/business.exception';
 import { ErrorCode } from '../common/error-codes';
 
 export const GITHUB_MIRRORS = [
-  { id: 'direct', name: '官方直连 (Direct)', url: 'https://github.com/' },
-  { id: 'ghfast', name: 'ghfast.top (极速代理)', url: 'https://ghfast.top/' },
-  { id: 'ghproxy', name: 'ghproxy.net (节点加速)', url: 'https://ghproxy.net/' },
-  { id: 'gitmirror', name: 'gitmirror.com (镜像站)', url: 'https://hub.gitmirror.com/' },
-  { id: 'kkgithub', name: 'kkgithub.com (海外节点)', url: 'https://kkgithub.com/' },
+  { id: 'direct', name: 'Direct (Official)', url: 'https://github.com/' },
+  { id: 'ghproxy', name: 'ghproxy.net (Fast Proxy)', url: 'https://ghproxy.net/' },
+  { id: 'ghddlc', name: 'gh.ddlc.top (Node Proxy)', url: 'https://gh.ddlc.top/' },
+  { id: 'ghfast', name: 'ghfast.top (Proxy)', url: 'https://ghfast.top/' },
+  { id: 'gitmirror', name: 'hub.gitmirror.com (Mirror)', url: 'https://hub.gitmirror.com/' },
+  { id: 'kkgithub', name: 'kkgithub.com (Overseas Node)', url: 'https://kkgithub.com/' },
+];
+
+export const MCP_STORE_SOURCES: McpStoreSourceDto[] = [
+  {
+    id: 'official',
+    name: 'OMP WebUI Official Store',
+    url: 'https://github.com/jinghuashang/oh-my-pi-webui',
+    description: 'Curated and verified core MCP services for Oh My Pi',
+  },
+  {
+    id: 'mcpservers-org',
+    name: 'MCPServers.org Community',
+    url: 'https://mcpservers.org/zh-CN/',
+    description: 'Global open registry with community-verified Model Context Protocol servers',
+  },
+];
+
+export const MCPSERVERS_ORG_STORE: Array<{
+  name: string;
+  title: string;
+  description: string;
+  category: string;
+  type: 'stdio' | 'http';
+  hasGithubSource: boolean;
+  config: Record<string, unknown>;
+}> = [
+  {
+    name: 'filesystem',
+    title: 'Filesystem Server',
+    description: 'Local file system access with secure permission boundaries by Model Context Protocol.',
+    category: 'System & Files',
+    type: 'stdio',
+    hasGithubSource: false,
+    config: {
+      type: 'stdio',
+      command: 'npx',
+      args: ['-y', '@modelcontextprotocol/server-filesystem', '.'],
+    },
+  },
+  {
+    name: 'github',
+    title: 'GitHub Server',
+    description: 'Official GitHub MCP server for managing issues, pull requests, files, and branches.',
+    category: 'Developer Tools',
+    type: 'stdio',
+    hasGithubSource: false,
+    config: {
+      type: 'stdio',
+      command: 'npx',
+      args: ['-y', '@modelcontextprotocol/server-github'],
+      env: { GITHUB_PERSONAL_ACCESS_TOKEN: '' },
+    },
+  },
+  {
+    name: 'postgres',
+    title: 'PostgreSQL Server',
+    description: 'Read-only database access and schema inspection for PostgreSQL databases.',
+    category: 'Database',
+    type: 'stdio',
+    hasGithubSource: false,
+    config: {
+      type: 'stdio',
+      command: 'npx',
+      args: ['-y', '@modelcontextprotocol/server-postgres', 'postgresql://localhost/mydb'],
+    },
+  },
+  {
+    name: 'sqlite',
+    title: 'SQLite Server',
+    description: 'Query and inspect SQLite databases with automatic table and schema detection.',
+    category: 'Database',
+    type: 'stdio',
+    hasGithubSource: false,
+    config: {
+      type: 'stdio',
+      command: 'npx',
+      args: ['-y', '@modelcontextprotocol/server-sqlite', '--db-path', 'data.db'],
+    },
+  },
+  {
+    name: 'fetch',
+    title: 'Fetch Server',
+    description: 'Web page content fetching and automatic HTML-to-Markdown conversion.',
+    category: 'Search & Retrieval',
+    type: 'stdio',
+    hasGithubSource: false,
+    config: {
+      type: 'stdio',
+      command: 'npx',
+      args: ['-y', '@modelcontextprotocol/server-fetch'],
+    },
+  },
+  {
+    name: 'brave-search',
+    title: 'Brave Search Server',
+    description: 'Privacy-preserving web and local search using the Brave Search API.',
+    category: 'Search & Retrieval',
+    type: 'stdio',
+    hasGithubSource: false,
+    config: {
+      type: 'stdio',
+      command: 'npx',
+      args: ['-y', '@modelcontextprotocol/server-brave-search'],
+      env: { BRAVE_API_KEY: '' },
+    },
+  },
+  {
+    name: 'git',
+    title: 'Git Tools Server',
+    description: 'Git repository reading, commit searching, log inspection, and branch diffing tools.',
+    category: 'Developer Tools',
+    type: 'stdio',
+    hasGithubSource: false,
+    config: {
+      type: 'stdio',
+      command: 'npx',
+      args: ['-y', 'mcp-server-git', '--repository', '.'],
+    },
+  },
+  {
+    name: 'memory',
+    title: 'Knowledge Graph Memory',
+    description: 'Persistent knowledge graph memory system for long-term multi-session recall.',
+    category: 'Coding & Memory',
+    type: 'stdio',
+    hasGithubSource: false,
+    config: {
+      type: 'stdio',
+      command: 'npx',
+      args: ['-y', '@modelcontextprotocol/server-memory'],
+    },
+  },
+  {
+    name: 'puppeteer',
+    title: 'Puppeteer Automation',
+    description: 'Browser navigation, interaction, console log inspection, and screenshot capture.',
+    category: 'Browser & Automation',
+    type: 'stdio',
+    hasGithubSource: false,
+    config: {
+      type: 'stdio',
+      command: 'npx',
+      args: ['-y', '@modelcontextprotocol/server-puppeteer'],
+    },
+  },
+  {
+    name: 'sentry',
+    title: 'Sentry Error Tracker',
+    description: 'Retrieve and analyze application exceptions, stacktraces, and issue summaries from Sentry.',
+    category: 'Developer Tools',
+    type: 'stdio',
+    hasGithubSource: false,
+    config: {
+      type: 'stdio',
+      command: 'npx',
+      args: ['-y', '@modelcontextprotocol/server-sentry'],
+      env: { SENTRY_AUTH_TOKEN: '' },
+    },
+  },
 ];
 
 export const DEFAULT_MCP_STORE: Array<{
@@ -36,8 +197,9 @@ export const DEFAULT_MCP_STORE: Array<{
   {
     name: 'exa',
     title: 'Exa Search',
-    description: '基于 Exa AI 引擎的实时网页搜索与内容深度提取 MCP，具备高准确度检索能力',
-    category: '搜索与检索',
+    description:
+      'Real-time web search and deep content extraction MCP powered by Exa AI with high retrieval precision.',
+    category: 'Search & Retrieval',
     type: 'http',
     hasGithubSource: false,
     config: {
@@ -48,8 +210,9 @@ export const DEFAULT_MCP_STORE: Array<{
   {
     name: 'context7',
     title: 'Context7 Docs',
-    description: 'Upstash 提供的官方最新第三方库/框架技术文档、API 说明与代码范例实时查询 MCP',
-    category: '文档与知识',
+    description:
+      'Official documentation, API references, and code examples search MCP for libraries and frameworks by Upstash.',
+    category: 'Documentation & Knowledge',
     type: 'stdio',
     hasGithubSource: false,
     config: {
@@ -61,8 +224,9 @@ export const DEFAULT_MCP_STORE: Array<{
   {
     name: 'playwright',
     title: 'Playwright Browser',
-    description: 'Playwright 官方无头浏览器自动化控制 MCP，支持网页导航、截图、点击与表单交互',
-    category: '自动化与爬虫',
+    description:
+      'Official headless browser automation MCP supporting navigation, screenshots, clicking, and form interactions.',
+    category: 'Browser & Automation',
     type: 'stdio',
     hasGithubSource: false,
     config: {
@@ -74,8 +238,9 @@ export const DEFAULT_MCP_STORE: Array<{
   {
     name: 'deepwiki',
     title: 'DeepWiki AI',
-    description: '基于 DeepWiki 的 GitHub 开源仓库智能问答与代码架构 Wiki 知识库 MCP',
-    category: '代码分析与Wiki',
+    description:
+      'GitHub open-source repository intelligent Q&A and code architecture wiki knowledge base MCP powered by DeepWiki.',
+    category: 'Code Analysis & Wiki',
     type: 'http',
     hasGithubSource: false,
     config: {
@@ -86,8 +251,9 @@ export const DEFAULT_MCP_STORE: Array<{
   {
     name: 'serena',
     title: 'Serena Assistant',
-    description: '专业 IDE 语义代码分析与多轮长效记忆管理 MCP（Python/uvx 驱动，支持 GitHub 镜像加速）',
-    category: '代码助手与记忆',
+    description:
+      'Professional IDE semantic code analysis and multi-turn persistent session memory management MCP (Python/uvx driven).',
+    category: 'Coding & Memory',
     type: 'stdio',
     hasGithubSource: true,
     config: {
@@ -212,13 +378,15 @@ export class McpServersService {
     };
   }
 
-  /** Gets list of available MCP servers in the store along with current install status. */
-  async getStore(): Promise<McpStoreResponseDto> {
+  /** Gets list of available MCP servers in the store along with current install status and sources. */
+  async getStore(source = 'official'): Promise<McpStoreResponseDto> {
     const config = this.readMcpConfigFile();
     const installedKeys = new Set(Object.keys(config.mcpServers));
     const disabledSet = new Set(config.disabledServers);
 
-    const items: McpStoreItemDto[] = DEFAULT_MCP_STORE.map((entry) => {
+    const storeCatalog = source === 'mcpservers-org' ? MCPSERVERS_ORG_STORE : DEFAULT_MCP_STORE;
+
+    const items: McpStoreItemDto[] = storeCatalog.map((entry) => {
       const isInstalled = installedKeys.has(entry.name);
       const isEnabled = isInstalled && !disabledSet.has(entry.name);
       return {
@@ -237,9 +405,10 @@ export class McpServersService {
     return {
       items,
       mirrors: GITHUB_MIRRORS,
+      sources: MCP_STORE_SOURCES,
+      activeSource: source,
     };
   }
-
   /** Installs or updates an MCP server into mcp.json with optional GitHub mirror acceleration. */
   async installServer(dto: InstallMcpServerDto): Promise<{ success: boolean; name: string }> {
     const trimmedName = dto.name.trim();

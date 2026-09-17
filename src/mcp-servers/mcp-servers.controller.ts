@@ -85,14 +85,14 @@ export class McpServersController {
     return this.mcpServersService.getConfig();
   }
 
-  /** Gets MCP store items with install status and available GitHub mirrors. */
+  /** Gets MCP store items by source with install status and available GitHub mirrors. */
   @Get('store')
-  @ApiOperation({ summary: 'Get default MCP store items with install status' })
+  @ApiOperation({ summary: 'Get MCP store items by source with install status' })
+  @ApiQuery({ name: 'source', required: false, enum: ['official', 'mcpservers-org'] })
   @ApiOkResponse({ type: McpStoreResponseDto })
-  getStore(): Promise<McpStoreResponseDto> {
-    return this.mcpServersService.getStore();
+  getStore(@Query('source') source?: string): Promise<McpStoreResponseDto> {
+    return this.mcpServersService.getStore(source || 'official');
   }
-
   /** Installs or updates an MCP server into mcp.json with mirror support. */
   @Post('config/install')
   @ApiOperation({ summary: 'Install or update an MCP server configuration' })

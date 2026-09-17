@@ -2169,9 +2169,18 @@ export type McpStoreItemDto = {
     hasGithubSource?: boolean;
 };
 
+export type McpStoreSourceDto = {
+    id: string;
+    name: string;
+    url?: string;
+    description: string;
+};
+
 export type McpStoreResponseDto = {
     items: Array<McpStoreItemDto>;
     mirrors: Array<string>;
+    sources?: Array<McpStoreSourceDto>;
+    activeSource?: string;
 };
 
 export type InstallMcpServerDto = {
@@ -2308,6 +2317,60 @@ export type CloneProjectDto = {
     model?: string;
 };
 
+export type UpdateMirrorDto = {
+    /**
+     * Mirror unique identifier
+     */
+    id: string;
+    /**
+     * Mirror display label
+     */
+    name: string;
+    /**
+     * Mirror base URL or proxy address
+     */
+    url: string;
+    /**
+     * Latency in milliseconds (-1 if unreachable)
+     */
+    latencyMs?: number;
+    /**
+     * Whether this mirror is currently the fastest available
+     */
+    isFastest?: boolean;
+    /**
+     * Whether mirror responded successfully
+     */
+    available?: boolean;
+    /**
+     * Whether this is a user-added custom mirror
+     */
+    isCustom?: boolean;
+};
+
+export type OmpMirrorsResponseDto = {
+    mirrors: Array<UpdateMirrorDto>;
+    /**
+     * ID of the fastest detected mirror
+     */
+    fastestId?: string;
+    /**
+     * URL of the fastest detected mirror
+     */
+    fastestUrl?: string;
+};
+
+export type AddCustomMirrorDto = {
+    /**
+     * Mirror display label
+     */
+    name: string;
+    /**
+     * Mirror base URL or proxy address
+     */
+    url: string;
+};
+
 export type OmpVersionResponseDto = {
     /**
      * Currently installed omp version
@@ -2348,6 +2411,10 @@ export type OmpUpgradeRequestDto = {
      * Force update even if current
      */
     force?: boolean;
+    /**
+     * Selected GitHub mirror or proxy URL to accelerate update
+     */
+    mirrorUrl?: string;
 };
 
 export type OmpUpgradeResponseDto = {
@@ -4659,7 +4726,9 @@ export type McpServersGetConfigResponse = McpServersGetConfigResponses[keyof Mcp
 export type McpServersGetStoreData = {
     body?: never;
     path?: never;
-    query?: never;
+    query?: {
+        source?: 'official' | 'mcpservers-org';
+    };
     url: '/api/mcp-servers/store';
 };
 
@@ -4821,11 +4890,75 @@ export type ProjectsCloneProjectResponses = {
 
 export type ProjectsCloneProjectResponse = ProjectsCloneProjectResponses[keyof ProjectsCloneProjectResponses];
 
+export type OmpUpdateGetMirrorsData = {
+    body?: never;
+    path?: never;
+    query?: {
+        ping?: boolean;
+    };
+    url: '/api/omp/update/mirrors';
+};
+
+export type OmpUpdateGetMirrorsErrors = {
+    401: ApiErrorResponseDto;
+};
+
+export type OmpUpdateGetMirrorsError = OmpUpdateGetMirrorsErrors[keyof OmpUpdateGetMirrorsErrors];
+
+export type OmpUpdateGetMirrorsResponses = {
+    200: OmpMirrorsResponseDto;
+};
+
+export type OmpUpdateGetMirrorsResponse = OmpUpdateGetMirrorsResponses[keyof OmpUpdateGetMirrorsResponses];
+
+export type OmpUpdateAddCustomMirrorData = {
+    body: AddCustomMirrorDto;
+    path?: never;
+    query?: never;
+    url: '/api/omp/update/mirrors/custom';
+};
+
+export type OmpUpdateAddCustomMirrorErrors = {
+    401: ApiErrorResponseDto;
+};
+
+export type OmpUpdateAddCustomMirrorError = OmpUpdateAddCustomMirrorErrors[keyof OmpUpdateAddCustomMirrorErrors];
+
+export type OmpUpdateAddCustomMirrorResponses = {
+    201: UpdateMirrorDto;
+};
+
+export type OmpUpdateAddCustomMirrorResponse = OmpUpdateAddCustomMirrorResponses[keyof OmpUpdateAddCustomMirrorResponses];
+
+export type OmpUpdateDeleteCustomMirrorData = {
+    body?: never;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/api/omp/update/mirrors/custom/{id}';
+};
+
+export type OmpUpdateDeleteCustomMirrorErrors = {
+    401: ApiErrorResponseDto;
+};
+
+export type OmpUpdateDeleteCustomMirrorError = OmpUpdateDeleteCustomMirrorErrors[keyof OmpUpdateDeleteCustomMirrorErrors];
+
+export type OmpUpdateDeleteCustomMirrorResponses = {
+    200: {
+        [key: string]: unknown;
+    };
+};
+
+export type OmpUpdateDeleteCustomMirrorResponse = OmpUpdateDeleteCustomMirrorResponses[keyof OmpUpdateDeleteCustomMirrorResponses];
+
 export type OmpUpdateCheckUpdateData = {
     body?: never;
     path?: never;
     query?: {
         refresh?: boolean;
+        mirrorUrl?: string;
     };
     url: '/api/omp/update/check';
 };

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import {
@@ -6,10 +6,14 @@ import {
   Copy,
   Download,
   ExternalLink,
+  Flame,
+  Gauge,
   Loader2,
+  Plus,
   RefreshCw,
   Sparkles,
   Terminal,
+  Zap,
 } from 'lucide-react';
 import {
   Dialog,
@@ -20,10 +24,15 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 import {
+  ompUpdateAddCustomMirrorMutation,
   ompUpdateCheckUpdateOptions,
   ompUpdateCheckUpdateQueryKey,
+  ompUpdateGetMirrorsOptions,
+  ompUpdateGetMirrorsQueryKey,
   ompUpdateUpgradeMutation,
 } from '@/generated/api/@tanstack/react-query.gen';
 import { showSnackbar } from '@/stores/snackbar-store';
@@ -40,10 +49,45 @@ export function OmpUpdateDialog({ open, onClose }: Props) {
   const queryClient = useQueryClient();
 
   const [outputLog, setOutputLog] = useState<string | null>(null);
+  const [selectedMirrorId, setSelectedMirrorId] = useState<string>('auto');
+  const [customOpen, setCustomOpen] = useState(false);
+  const [customName, setCustomName] = useState('');
+  const [customUrl, setCustomUrl] = useState('');
 
+  // Version check query
   const updateQuery = useQuery(ompUpdateCheckUpdateOptions());
   const updateData = updateQuery.data;
 
+  // Mirror latency query
+  const mirrorsQuery = useQuery(
+    ompUpdateGetMirrorsOptions({
+      query: { ping: true },
+    }),
+  );
+  const mirrors = mirrorsQuery.data?.mirrors ?? [];
+  const fastestMirror = mirrors.find((m) => m.isFastest) ?? mirrors.find((m) => m.available);
+
+  // Resolved mirror URL based on user selection
+  const effectiveMirrorUrl = useMemo(() => {
+    if (selectedMirrorId === 'auto') {
+      return fastestMirror?.url;
+    }
+    const found = mirrors.find((m) => m.id === selectedMirrorId);
+    return found?.url;
+  }, [selectedMirrorId, fastestMirror, mirrors]);
+
+  // Terminal command preview
+  const manualCommand = useMemo(() => {
+    if (!effectiveMirrorUrl || effectiveMirrorUrl === 'https://github.com/' || effectiveMirrorUrl === 'direct') {
+      return updateData?.updateCommand || 'omp update';
+    }
+    if (effectiveMirrorUrl.startsWith('http://') || effectiveMirrorUrl.startsWith('socks')) {
+      return `HTTPS_PROXY=${effectiveMirrorUrl} omp update`;
+    }
+    return `GH_PROXY=${effectiveMirrorUrl} omp update`;
+  }, [effectiveMirrorUrl, updateData?.updateCommand]);
+
+  // Upgrade mutation
   const upgradeMutation = useMutation({
     ...ompUpdateUpgradeMutation(),
     onSuccess: (data) => {
@@ -60,6 +104,22 @@ export function OmpUpdateDialog({ open, onClose }: Props) {
     },
   });
 
+  // Add custom mirror mutation
+  const addCustomMirrorMutation = useMutation({
+    ...ompUpdateAddCustomMirrorMutation(),
+    onSuccess: (data) => {
+      showSnackbar(t('Custom mirror added'), 'success');
+      setSelectedMirrorId(data.id);
+      setCustomOpen(false);
+      setCustomName('');
+      setCustomUrl('');
+      void queryClient.invalidateQueries({ queryKey: ompUpdateGetMirrorsQueryKey() });
+    },
+    onError: (err) => {
+      showSnackbar(getApiErrorMessage(err), 'error');
+    },
+  });
+
   const handleCopyCommand = async (cmd: string) => {
     await copyTextToClipboard(cmd);
     showSnackbar(t('Command copied to clipboard'), 'success');
@@ -67,8 +127,23 @@ export function OmpUpdateDialog({ open, onClose }: Props) {
 
   const handleRefresh = async () => {
     setOutputLog(null);
-    await queryClient.invalidateQueries({ queryKey: ompUpdateCheckUpdateQueryKey() });
+    await Promise.all([
+      queryClient.invalidateQueries({ queryKey: ompUpdateCheckUpdateQueryKey() }),
+      queryClient.invalidateQueries({ queryKey: ompUpdateGetMirrorsQueryKey() }),
+    ]);
     showSnackbar(t('Update status refreshed'), 'info');
+  };
+
+  const handleAddCustomSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const trimmedUrl = customUrl.trim();
+    if (!trimmedUrl) return;
+    addCustomMirrorMutation.mutate({
+      body: {
+        name: customName.trim() || trimmedUrl,
+        url: trimmedUrl,
+      },
+    });
   };
 
   return (
@@ -147,6 +222,133 @@ export function OmpUpdateDialog({ open, onClose }: Props) {
             )}
           </div>
 
+          {/* Mirror Proxy & Speed Test Section */}
+          <div className="rounded-xl border bg-card p-3 space-y-2.5">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-1.5 text-xs font-semibold text-foreground">
+                <Flame className="h-3.5 w-3.5 text-amber-500" />
+                <span>{t('Update Mirror & Proxy')}</span>
+              </div>
+
+              <div className="flex items-center gap-1.5">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => mirrorsQuery.refetch()}
+                  disabled={mirrorsQuery.isFetching}
+                  className="h-6 px-1.5 text-[11px] text-muted-foreground hover:text-foreground gap-1"
+                >
+                  <Gauge className={cn('h-3 w-3', mirrorsQuery.isFetching && 'animate-spin')} />
+                  <span>{t('Speed Test')}</span>
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCustomOpen(!customOpen)}
+                  className="h-6 px-1.5 text-[11px] gap-1"
+                >
+                  <Plus className="h-3 w-3" />
+                  <span>{t('Add Custom Mirror')}</span>
+                </Button>
+              </div>
+            </div>
+
+            {/* Custom Mirror Inline Input Form */}
+            {customOpen && (
+              <form onSubmit={handleAddCustomSubmit} className="rounded-lg border bg-muted/30 p-2.5 space-y-2">
+                <div className="grid grid-cols-2 gap-2">
+                  <Input
+                    value={customName}
+                    onChange={(e) => setCustomName(e.target.value)}
+                    placeholder={t('Mirror Name')}
+                    className="h-7 text-xs font-mono"
+                  />
+                  <Input
+                    value={customUrl}
+                    onChange={(e) => setCustomUrl(e.target.value)}
+                    placeholder={t('Mirror URL or Proxy')}
+                    className="h-7 text-xs font-mono"
+                    required
+                  />
+                </div>
+                <div className="flex justify-end gap-1.5">
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setCustomOpen(false)}
+                    className="h-6 text-xs px-2"
+                  >
+                    {t('Cancel')}
+                  </Button>
+                  <Button
+                    type="submit"
+                    size="sm"
+                    disabled={!customUrl.trim() || addCustomMirrorMutation.isPending}
+                    className="h-6 text-xs px-2"
+                  >
+                    {addCustomMirrorMutation.isPending && <Loader2 className="h-3 w-3 animate-spin mr-1" />}
+                    {t('Add')}
+                  </Button>
+                </div>
+              </form>
+            )}
+
+            {/* Mirror Selection Chips */}
+            <div className="flex flex-wrap gap-1.5 max-h-32 overflow-y-auto">
+              {/* Auto Fastest option */}
+              <button
+                type="button"
+                onClick={() => setSelectedMirrorId('auto')}
+                className={cn(
+                  'flex items-center gap-1.5 rounded-lg border px-2.5 py-1 text-xs transition-colors',
+                  selectedMirrorId === 'auto'
+                    ? 'border-primary bg-primary/10 font-semibold text-primary shadow-xs'
+                    : 'border-border text-muted-foreground hover:bg-muted',
+                )}
+              >
+                <Zap className="h-3 w-3 text-amber-500" />
+                <span>{t('Auto Fastest')}</span>
+                {fastestMirror?.latencyMs && fastestMirror.latencyMs > 0 ? (
+                  <Badge variant="outline" className="text-[10px] px-1 py-0 border-emerald-500/40 text-emerald-600 dark:text-emerald-400">
+                    {fastestMirror.latencyMs}ms
+                  </Badge>
+                ) : null}
+              </button>
+
+              {/* Individual Mirrors */}
+              {mirrors.map((m) => (
+                <button
+                  key={m.id}
+                  type="button"
+                  onClick={() => setSelectedMirrorId(m.id)}
+                  className={cn(
+                    'flex items-center gap-1.5 rounded-lg border px-2 py-1 text-xs transition-colors',
+                    selectedMirrorId === m.id
+                      ? 'border-primary bg-primary/10 font-semibold text-primary shadow-xs'
+                      : 'border-border text-muted-foreground hover:bg-muted',
+                  )}
+                >
+                  <span>{t(m.name)}</span>
+                  {m.latencyMs && m.latencyMs > 0 ? (
+                    <span
+                      className={cn(
+                        'font-mono text-[10px]',
+                        m.latencyMs < 1000
+                          ? 'text-emerald-600 dark:text-emerald-400'
+                          : 'text-amber-600 dark:text-amber-400',
+                      )}
+                    >
+                      {m.latencyMs}ms
+                    </span>
+                  ) : m.latencyMs === -1 ? (
+                    <span className="font-mono text-[10px] text-muted-foreground/60">timeout</span>
+                  ) : null}
+                </button>
+              ))}
+            </div>
+          </div>
+
           {/* Terminal Command Box */}
           <div className="space-y-1.5">
             <label className="text-xs font-medium text-foreground flex items-center justify-between">
@@ -157,12 +359,12 @@ export function OmpUpdateDialog({ open, onClose }: Props) {
               <span className="text-[10px] text-muted-foreground">{t('Run in terminal')}</span>
             </label>
             <div className="flex items-center justify-between rounded-lg border bg-muted/60 px-3 py-2 font-mono text-xs text-foreground">
-              <span>{updateData?.updateCommand || 'omp update'}</span>
+              <span className="truncate pr-2">{manualCommand}</span>
               <Button
                 variant="ghost"
                 size="sm"
-                className="h-6 w-6 p-0 text-muted-foreground hover:text-foreground"
-                onClick={() => handleCopyCommand(updateData?.updateCommand || 'omp update')}
+                className="h-6 w-6 p-0 text-muted-foreground hover:text-foreground shrink-0"
+                onClick={() => handleCopyCommand(manualCommand)}
                 title={t('Copy command')}
               >
                 <Copy className="h-3 w-3" />
@@ -187,10 +389,10 @@ export function OmpUpdateDialog({ open, onClose }: Props) {
             variant="outline"
             size="sm"
             onClick={handleRefresh}
-            disabled={updateQuery.isFetching}
+            disabled={updateQuery.isFetching || mirrorsQuery.isFetching}
             className="gap-1.5 text-xs"
           >
-            <RefreshCw className={cn('h-3.5 w-3.5', updateQuery.isFetching && 'animate-spin')} />
+            <RefreshCw className={cn('h-3.5 w-3.5', (updateQuery.isFetching || mirrorsQuery.isFetching) && 'animate-spin')} />
             {t('Check Again')}
           </Button>
 
@@ -202,7 +404,13 @@ export function OmpUpdateDialog({ open, onClose }: Props) {
               <Button
                 type="button"
                 size="sm"
-                onClick={() => upgradeMutation.mutate({ body: {} })}
+                onClick={() =>
+                  upgradeMutation.mutate({
+                    body: {
+                      mirrorUrl: effectiveMirrorUrl,
+                    },
+                  })
+                }
                 disabled={upgradeMutation.isPending}
                 className="gap-1.5 text-xs bg-emerald-600 hover:bg-emerald-700 text-white"
               >

@@ -120,10 +120,30 @@ export class McpStoreItemDto {
   hasGithubSource?: boolean;
 }
 
+export class McpStoreSourceDto {
+  @ApiProperty()
+  id!: string;
+
+  @ApiProperty()
+  name!: string;
+
+  @ApiPropertyOptional()
+  url?: string;
+
+  @ApiProperty()
+  description!: string;
+}
+
 export class McpStoreResponseDto {
   @ApiProperty({ type: [McpStoreItemDto] })
   items!: McpStoreItemDto[];
 
   @ApiProperty()
   mirrors!: Array<{ id: string; name: string; url: string }>;
+
+  @ApiPropertyOptional({ type: [McpStoreSourceDto] })
+  sources?: McpStoreSourceDto[];
+
+  @ApiPropertyOptional()
+  activeSource?: string;
 }
