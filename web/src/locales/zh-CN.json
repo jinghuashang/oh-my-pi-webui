@@ -1265,5 +1265,16 @@
   "Puppeteer Automation": "Puppeteer 自动化服务",
   "Browser navigation, interaction, console log inspection, and screenshot capture.": "支持页面导航、表单交互、控制台日志监听与网页截图的浏览器自动化服务。",
   "Sentry Error Tracker": "Sentry 异常追踪服务",
-  "Retrieve and analyze application exceptions, stacktraces, and issue summaries from Sentry.": "从 Sentry 获取并深度分析应用程序异常堆栈与问题概览的服务。"
+  "Retrieve and analyze application exceptions, stacktraces, and issue summaries from Sentry.": "从 Sentry 获取并深度分析应用程序异常堆栈与问题概览的服务。",
+  "Oh My Pi WebUI Updates": "Oh My Pi WebUI 更新",
+  "Check WebUI GitHub commits, release updates and mirror acceleration": "检查 WebUI 远端提交、发布更新与镜像加速",
+  "Current Commit": "当前提交",
+  "Remote Latest": "远端最新",
+  "Checking for WebUI updates...": "正在检查 WebUI 更新…",
+  "New WebUI commit available!": "发现 WebUI 新版本提交！",
+  "View commit on GitHub": "在 GitHub 上查看此提交",
+  "Your WebUI is up to date with the latest commit": "当前 WebUI 已是最新提交版本",
+  "Upgrade WebUI": "立即更新 WebUI",
+  "WebUI updated successfully! Please refresh or restart.": "WebUI 更新成功！请刷新页面或重启服务。",
+  "Update available": "有更新可用"
 }

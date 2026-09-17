@@ -1,0 +1,61 @@
+import { Body, Controller, Get, Post, Query } from '@nestjs/common';
+import {
+  ApiBearerAuth,
+  ApiOkResponse,
+  ApiOperation,
+  ApiQuery,
+  ApiTags,
+  ApiUnauthorizedResponse,
+} from '@nestjs/swagger';
+import { ApiErrorResponseDto } from '../common/dto/api-responses.dto';
+import {
+  WebuiUpgradeRequestDto,
+  WebuiUpgradeResponseDto,
+  WebuiVersionResponseDto,
+} from './dto/webui-update.dto';
+import { WebuiUpdateService } from './webui-update.service';
+import { OmpMirrorsResponseDto } from '../omp-update/dto/omp-update.dto';
+
+@ApiTags('webui-update')
+@ApiBearerAuth()
+@ApiUnauthorizedResponse({ type: ApiErrorResponseDto })
+@Controller('webui/update')
+export class WebuiUpdateController {
+  constructor(private readonly webuiUpdateService: WebuiUpdateService) {}
+
+  /**
+   * Checks for available WebUI git commits or releases.
+   */
+  @Get('check')
+  @ApiOperation({ summary: 'Check for WebUI git updates and remote commits' })
+  @ApiQuery({ name: 'refresh', required: false, type: Boolean })
+  @ApiQuery({ name: 'mirrorUrl', required: false, type: String })
+  @ApiOkResponse({ type: WebuiVersionResponseDto })
+  checkUpdate(
+    @Query('refresh') refresh?: string,
+    @Query('mirrorUrl') mirrorUrl?: string,
+  ): Promise<WebuiVersionResponseDto> {
+    return this.webuiUpdateService.checkUpdate(refresh === 'true' || refresh === '1', mirrorUrl);
+  }
+
+  /**
+   * Gets list of GitHub mirrors with latency ping results.
+   */
+  @Get('mirrors')
+  @ApiOperation({ summary: 'Get list of mirrors with speed test results for WebUI updates' })
+  @ApiQuery({ name: 'ping', required: false, type: Boolean })
+  @ApiOkResponse({ type: OmpMirrorsResponseDto })
+  getMirrors(@Query('ping') ping?: string): Promise<OmpMirrorsResponseDto> {
+    return this.webuiUpdateService.getMirrors(ping === 'true' || ping === '1' || ping === undefined);
+  }
+
+  /**
+   * Pulls latest WebUI updates from remote git repository.
+   */
+  @Post('upgrade')
+  @ApiOperation({ summary: 'Pull latest WebUI commits from GitHub and rebuild' })
+  @ApiOkResponse({ type: WebuiUpgradeResponseDto })
+  upgrade(@Body() body: WebuiUpgradeRequestDto): Promise<WebuiUpgradeResponseDto> {
+    return this.webuiUpdateService.upgrade(body);
+  }
+}

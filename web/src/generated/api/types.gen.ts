@@ -2423,6 +2423,86 @@ export type OmpUpgradeResponseDto = {
     output: string;
 };
 
+export type WebuiVersionResponseDto = {
+    /**
+     * Currently installed WebUI version
+     */
+    currentVersion: string;
+    /**
+     * Current short Git commit hash
+     */
+    currentCommit: string;
+    /**
+     * Latest remote Git commit hash on main branch
+     */
+    latestCommit: string;
+    /**
+     * Latest released version tag if available
+     */
+    latestVersion?: string;
+    /**
+     * Whether a newer version or commit is available
+     */
+    hasUpdate: boolean;
+    /**
+     * Latest commit message summary
+     */
+    commitMessage?: string;
+    /**
+     * Latest commit author
+     */
+    commitAuthor?: string;
+    /**
+     * Latest commit timestamp or ISO date
+     */
+    commitDate?: string;
+    /**
+     * Number of commits local branch is behind remote
+     */
+    commitsBehind?: number;
+    /**
+     * GitHub repository URL
+     */
+    repoUrl: string;
+    /**
+     * Recommended git pull & rebuild command
+     */
+    updateCommand: string;
+    /**
+     * Recommended Docker Compose pull command
+     */
+    dockerCommand: string;
+    /**
+     * Timestamp when update check was performed in ms
+     */
+    checkedAt: number;
+    /**
+     * Fastest detected mirror ID
+     */
+    fastestMirrorId?: string;
+    /**
+     * Fastest detected mirror URL
+     */
+    fastestMirrorUrl?: string;
+};
+
+export type WebuiUpgradeRequestDto = {
+    /**
+     * Selected GitHub mirror or proxy URL to accelerate git pull
+     */
+    mirrorUrl?: string;
+    /**
+     * Whether to automatically run pnpm build after pulling (default true)
+     */
+    rebuild?: boolean;
+};
+
+export type WebuiUpgradeResponseDto = {
+    success: boolean;
+    message: string;
+    output: string;
+};
+
 export type AppGetStatusData = {
     body?: never;
     path?: never;
@@ -4993,3 +5073,65 @@ export type OmpUpdateUpgradeResponses = {
 };
 
 export type OmpUpdateUpgradeResponse = OmpUpdateUpgradeResponses[keyof OmpUpdateUpgradeResponses];
+
+export type WebuiUpdateCheckUpdateData = {
+    body?: never;
+    path?: never;
+    query?: {
+        refresh?: boolean;
+        mirrorUrl?: string;
+    };
+    url: '/api/webui/update/check';
+};
+
+export type WebuiUpdateCheckUpdateErrors = {
+    401: ApiErrorResponseDto;
+};
+
+export type WebuiUpdateCheckUpdateError = WebuiUpdateCheckUpdateErrors[keyof WebuiUpdateCheckUpdateErrors];
+
+export type WebuiUpdateCheckUpdateResponses = {
+    200: WebuiVersionResponseDto;
+};
+
+export type WebuiUpdateCheckUpdateResponse = WebuiUpdateCheckUpdateResponses[keyof WebuiUpdateCheckUpdateResponses];
+
+export type WebuiUpdateGetMirrorsData = {
+    body?: never;
+    path?: never;
+    query?: {
+        ping?: boolean;
+    };
+    url: '/api/webui/update/mirrors';
+};
+
+export type WebuiUpdateGetMirrorsErrors = {
+    401: ApiErrorResponseDto;
+};
+
+export type WebuiUpdateGetMirrorsError = WebuiUpdateGetMirrorsErrors[keyof WebuiUpdateGetMirrorsErrors];
+
+export type WebuiUpdateGetMirrorsResponses = {
+    200: OmpMirrorsResponseDto;
+};
+
+export type WebuiUpdateGetMirrorsResponse = WebuiUpdateGetMirrorsResponses[keyof WebuiUpdateGetMirrorsResponses];
+
+export type WebuiUpdateUpgradeData = {
+    body: WebuiUpgradeRequestDto;
+    path?: never;
+    query?: never;
+    url: '/api/webui/update/upgrade';
+};
+
+export type WebuiUpdateUpgradeErrors = {
+    401: ApiErrorResponseDto;
+};
+
+export type WebuiUpdateUpgradeError = WebuiUpdateUpgradeErrors[keyof WebuiUpdateUpgradeErrors];
+
+export type WebuiUpdateUpgradeResponses = {
+    200: WebuiUpgradeResponseDto;
+};
+
+export type WebuiUpdateUpgradeResponse = WebuiUpdateUpgradeResponses[keyof WebuiUpdateUpgradeResponses];

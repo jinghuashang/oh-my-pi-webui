@@ -3,10 +3,11 @@
  * Rendering is split into sidebar/ sub-components; this file orchestrates
  * state, queries, mutations, and view routing.
  */
-import { useMemo, useState } from 'react';
-import { FolderOpen, FolderPlus, PanelLeftClose, Puzzle, RefreshCw, Settings, Terminal } from 'lucide-react';
+import { useEffect, useMemo, useState } from 'react';
+import { FolderOpen, FolderPlus, GitBranch, PanelLeftClose, Puzzle, RefreshCw, Settings, Terminal } from 'lucide-react';
 import { CreateProjectDialog } from './sidebar/create-project-dialog';
 import { OmpUpdateDialog } from './sidebar/omp-update-dialog';
+import { WebuiUpdateDialog } from './sidebar/webui-update-dialog';
 import { useNavigate, useRouterState } from '@tanstack/react-router';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
@@ -22,6 +23,7 @@ import {
   threadsSetThreadNameMutation,
   threadsStartThreadMutation,
   threadsUnarchiveThreadMutation,
+  webuiUpdateCheckUpdateOptions,
 } from '@/generated/api/@tanstack/react-query.gen';
 import type { ThreadDto } from '@/generated/api';
 import { selectSidebarRows } from '@/lib/sidebar-rows';
@@ -99,11 +101,25 @@ export function ThreadSidebar() {
   const [dirPickerOpen, setDirPickerOpen] = useState(false);
   const [createProjectOpen, setCreateProjectOpen] = useState(false);
   const [updateDialogOpen, setUpdateDialogOpen] = useState(false);
+  const [webuiDialogOpen, setWebuiDialogOpen] = useState(false);
   const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
   const [graphTargetId, setGraphTargetId] = useState<string | null>(null);
 
   const updateQuery = useQuery(ompUpdateCheckUpdateOptions());
   const updateData = updateQuery.data;
+
+  const webuiQuery = useQuery(webuiUpdateCheckUpdateOptions());
+  const webuiData = webuiQuery.data;
+
+  // Auto-detect WebUI updates and prompt update dialog
+  useEffect(() => {
+    if (webuiData?.hasUpdate && webuiData.latestCommit) {
+      const dismissed = sessionStorage.getItem('webui_update_dismissed');
+      if (dismissed !== webuiData.latestCommit) {
+        setWebuiDialogOpen(true);
+      }
+    }
+  }, [webuiData?.hasUpdate, webuiData?.latestCommit]);
   // ── Queries ─────────────────────────────────────────────────────────
   // The sidebar reads one server-side projection. It used to join a paginated
   // thread list with the branch topology on the client, fold branches into
@@ -570,13 +586,42 @@ export function ThreadSidebar() {
         )}
       </ScrollArea>
 
-      {/* Desktop bottom footer: OMP update check + collapse sidebar */}
+      {/* Desktop bottom footer: WebUI update + OMP update + collapse sidebar */}
       <div className="hidden shrink-0 border-t border-border px-2 py-1.5 lg:block space-y-1">
+        {/* WebUI Update Status Row */}
+        <button
+          type="button"
+          onClick={() => setWebuiDialogOpen(true)}
+          className="flex w-full cursor-pointer items-center justify-between rounded-lg px-2.5 py-1 text-xs text-muted-foreground transition-colors hover:bg-accent/50 hover:text-foreground group"
+        >
+          <div className="flex items-center gap-2">
+            <GitBranch
+              className={cn(
+                'h-3.5 w-3.5 shrink-0 transition-transform text-muted-foreground',
+                webuiQuery.isFetching && 'animate-spin text-primary',
+              )}
+            />
+            <span className="font-mono text-[11px]">
+              WebUI {webuiData?.currentCommit || '...'}
+            </span>
+          </div>
+          {webuiData?.hasUpdate ? (
+            <span className="flex items-center gap-1 text-[10px] font-medium text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded-full border border-emerald-500/20">
+              <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
+              {t('Update available')}
+            </span>
+          ) : (
+            <span className="text-[10px] text-muted-foreground/60 group-hover:text-muted-foreground">
+              {t('Check update')}
+            </span>
+          )}
+        </button>
+
         {/* OMP Update Status Row */}
         <button
           type="button"
           onClick={() => setUpdateDialogOpen(true)}
-          className="flex w-full cursor-pointer items-center justify-between rounded-lg px-2.5 py-1.5 text-xs text-muted-foreground transition-colors hover:bg-accent/50 hover:text-foreground group"
+          className="flex w-full cursor-pointer items-center justify-between rounded-lg px-2.5 py-1 text-xs text-muted-foreground transition-colors hover:bg-accent/50 hover:text-foreground group"
         >
           <div className="flex items-center gap-2">
             <RefreshCw
@@ -590,7 +635,7 @@ export function ThreadSidebar() {
             </span>
           </div>
           {updateData?.hasUpdate ? (
-            <span className="flex items-center gap-1 text-[11px] font-medium text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded-full border border-emerald-500/20">
+            <span className="flex items-center gap-1 text-[10px] font-medium text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-1.5 py-0.5 rounded-full border border-emerald-500/20">
               <span className="h-1.5 w-1.5 rounded-full bg-emerald-500 animate-pulse" />
               {t('New version')}
             </span>
@@ -611,6 +656,16 @@ export function ThreadSidebar() {
           {t('Collapse sidebar')}
         </button>
       </div>
+
+      <WebuiUpdateDialog
+        open={webuiDialogOpen}
+        onClose={() => {
+          setWebuiDialogOpen(false);
+          if (webuiData?.latestCommit) {
+            sessionStorage.setItem('webui_update_dismissed', webuiData.latestCommit);
+          }
+        }}
+      />
 
       <OmpUpdateDialog
         open={updateDialogOpen}
