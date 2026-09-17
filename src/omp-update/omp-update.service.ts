@@ -18,13 +18,30 @@ import {
 const execFileAsync = promisify(execFile);
 
 export const DEFAULT_UPDATE_MIRRORS: UpdateMirrorDto[] = [
-  { id: 'direct', name: 'Direct (Official)', url: 'https://github.com/' },
   { id: 'ghproxy', name: 'ghproxy.net (Fast Proxy)', url: 'https://ghproxy.net/' },
   { id: 'ghddlc', name: 'gh.ddlc.top (Node Proxy)', url: 'https://gh.ddlc.top/' },
   { id: 'ghfast', name: 'ghfast.top (Proxy)', url: 'https://ghfast.top/' },
   { id: 'gitmirror', name: 'hub.gitmirror.com (Mirror)', url: 'https://hub.gitmirror.com/' },
   { id: 'kkgithub', name: 'kkgithub.com (Overseas Node)', url: 'https://kkgithub.com/' },
+  { id: 'direct', name: 'Direct (Official)', url: 'https://github.com/' },
 ];
+
+export function buildMirrorDownloadUrl(rawUrl: string, mirrorUrl?: string): string {
+  if (
+    !mirrorUrl ||
+    mirrorUrl === 'direct' ||
+    mirrorUrl === 'https://github.com/' ||
+    mirrorUrl === 'https://github.com' ||
+    mirrorUrl.trim() === ''
+  ) {
+    return rawUrl;
+  }
+  if (mirrorUrl === 'https://kkgithub.com/' || mirrorUrl === 'https://kkgithub.com') {
+    return rawUrl.replace('https://github.com/', 'https://kkgithub.com/');
+  }
+  const prefix = mirrorUrl.endsWith('/') ? mirrorUrl : `${mirrorUrl}/`;
+  return `${prefix}${rawUrl}`;
+}
 
 @Injectable()
 export class OmpUpdateService {
@@ -316,16 +333,22 @@ export class OmpUpdateService {
       }),
     );
 
-    // Find fastest available
+    // Find fastest available, preferring acceleration proxies over direct
     const available = pinged.filter((m) => m.available && (m.latencyMs ?? -1) > 0);
     let fastestId: string | undefined;
     let fastestUrl: string | undefined;
     if (available.length > 0) {
-      available.sort((a, b) => (a.latencyMs ?? 99999) - (b.latencyMs ?? 99999));
-      fastestId = available[0].id;
-      fastestUrl = available[0].url;
+      const nonDirect = available.filter((m) => m.id !== 'direct');
+      if (nonDirect.length > 0) {
+        nonDirect.sort((a, b) => (a.latencyMs ?? 99999) - (b.latencyMs ?? 99999));
+        fastestId = nonDirect[0].id;
+        fastestUrl = nonDirect[0].url;
+      } else {
+        available.sort((a, b) => (a.latencyMs ?? 99999) - (b.latencyMs ?? 99999));
+        fastestId = available[0].id;
+        fastestUrl = available[0].url;
+      }
     }
-
     const finalMirrors = pinged.map((m) => ({
       ...m,
       isFastest: m.id === fastestId,
@@ -396,16 +419,26 @@ export class OmpUpdateService {
     let releaseNotes: string | undefined;
     let releaseUrl: string | undefined;
 
-    // 1. Try GitHub Releases API first (using mirror prefix if specified)
+    // 1. Try domestic npmmirror first (ultra-fast, reliable in China)
+    try {
+      const res = await fetch('https://registry.npmmirror.com/@oh-my-pi/pi-coding-agent/latest', {
+        signal: AbortSignal.timeout(3500),
+      });
+      if (res.ok) {
+        const data = (await res.json()) as { version?: string };
+        if (data.version && this.compareSemver(data.version, latestVersion) > 0) {
+          latestVersion = data.version;
+        }
+      }
+    } catch (err) {
+      this.logger.debug(`npmmirror check failed: ${String(err)}`);
+    }
+
+    // 2. Try GitHub Releases API for release notes and verification
     try {
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 5000);
-      let apiUrl = 'https://api.github.com/repos/can1357/oh-my-pi/releases/latest';
-      if (mirrorUrl && mirrorUrl !== 'direct' && !mirrorUrl.startsWith('http://127.0.0.1')) {
-        const prefix = mirrorUrl.endsWith('/') ? mirrorUrl : `${mirrorUrl}/`;
-        apiUrl = `${prefix}https://api.github.com/repos/can1357/oh-my-pi/releases/latest`;
-      }
-      const res = await fetch(apiUrl, {
+      const timeoutId = setTimeout(() => controller.abort(), 4000);
+      const res = await fetch('https://api.github.com/repos/can1357/oh-my-pi/releases/latest', {
         headers: {
           'User-Agent': 'oh-my-pi-webui',
           Accept: 'application/vnd.github.v3+json',
@@ -423,31 +456,32 @@ export class OmpUpdateService {
         };
         const rawTag = data.tag_name || data.name || '';
         const match = rawTag.match(/(\d+\.\d+\.\d+)/);
-        if (match) {
+        if (match && this.compareSemver(match[1], latestVersion) > 0) {
           latestVersion = match[1];
-          releaseNotes = data.body || undefined;
-          releaseUrl = data.html_url || 'https://github.com/can1357/oh-my-pi/releases';
         }
+        releaseNotes = data.body || undefined;
+        releaseUrl = data.html_url || 'https://github.com/can1357/oh-my-pi/releases';
       }
     } catch (err) {
       this.logger.debug(`GitHub release check skipped/failed: ${String(err)}`);
     }
 
-    // 2. If GitHub fetch didn't return a higher version, verify with `omp update --check`
+    // 3. If still equal or failed, check via official npmjs.org
     if (latestVersion === currentVersion) {
       try {
-        const { stdout } = await execFileAsync(this.ompBin, ['update', '--check'], {
-          timeout: 10_000,
+        const res = await fetch('https://registry.npmjs.org/@oh-my-pi/pi-coding-agent/latest', {
+          signal: AbortSignal.timeout(4000),
         });
-        const match = stdout.match(/([Nn]ew version|[Uu]pdate available.*?|[Ll]atest.*?)\s*v?(\d+\.\d+\.\d+)/);
-        if (match && match[2]) {
-          latestVersion = match[2];
+        if (res.ok) {
+          const data = (await res.json()) as { version?: string };
+          if (data.version && this.compareSemver(data.version, latestVersion) > 0) {
+            latestVersion = data.version;
+          }
         }
       } catch (err) {
-        this.logger.debug(`omp update --check failed: ${String(err)}`);
+        this.logger.debug(`npmjs check failed: ${String(err)}`);
       }
     }
-
     const hasUpdate = this.compareSemver(latestVersion, currentVersion) > 0;
 
     const result: OmpVersionResponseDto = {
@@ -476,32 +510,62 @@ export class OmpUpdateService {
     const check = await this.checkUpdate();
     const targetBinary = await this.resolveBinaryPath();
     const binaryName = this.resolveBinaryName();
+    const targetVersion = check.latestVersion || '18.2.4';
+    const rawAssetUrl = `https://github.com/can1357/oh-my-pi/releases/download/v${targetVersion}/${binaryName}`;
 
-    // If mirror is specified or user wants mirror-accelerated download
-    const isMirrorPrefix = dto.mirrorUrl && dto.mirrorUrl !== 'direct' && !dto.mirrorUrl.startsWith('http://127.0.0.1');
-    if (isMirrorPrefix || (!dto.canary && check.latestVersion)) {
-      let downloadUrl = `https://github.com/can1357/oh-my-pi/releases/download/v${check.latestVersion}/${binaryName}`;
-      if (isMirrorPrefix && dto.mirrorUrl) {
-        const prefix = dto.mirrorUrl.endsWith('/') ? dto.mirrorUrl : `${dto.mirrorUrl}/`;
-        downloadUrl = `${prefix}${downloadUrl}`;
+    // Gather candidate mirror URLs to ensure high reliability
+    const mirrorCandidates: string[] = [];
+    if (dto.mirrorUrl && dto.mirrorUrl !== 'direct' && dto.mirrorUrl !== 'https://github.com/') {
+      mirrorCandidates.push(dto.mirrorUrl);
+    }
+    try {
+      const mirrorData = await this.getMirrors(false);
+      const fastest = mirrorData.mirrors.find((m) => m.isFastest && m.id !== 'direct');
+      if (fastest && !mirrorCandidates.includes(fastest.url)) {
+        mirrorCandidates.push(fastest.url);
       }
+    } catch {}
 
-      this.logger.log(`Downloading OMP binary directly via mirror: ${downloadUrl} to ${targetBinary}`);
-      try {
-        await this.downloadBinaryWithProgress(downloadUrl, targetBinary);
-        this.cachedCheck = null;
-        const newVersion = await this.getCurrentVersion();
-        return {
-          success: true,
-          message: `Successfully downloaded and updated OMP to v${newVersion} via mirror acceleration.`,
-          output: `Downloaded ${binaryName} from ${downloadUrl}\nInstalled to ${targetBinary}\nVerified version: v${newVersion}`,
-        };
-      } catch (err) {
-        this.logger.warn(`Direct mirror binary download failed, falling back to CLI update: ${String(err)}`);
+    for (const fallback of ['https://ghproxy.net/', 'https://gh.ddlc.top/', 'https://hub.gitmirror.com/']) {
+      if (!mirrorCandidates.includes(fallback)) {
+        mirrorCandidates.push(fallback);
+      }
+    }
+    if (!mirrorCandidates.includes('direct')) {
+      mirrorCandidates.push('direct');
+    }
+
+    let lastError: Error | null = null;
+    let successfulUrl: string | null = null;
+
+    // 1. Try direct mirror binary download first (with real-time progress)
+    if (!dto.canary) {
+      for (const candidate of mirrorCandidates) {
+        const downloadUrl = buildMirrorDownloadUrl(rawAssetUrl, candidate);
+        this.logger.log(`Attempting OMP binary download via: ${downloadUrl}`);
+        try {
+          await this.downloadBinaryWithProgress(downloadUrl, targetBinary);
+          successfulUrl = downloadUrl;
+          break;
+        } catch (err) {
+          lastError = err as Error;
+          this.logger.warn(`Download via ${downloadUrl} failed: ${String(err)}; trying next candidate...`);
+        }
       }
     }
 
-    // Fallback to CLI update
+    if (successfulUrl) {
+      this.cachedCheck = null;
+      const newVersion = await this.getCurrentVersion();
+      return {
+        success: true,
+        message: `Successfully downloaded and updated OMP to v${newVersion} via mirror acceleration.`,
+        output: `Downloaded ${binaryName} from ${successfulUrl}\nInstalled to ${targetBinary}\nVerified version: v${newVersion}`,
+      };
+    }
+
+    // 2. Fallback to native CLI update if mirror download is bypassed or failed
+    this.logger.warn(`Mirror downloads failed (${lastError?.message}), falling back to native CLI update...`);
     const args = ['update'];
     if (dto.canary) {
       args.push('--canary');
@@ -511,21 +575,14 @@ export class OmpUpdateService {
     }
 
     const env: NodeJS.ProcessEnv = { ...process.env };
-    if (dto.mirrorUrl && dto.mirrorUrl !== 'direct') {
-      const isProxy = dto.mirrorUrl.startsWith('http://') || dto.mirrorUrl.startsWith('socks');
-      if (isProxy) {
-        env.HTTPS_PROXY = dto.mirrorUrl;
-        env.HTTP_PROXY = dto.mirrorUrl;
-        env.ALL_PROXY = dto.mirrorUrl;
-      } else {
-        env.GH_PROXY = dto.mirrorUrl;
-        env.GITHUB_MIRROR = dto.mirrorUrl;
-        env.OMP_UPDATE_MIRROR = dto.mirrorUrl;
-      }
+    if (dto.mirrorUrl && (dto.mirrorUrl.startsWith('http://') || dto.mirrorUrl.startsWith('socks'))) {
+      env.HTTPS_PROXY = dto.mirrorUrl;
+      env.HTTP_PROXY = dto.mirrorUrl;
+      env.ALL_PROXY = dto.mirrorUrl;
     }
 
     this.logger.log(
-      `Executing omp upgrade with args: ${args.join(' ')} and mirror: ${dto.mirrorUrl || 'direct'}...`,
+      `Executing omp update via CLI with args: ${args.join(' ')}...`,
     );
 
     try {
@@ -553,8 +610,8 @@ export class OmpUpdateService {
       this.logger.error(`omp update failed: ${output}`);
       return {
         success: false,
-        message: `Update execution failed: ${output}`,
-        output,
+        message: `Update execution failed: ${lastError?.message || output}`,
+        output: `Mirror download error: ${lastError?.message || 'unknown'}\n\nCLI output:\n${output}`,
       };
     }
   }

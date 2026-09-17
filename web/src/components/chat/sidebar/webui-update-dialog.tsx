@@ -166,7 +166,7 @@ export function WebuiUpdateDialog({ open, onClose }: Props) {
 
   return (
     <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
-      <DialogContent className="max-w-md">
+      <DialogContent className="sm:max-w-lg max-w-lg overflow-hidden">
         <DialogHeader>
           <div className="flex items-center gap-2">
             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
@@ -181,9 +181,9 @@ export function WebuiUpdateDialog({ open, onClose }: Props) {
           </div>
         </DialogHeader>
 
-        <div className="space-y-4 pt-1">
+        <div className="space-y-4 pt-1 min-w-0 max-w-full">
           {/* Version & Commit Status Box */}
-          <div className="rounded-xl border bg-muted/40 p-3.5 space-y-3">
+          <div className="rounded-xl border bg-muted/40 p-3.5 space-y-3 min-w-0">
             <div className="flex items-center justify-between">
               <div>
                 <span className="text-[10px] uppercase font-semibold text-muted-foreground block">
@@ -240,7 +240,7 @@ export function WebuiUpdateDialog({ open, onClose }: Props) {
                       {t('New WebUI commit available!')}
                     </p>
                     {updateData.commitMessage && (
-                      <p className="font-mono text-[11px] text-foreground/80 bg-background/50 rounded p-1 line-clamp-2">
+                      <p className="font-mono text-[11px] text-foreground/80 bg-background/50 rounded p-1 line-clamp-2 break-all">
                         {updateData.commitMessage}
                       </p>
                     )}
@@ -397,7 +397,7 @@ export function WebuiUpdateDialog({ open, onClose }: Props) {
           </div>
 
           {/* Terminal Command Box */}
-          <div className="space-y-1.5">
+          <div className="space-y-1.5 min-w-0">
             <div className="flex items-center justify-between">
               <label className="text-xs font-medium text-foreground flex items-center gap-1.5">
                 <Terminal className="h-3.5 w-3.5 text-muted-foreground" />
@@ -428,8 +428,8 @@ export function WebuiUpdateDialog({ open, onClose }: Props) {
               </div>
             </div>
 
-            <div className="flex items-center justify-between rounded-lg border bg-muted/60 px-3 py-2 font-mono text-xs text-foreground">
-              <span className="truncate pr-2">{cmdTab === 'git' ? gitCommand : dockerCommand}</span>
+            <div className="flex items-center justify-between rounded-lg border bg-muted/60 px-3 py-2 font-mono text-xs text-foreground min-w-0 overflow-hidden">
+              <span className="truncate min-w-0 flex-1 pr-2">{cmdTab === 'git' ? gitCommand : dockerCommand}</span>
               <Button
                 variant="ghost"
                 size="sm"
@@ -440,10 +440,11 @@ export function WebuiUpdateDialog({ open, onClose }: Props) {
                 <Copy className="h-3 w-3" />
               </Button>
             </div>
+          </div>
 
           {/* Real-time WebUI Upgrade Progress Card */}
           {upgradeMutation.isPending && (
-            <div className="rounded-xl border border-primary/20 bg-primary/5 p-3.5 space-y-2">
+            <div className="rounded-xl border border-primary/20 bg-primary/5 p-3.5 space-y-2 min-w-0">
               <div className="flex items-center justify-between text-xs">
                 <div className="flex items-center gap-1.5 font-medium text-foreground">
                   <Loader2 className="h-3.5 w-3.5 animate-spin text-primary" />
@@ -466,7 +467,6 @@ export function WebuiUpdateDialog({ open, onClose }: Props) {
               </div>
             </div>
           )}
-          </div>
 
           {/* Output Log if upgrade was executed */}
           {outputLog && (
