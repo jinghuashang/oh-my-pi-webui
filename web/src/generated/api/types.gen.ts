@@ -2514,6 +2514,18 @@ export type WebuiVersionResponseDto = {
      * Fastest detected mirror URL
      */
     fastestMirrorUrl?: string;
+    /**
+     * Whether WebUI is running inside a Docker container
+     */
+    isDocker: boolean;
+    /**
+     * Whether in-place auto update via git pull is supported in this environment
+     */
+    canAutoUpdate: boolean;
+    /**
+     * Reason why auto-update is disabled (e.g. docker container or read-only)
+     */
+    autoUpdateDisabledReason?: string;
 };
 
 export type WebuiUpdateProgressDto = {

@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
 import {
@@ -58,11 +58,15 @@ export function WebuiUpdateDialog({ open, onClose }: Props) {
   const [customName, setCustomName] = useState('');
   const [customUrl, setCustomUrl] = useState('');
   const [cmdTab, setCmdTab] = useState<'git' | 'docker'>('git');
-
-  // WebUI version check query
-
   const updateQuery = useQuery(webuiUpdateCheckUpdateOptions());
   const updateData = updateQuery.data;
+
+  // Default to Docker tab if running inside container
+  useEffect(() => {
+    if (updateData?.isDocker) {
+      setCmdTab('docker');
+    }
+  }, [updateData?.isDocker]);
 
   // Mirror latency query
   const mirrorsQuery = useQuery(
@@ -95,8 +99,8 @@ export function WebuiUpdateDialog({ open, onClose }: Props) {
   }, [effectiveMirrorUrl]);
 
   const dockerCommand = useMemo(() => {
-    return 'docker compose pull && docker compose up -d';
-  }, []);
+    return updateData?.dockerCommand || 'git pull && docker compose up -d --build';
+  }, [updateData?.dockerCommand]);
 
   // Upgrade mutation
   const upgradeMutation = useMutation({
@@ -214,6 +218,20 @@ export function WebuiUpdateDialog({ open, onClose }: Props) {
               <div className="flex items-center gap-2 text-xs text-muted-foreground py-1">
                 <Loader2 className="h-3.5 w-3.5 animate-spin text-primary" />
                 <span>{t('Checking for WebUI updates...')}</span>
+              </div>
+            ) : updateData?.isDocker ? (
+              <div className="rounded-lg border border-blue-500/30 bg-blue-500/10 p-2.5 space-y-1.5">
+                <div className="flex items-start gap-2">
+                  <Flame className="h-4 w-4 text-blue-500 shrink-0 mt-0.5" />
+                  <div className="text-xs text-blue-700 dark:text-blue-300 space-y-1 flex-1">
+                    <p className="font-semibold">
+                      {t('Running in Docker container environment (Read-only filesystem)')}
+                    </p>
+                    <p className="text-[11px] text-muted-foreground leading-relaxed">
+                      {t('In-place git pull is disabled inside the container. To update WebUI, run the docker compose command on your host machine.')}
+                    </p>
+                  </div>
+                </div>
               </div>
             ) : updateData?.currentCommit === 'unknown' ? (
               <div className="rounded-lg border border-amber-500/30 bg-amber-500/10 p-2.5 space-y-1.5">
@@ -496,27 +514,41 @@ export function WebuiUpdateDialog({ open, onClose }: Props) {
             <Button type="button" variant="ghost" size="sm" onClick={onClose} className="text-xs">
               {t('Close')}
             </Button>
-            {(updateData?.hasUpdate || updateData?.currentCommit === 'unknown') && (
-              <Button
-                type="button"
-                size="sm"
-                onClick={() =>
-                  upgradeMutation.mutate({
-                    body: {
-                      mirrorUrl: effectiveMirrorUrl,
-                    },
-                  })
-                }
-                disabled={upgradeMutation.isPending}
-                className="gap-1.5 text-xs bg-emerald-600 hover:bg-emerald-700 text-white"
-              >
-                {upgradeMutation.isPending ? (
-                  <Loader2 className="h-3.5 w-3.5 animate-spin" />
-                ) : (
-                  <Download className="h-3.5 w-3.5" />
-                )}
-                {t('Upgrade WebUI')}
-              </Button>
+            {updateData?.canAutoUpdate ? (
+              (updateData?.hasUpdate || updateData?.currentCommit === 'unknown') && (
+                <Button
+                  type="button"
+                  size="sm"
+                  onClick={() =>
+                    upgradeMutation.mutate({
+                      body: {
+                        mirrorUrl: effectiveMirrorUrl,
+                      },
+                    })
+                  }
+                  disabled={upgradeMutation.isPending}
+                  className="gap-1.5 text-xs bg-emerald-600 hover:bg-emerald-700 text-white"
+                >
+                  {upgradeMutation.isPending ? (
+                    <Loader2 className="h-3.5 w-3.5 animate-spin" />
+                  ) : (
+                    <Download className="h-3.5 w-3.5" />
+                  )}
+                  {t('Upgrade WebUI')}
+                </Button>
+              )
+            ) : (
+              (updateData?.hasUpdate || updateData?.isDocker || updateData?.currentCommit === 'unknown') && (
+                <Button
+                  type="button"
+                  size="sm"
+                  onClick={() => handleCopyCommand(cmdTab === 'git' ? gitCommand : dockerCommand)}
+                  className="gap-1.5 text-xs bg-primary hover:bg-primary/90 text-primary-foreground"
+                >
+                  <Copy className="h-3.5 w-3.5" />
+                  {t('Copy Host Update Command')}
+                </Button>
+              )
             )}
           </div>
         </DialogFooter>

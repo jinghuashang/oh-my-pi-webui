@@ -39,6 +39,61 @@ export class WebuiUpdateService {
   getProgress(): WebuiUpdateProgressDto {
     return this.progress;
   }
+
+  /**
+   * Detects whether the process is running inside a Docker or containerized environment.
+   */
+  isDocker(): boolean {
+    try {
+      if (fs.existsSync('/.dockerenv')) return true;
+      if (fs.existsSync('/run/.containerenv')) return true;
+      if (process.env.DOCKER_CONTAINER === 'true' || process.env.IS_DOCKER === 'true') return true;
+      if (fs.existsSync('/proc/1/cgroup')) {
+        const cgroup = fs.readFileSync('/proc/1/cgroup', 'utf-8');
+        if (cgroup.includes('docker') || cgroup.includes('containerd') || cgroup.includes('kubepods')) {
+          return true;
+        }
+      }
+    } catch {}
+    return false;
+  }
+
+  /**
+   * Checks if .git directory exists and has full write permissions.
+   */
+  isGitWritable(): boolean {
+    try {
+      const gitDir = path.join(this.repoRoot, '.git');
+      if (!fs.existsSync(gitDir)) return false;
+      const testFile = path.join(gitDir, `.writable_probe_${Date.now()}`);
+      fs.writeFileSync(testFile, '1', 'utf-8');
+      fs.unlinkSync(testFile);
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  /**
+   * Determines whether in-place auto update via git pull is supported in this environment.
+   */
+  canAutoUpdate(): boolean {
+    if (this.isDocker()) return false;
+    return this.isGitWritable();
+  }
+
+  /**
+   * Human-readable explanation when auto update is disabled.
+   */
+  getAutoUpdateDisabledReason(): string | undefined {
+    if (this.isDocker()) {
+      return 'Running in Docker container with protected root filesystem. Please update from host machine.';
+    }
+    if (!this.isGitWritable()) {
+      return 'Filesystem or .git directory is read-only. Cannot perform in-place git pull.';
+    }
+    return undefined;
+  }
   /**
    * Reads current WebUI version from package.json.
    */
@@ -218,6 +273,10 @@ export class WebuiUpdateService {
       fastestMirrorId = fastest?.id;
     } catch {}
 
+    const isDocker = this.isDocker();
+    const canAutoUpdate = this.canAutoUpdate();
+    const autoUpdateDisabledReason = this.getAutoUpdateDisabledReason();
+
     const result: WebuiVersionResponseDto = {
       currentVersion,
       currentCommit,
@@ -228,12 +287,14 @@ export class WebuiUpdateService {
       commitDate,
       repoUrl,
       updateCommand: 'git pull && pnpm build',
-      dockerCommand: 'docker compose pull && docker compose up -d',
+      dockerCommand: 'git pull && docker compose up -d --build',
       checkedAt: now,
       fastestMirrorId,
       fastestMirrorUrl,
+      isDocker,
+      canAutoUpdate,
+      autoUpdateDisabledReason,
     };
-
     // Cache check results for 2 minutes
     this.cachedCheck = {
       result,
@@ -247,11 +308,37 @@ export class WebuiUpdateService {
    * Executes git pull with optional mirror acceleration and triggers production build.
    */
   async upgrade(dto: WebuiUpgradeRequestDto): Promise<WebuiUpgradeResponseDto> {
+    if (!this.canAutoUpdate()) {
+      const reason = this.getAutoUpdateDisabledReason() || 'In-place update is not supported in this environment.';
+      this.logger.warn(`WebUI in-place update rejected: ${reason}`);
+
+      const hostCmd = this.isDocker()
+        ? 'git pull && docker compose up -d --build'
+        : 'git pull origin main && pnpm build';
+
+      const output = this.isDocker()
+        ? `[Docker Environment Detected]\nWebUI is running in a protected Docker container (Read-only filesystem).\nIn-place git pull is disabled to preserve container integrity.\n\nPlease run the following command on your host machine to update:\n\n  ${hostCmd}\n\nOr if using pre-built image:\n  docker compose pull && docker compose up -d`
+        : `[Read-Only Filesystem Detected]\n${reason}\nPlease run "${hostCmd}" manually with appropriate write permissions.`;
+
+      this.progress = {
+        status: 'failed',
+        stage: reason,
+        percent: 0,
+        outputLog: output,
+        error: reason,
+      };
+
+      return {
+        success: false,
+        message: reason,
+        output,
+      };
+    }
+
     const env: NodeJS.ProcessEnv = {
       ...process.env,
       GIT_TERMINAL_PROMPT: '0',
     };
-
     let pullTarget = 'origin';
     if (dto.mirrorUrl && dto.mirrorUrl !== 'direct') {
       const isProxy = dto.mirrorUrl.startsWith('http://') || dto.mirrorUrl.startsWith('socks');

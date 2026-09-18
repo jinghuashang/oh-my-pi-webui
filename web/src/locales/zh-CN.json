@@ -1278,5 +1278,10 @@
   "WebUI updated successfully! Please refresh or restart.": "WebUI 更新成功！请刷新页面或重启服务。",
   "Update available": "有更新可用",
   "Running in lean/container environment without local Git commit tag": "当前运行在容器或精简环境中，未挂载本地 Git 提交元数据",
-  "Remote latest commit is {{commit}}. You can pull the latest update or rebuild below.": "远端最新提交为 {{commit}}。您可以点击下方按钮更新至最新提交，或拉取新镜像。"
+  "Remote latest commit is {{commit}}. You can pull the latest update or rebuild below.": "远端最新提交为 {{commit}}。您可以点击下方按钮更新至最新提交，或拉取新镜像。",
+  "Running in Docker container environment (Read-only filesystem)": "运行于 Docker 容器环境（文件系统受保护）",
+  "In-place git pull is disabled inside the container. To update WebUI, run the docker compose command on your host machine.": "容器内禁止直接执行 git pull 避免破坏镜像完整性。更新 WebUI 请直接在宿主机执行升级命令：",
+  "Filesystem or .git directory is read-only. Cannot perform in-place git pull.": "文件系统或 .git 目录为只读模式，无法在容器内直接拉取更新。",
+  "Copy Host Update Command": "复制宿主机升级命令",
+  "Docker update command copied to clipboard": "Docker 升级命令已复制到剪贴板"
 }

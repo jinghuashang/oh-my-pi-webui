@@ -1,5 +1,5 @@
 import { ConfigService } from '@nestjs/config';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { WebuiUpdateService } from './webui-update.service';
 import { OmpUpdateService } from '../omp-update/omp-update.service';
 
@@ -29,4 +29,17 @@ describe('WebuiUpdateService', () => {
     },
     15000,
   );
+
+  it('detects docker and writable status', () => {
+    expect(typeof service.isDocker()).toBe('boolean');
+    expect(typeof service.canAutoUpdate()).toBe('boolean');
+  });
+
+  it('rejects in-place upgrade when canAutoUpdate is false', async () => {
+    const canUpdateSpy = vi.spyOn(service, 'canAutoUpdate').mockReturnValue(false);
+    const res = await service.upgrade({});
+    expect(res.success).toBe(false);
+    expect(res.message).toBeTruthy();
+    canUpdateSpy.mockRestore();
+  });
 });

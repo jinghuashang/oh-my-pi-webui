@@ -45,6 +45,15 @@ export class WebuiVersionResponseDto {
 
   @ApiPropertyOptional({ description: 'Fastest detected mirror URL' })
   fastestMirrorUrl?: string;
+
+  @ApiProperty({ description: 'Whether WebUI is running inside a Docker container' })
+  isDocker!: boolean;
+
+  @ApiProperty({ description: 'Whether in-place auto update via git pull is supported in this environment' })
+  canAutoUpdate!: boolean;
+
+  @ApiPropertyOptional({ description: 'Reason why auto-update is disabled (e.g. docker container or read-only)' })
+  autoUpdateDisabledReason?: string;
 }
 
 export class WebuiUpgradeRequestDto {
