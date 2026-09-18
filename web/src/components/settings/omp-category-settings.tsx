@@ -22,7 +22,7 @@ import {
   type OmpSettingItem,
   updateOmpSetting,
 } from '@/api/omp-config-api';
-import { getOmpSettingI18n } from '@/lib/omp-setting-translations';
+import { getOmpSettingI18n, humanizeKey } from '@/lib/omp-setting-translations';
 import { SettingsSection } from './settings-section';
 
 interface Props {
@@ -49,11 +49,12 @@ export function OmpCategorySettings({ category, onRefresh }: Props) {
     if (!query) return sourceItems;
     return sourceItems.filter((item) => {
       const translated = getOmpSettingI18n(item.key, item.description);
+      const title = isZh ? translated.title : humanizeKey(item.key);
+      const desc = isZh && translated.desc ? translated.desc : item.description;
       return (
         item.key.toLowerCase().includes(query) ||
-        item.description.toLowerCase().includes(query) ||
-        translated.title.toLowerCase().includes(query) ||
-        translated.desc.toLowerCase().includes(query)
+        title.toLowerCase().includes(query) ||
+        desc.toLowerCase().includes(query)
       );
     });
   }, [sourceItems, search]);
@@ -148,6 +149,7 @@ export function SettingRow({
   onSave: (val: unknown) => void;
 }) {
   const translated = getOmpSettingI18n(item.key, item.description);
+  const title = isZh ? translated.title : humanizeKey(item.key);
   const description = isZh && translated.desc ? translated.desc : item.description;
   const current = item.value;
 
@@ -155,7 +157,7 @@ export function SettingRow({
     <div className="flex flex-col gap-2.5 py-3 transition-colors hover:bg-accent/20 sm:flex-row sm:items-start sm:gap-6 sm:px-1">
       <div className="min-w-0 flex-1 space-y-1.5">
         <div className="flex flex-wrap items-center gap-x-2 gap-y-1">
-          <span className="text-[13px] font-medium leading-tight">{translated.title}</span>
+          <span className="text-[13px] font-medium leading-tight">{title}</span>
           <code className="rounded bg-muted/60 px-1.5 py-px font-mono text-[10px] text-muted-foreground">
             {item.key}
           </code>

@@ -191,7 +191,7 @@ const CURATED: Record<string, SettingTranslation> = {
 };
 
 /** Humanized key, used when neither dictionary names an option. */
-function humanizeKey(key: string): string {
+export function humanizeKey(key: string): string {
   const leaf = key.split('.').pop() ?? key;
   return leaf
     .replace(/([a-z0-9])([A-Z])/g, '$1 $2')
