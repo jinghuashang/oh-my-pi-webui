@@ -402,6 +402,24 @@ async function main() {
         const threadId = sessionId ?? `session_${Date.now()}`;
         activeThreadId = threadId;
 
+        if (cwd) {
+          sessionManager.setSessionCwd(threadId, cwd);
+          if (sessionFile && fs.existsSync(sessionFile)) {
+            try {
+              const raw = fs.readFileSync(sessionFile, 'utf8');
+              const lines = raw.split('\n');
+              if (lines.length > 0 && lines[0].trim()) {
+                const parsed = JSON.parse(lines[0]) as Record<string, unknown>;
+                if (parsed.type === 'session') {
+                  parsed.cwd = cwd;
+                  lines[0] = JSON.stringify(parsed);
+                  fs.writeFileSync(sessionFile, lines.join('\n'), 'utf8');
+                }
+              }
+            } catch {}
+          }
+        }
+
         const thread = {
           id: threadId,
           forkedFromId: null,
@@ -434,6 +452,13 @@ async function main() {
         return result;
       }
 
+      case 'thread/delete': {
+        const threadId = (params.threadId as string) || (params.id as string);
+        const ok = sessionManager.deleteSession(threadId);
+        transport.sendNotification('thread/deleted', { threadId });
+        return { success: ok, threadId };
+      }
+
       case 'thread/read': {
         const threadId = params.threadId as string;
         activeThreadId = threadId;
@@ -451,7 +476,7 @@ async function main() {
           updatedAt: meta?.updatedAt || Date.now(),
           status: { type: 'idle' },
           path: sessionPath,
-          cwd: meta?.cwd || process.cwd(),
+          cwd: sessionManager.getSessionCwd(threadId) || meta?.cwd || process.cwd(),
           cliVersion: 'omp 18.1.19',
           historyMode: 'paginated',
           turns: [],
@@ -486,7 +511,7 @@ async function main() {
           updatedAt: meta?.updatedAt || Date.now(),
           status: { type: 'idle' },
           path: sessionPath,
-          cwd: meta?.cwd || process.cwd(),
+          cwd: sessionManager.getSessionCwd(threadId) || meta?.cwd || process.cwd(),
           cliVersion: 'omp 18.1.19',
           historyMode: 'paginated',
           turns: [],

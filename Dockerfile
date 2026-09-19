@@ -31,7 +31,7 @@ COPY . .
 RUN pnpm build
 
 # Prune development dependencies to keep the production image lean
-RUN pnpm prune --prod
+RUN CI=true pnpm prune --prod
 
 # ==============================================================================
 # Stage 2: Production Runtime with OMP Engine
@@ -63,6 +63,8 @@ ENV NODE_ENV=production \
     OMP_BIN=/usr/local/bin/omp \
     OMP_CWD=/workspaces \
     OMP_SESSION_DIR=/root/.omp/agent/sessions \
+    WORKSPACE_ROOTS=/workspaces,/root/.omp \
+    WEBUI_PROJECTS_DIR=/workspaces \
     PATH="/usr/local/bin:$PATH"
 
 # Copy built dependencies and distribution artifacts from builder

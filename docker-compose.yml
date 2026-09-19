@@ -15,6 +15,8 @@ services:
       - HOST=0.0.0.0
       - OMP_BIN=/usr/local/bin/omp
       - OMP_CWD=/workspaces
+      - WORKSPACE_ROOTS=/workspaces,/root/.omp
+      - WEBUI_PROJECTS_DIR=/workspaces
       # 可选：直接在此配置模型服务商 API Key，容器内 OMP 自动识别
       # - OPENAI_API_KEY=sk-xxx
       # - ANTHROPIC_API_KEY=sk-ant-xxx

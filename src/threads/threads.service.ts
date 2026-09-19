@@ -1,12 +1,13 @@
 /**
  * Handles thread and turn operations by delegating to OMP engine.
  */
-import { HttpStatus, Injectable, Logger } from '@nestjs/common';
+import { HttpStatus, Injectable, Logger, Optional } from '@nestjs/common';
 import { OmpService } from '../omp/omp-engine.service';
 import type { v2 } from '../omp/omp-schema';
 import { BusinessException } from '../common/business.exception';
 import { ErrorCode } from '../common/error-codes';
 import { ConversationBranchesService } from '../conversation-branches/conversation-branches.service';
+import { FilesService } from '../files/files.service';
 import { ConversationBranchMutationsService } from '../conversation-branches/conversation-branch-mutations.service';
 import type {
   BranchStateDto,
@@ -71,6 +72,7 @@ export class ThreadsService {
     private readonly deletionRegistry: ThreadDeletionRegistryService,
     private readonly history: ThreadHistoryService,
     private readonly overview: ThreadsOverviewService,
+    @Optional() private readonly filesService?: FilesService,
   ) {}
 
   /**
@@ -86,6 +88,12 @@ export class ThreadsService {
       ...params,
       historyMode: REQUIRED_HISTORY_MODE,
     };
+    if (params.cwd && this.filesService) {
+      try {
+        this.filesService.addAllowedRoot(params.cwd);
+        this.filesService.addWorkspaceRoot(params.cwd, true);
+      } catch {}
+    }
     const settingsGeneration = this.resumeRegistry.getGeneration();
     const response = await this.ompService.request<v2.ThreadStartResponse>(
       'thread/start',
@@ -159,6 +167,12 @@ export class ThreadsService {
    */
   async readThread(threadId: string): Promise<ClientThreadReadResponse> {
     const response = await this.history.readThreadMetadata(threadId);
+    if (response.thread?.cwd && this.filesService) {
+      try {
+        this.filesService.addAllowedRoot(response.thread.cwd);
+        this.filesService.addWorkspaceRoot(response.thread.cwd, true);
+      } catch {}
+    }
     return projectThreadReadForClient(response);
   }
 
@@ -176,7 +190,12 @@ export class ThreadsService {
   ): Promise<ThreadOpenResponseDto> {
     this.deletionRegistry.assertMutable(threadId);
     const response = await this.resumeRegistry.ensureOpened(threadId);
-    // The pointer means "the branch a person last looked at", so only a
+    if (response.thread?.cwd && this.filesService) {
+      try {
+        this.filesService.addAllowedRoot(response.thread.cwd);
+        this.filesService.addWorkspaceRoot(response.thread.cwd, true);
+      } catch {}
+    }
     // deliberate open may move it. Background reopens — app-server auto-resume,
     // and the client restoring its loaded threads after a refresh or a socket
     // reconnect — walk every loaded thread in whatever order they come back;

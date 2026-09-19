@@ -7,7 +7,9 @@ import {
   Injectable,
   Logger,
   OnModuleDestroy,
+  Optional,
 } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { BusinessException } from '../common/business.exception';
 import { ErrorCode } from '../common/error-codes';
 import {
@@ -102,6 +104,8 @@ interface ExistingAncestor {
 @Injectable()
 export class FilesService implements OnModuleDestroy {
   private readonly logger = new Logger(FilesService.name);
+  /** Roots explicitly trusted by internal services (e.g. newly created or cloned projects). */
+  private readonly trustedRoots = new Set<string>();
   /** Roots dynamically added via addWorkspaceRoot (e.g. thread cwd). */
   private readonly dynamicRoots = new Set<string>();
   /** Union of configured roots (from setting/env) + dynamicRoots + home. */
@@ -110,7 +114,10 @@ export class FilesService implements OnModuleDestroy {
   private excludedDirs = DEFAULT_EXCLUDED_DIRS;
   private unregisterSettingsChange: (() => void) | null = null;
 
-  constructor(private readonly settingsService: SettingsService) {
+  constructor(
+    private readonly settingsService: SettingsService,
+    @Optional() private readonly configService?: ConfigService,
+  ) {
     this.rebuildWorkspaceRoots();
     this.rebuildExcludedDirs();
     this.unregisterSettingsChange = this.settingsService.onChange((event) => {
@@ -156,11 +163,40 @@ export class FilesService implements OnModuleDestroy {
     try {
       next.add(fsSync.realpathSync(process.cwd()));
     } catch {}
-    // Prune dynamic roots that no longer fall within any configured root
+
+    // Include OMP_CWD and common Docker/system workspace locations
+    const possibleRoots: Array<string | undefined> = [
+      this.configService?.get<string>('OMP_CWD'),
+      process.env.OMP_CWD,
+      '/workspaces',
+      path.join(process.cwd(), 'workspaces'),
+      this.configService?.get<string>('WEBUI_PROJECTS_DIR'),
+      process.env.WEBUI_PROJECTS_DIR,
+      this.configService?.get<string>('WEBUI_HOME'),
+      process.env.WEBUI_HOME,
+      path.join(process.cwd(), 'data'),
+      path.join(process.cwd(), 'data', 'projects'),
+      path.join(os.homedir(), '.omp'),
+      path.join(os.homedir(), '.omp', 'projects'),
+    ];
+
+    for (const r of possibleRoots) {
+      if (!r || typeof r !== 'string') continue;
+      for (const item of r.split(',')) {
+        const trimmed = item.trim();
+        if (!trimmed) continue;
+        try {
+          if (fsSync.existsSync(trimmed)) {
+            next.add(this.resolveExistingDirectorySync(trimmed));
+          }
+        } catch {}
+      }
+    }
+    // Prune dynamic roots that no longer fall within any configured root or trusted root
     for (const dynamicRoot of this.dynamicRoots) {
-      const stillAllowed = [...next].some((root) =>
-        this.isPathInside(dynamicRoot, root),
-      );
+      const stillAllowed =
+        this.trustedRoots.has(dynamicRoot) ||
+        [...next].some((root) => this.isPathInside(dynamicRoot, root));
       if (!stillAllowed) {
         this.dynamicRoots.delete(dynamicRoot);
         this.logger.warn(
@@ -169,8 +205,17 @@ export class FilesService implements OnModuleDestroy {
       }
     }
 
-    // Merge configured + surviving dynamic
-    this.workspaceRoots = new Set([...next, ...this.dynamicRoots]);
+    // Merge configured + surviving dynamic + trusted
+    this.workspaceRoots = new Set([...next, ...this.trustedRoots, ...this.dynamicRoots]);
+  }
+
+  private isDocker(): boolean {
+    try {
+      if (fsSync.existsSync('/.dockerenv')) return true;
+      if (fsSync.existsSync('/run/.containerenv')) return true;
+      if (process.env.DOCKER_CONTAINER === 'true' || process.env.IS_DOCKER === 'true') return true;
+    } catch {}
+    return false;
   }
 
   /** Rebuilds the excluded dirs set from the runtime setting. */
@@ -193,28 +238,54 @@ export class FilesService implements OnModuleDestroy {
   }
 
   /**
-   * Registers a workspace root directory (e.g. from a thread's cwd).
-   * Dynamic roots must fall within an already-configured root.
-   *
-   * @param root - Absolute path to register
-   * @throws BusinessException if root escapes configured workspace roots
+   * Registers an allowed workspace root from internal services (such as ProjectsService).
+   * Unlike addWorkspaceRoot, this explicitly trusts the directory and does not require
+   * it to already fall under an existing root.
    */
-  addWorkspaceRoot(root: string): void {
-    const resolved = this.resolveExistingDirectorySync(root);
-    if (!this.isAllowedPath(resolved)) {
-      throw BusinessException.forbidden(
-        ErrorCode.files.pathOutsideWorkspace,
-        'Workspace root must be inside configured workspace roots',
-      );
-    }
-
-    if (!this.workspaceRoots.has(resolved)) {
-      this.dynamicRoots.add(resolved);
+  addAllowedRoot(root: string): void {
+    try {
+      const resolved = this.resolveExistingDirectorySync(root);
+      this.trustedRoots.add(resolved);
       this.workspaceRoots.add(resolved);
-      this.logger.log(`Registered dynamic workspace root: ${resolved}`);
+      this.logger.log(`Registered trusted workspace root: ${resolved}`);
+    } catch (err) {
+      this.logger.warn(`Could not add trusted workspace root for ${root}: ${String(err)}`);
     }
   }
+  addWorkspaceRoot(root: string, allowExternal = false): void {
+    const resolved = this.resolveExistingDirectorySync(root);
+    if (!allowExternal && !this.isAllowedPath(resolved)) {
+      if (this.isDocker() || fsSync.existsSync(resolved)) {
+        allowExternal = true;
+      } else {
+        throw BusinessException.forbidden(
+          ErrorCode.files.pathOutsideWorkspace,
+          'Workspace root must be inside configured workspace roots',
+        );
+      }
+    }
 
+    this.trustedRoots.add(resolved);
+    this.workspaceRoots.add(resolved);
+    this.logger.log(`Registered workspace root: ${resolved}`);
+  }
+
+  /**
+   * Unregisters a workspace root directory.
+   */
+  removeWorkspaceRoot(root: string): void {
+    try {
+      const resolved = this.resolveExistingDirectorySync(root);
+      this.trustedRoots.delete(resolved);
+      this.dynamicRoots.delete(resolved);
+      this.workspaceRoots.delete(resolved);
+      this.logger.log(`Removed workspace root: ${resolved}`);
+    } catch {
+      this.trustedRoots.delete(root);
+      this.dynamicRoots.delete(root);
+      this.workspaceRoots.delete(root);
+    }
+  }
   /**
    * Resolves and validates that a path falls within an allowed workspace root.
    *

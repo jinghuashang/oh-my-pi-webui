@@ -2317,6 +2317,18 @@ export type CloneProjectDto = {
     model?: string;
 };
 
+export type DeleteProjectResponseDto = {
+    /**
+     * Deleted project name
+     */
+    name: string;
+    /**
+     * Whether the local directory was removed from disk
+     */
+    deletedDirectory: boolean;
+    success: boolean;
+};
+
 export type UpdateMirrorDto = {
     /**
      * Mirror unique identifier
@@ -5026,6 +5038,32 @@ export type ProjectsCloneProjectResponses = {
 };
 
 export type ProjectsCloneProjectResponse = ProjectsCloneProjectResponses[keyof ProjectsCloneProjectResponses];
+
+export type ProjectsDeleteProjectData = {
+    body?: never;
+    path: {
+        name: string;
+    };
+    query?: {
+        /**
+         * Whether to permanently remove the project directory from disk
+         */
+        deleteDirectory?: boolean;
+    };
+    url: '/api/projects/{name}';
+};
+
+export type ProjectsDeleteProjectErrors = {
+    401: ApiErrorResponseDto;
+};
+
+export type ProjectsDeleteProjectError = ProjectsDeleteProjectErrors[keyof ProjectsDeleteProjectErrors];
+
+export type ProjectsDeleteProjectResponses = {
+    200: DeleteProjectResponseDto;
+};
+
+export type ProjectsDeleteProjectResponse = ProjectsDeleteProjectResponses[keyof ProjectsDeleteProjectResponses];
 
 export type OmpUpdateGetMirrorsData = {
     body?: never;

@@ -48,6 +48,46 @@ export interface ThreadTurn {
 export class SessionManager {
   public readonly baseDir: string;
   private idToPath = new Map<string, string>();
+  private threadCwds = new Map<string, string>();
+
+  private loadCwds(): void {
+    try {
+      const p = path.join(this.baseDir, '..', 'thread-cwds.json');
+      if (fs.existsSync(p)) {
+        const obj = JSON.parse(fs.readFileSync(p, 'utf8'));
+        for (const [k, v] of Object.entries(obj)) {
+          if (typeof v === 'string') this.threadCwds.set(k, v);
+        }
+      }
+    } catch {}
+  }
+
+  private saveCwds(): void {
+    try {
+      const p = path.join(this.baseDir, '..', 'thread-cwds.json');
+      const dir = path.dirname(p);
+      if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+      const obj: Record<string, string> = {};
+      for (const [k, v] of this.threadCwds.entries()) {
+        obj[k] = v;
+      }
+      fs.writeFileSync(p, JSON.stringify(obj, null, 2), 'utf8');
+    } catch {}
+  }
+
+  setSessionCwd(id: string, cwd: string): void {
+    if (id && cwd) {
+      this.threadCwds.set(id, cwd);
+      this.saveCwds();
+    }
+  }
+
+  getSessionCwd(id: string): string | undefined {
+    if (this.threadCwds.size === 0) {
+      this.loadCwds();
+    }
+    return this.threadCwds.get(id);
+  }
 
   constructor(customDir?: string) {
     if (customDir) {
@@ -64,6 +104,22 @@ export class SessionManager {
     const mapped = this.idToPath.get(idOrPath);
     if (mapped && fs.existsSync(mapped)) return mapped;
     return idOrPath;
+  }
+
+  deleteSession(idOrPath: string): boolean {
+    try {
+      const sessionPath = this.resolveSessionPath(idOrPath);
+      if (fs.existsSync(sessionPath)) {
+        fs.unlinkSync(sessionPath);
+      }
+      this.idToPath.delete(idOrPath);
+      this.threadCwds.delete(idOrPath);
+      this.saveCwds();
+      return true;
+    } catch (err) {
+      process.stderr.write(`[bridge:sessions] Failed to delete session ${idOrPath}: ${String(err)}\n`);
+      return false;
+    }
   }
 
   listThreads(options: { cursor?: string; limit?: number; cwd?: string } = {}): {
@@ -150,7 +206,7 @@ export class SessionManager {
       let explicitTitle = '';
       let firstUserPrompt = '';
       let id = path.basename(sessionPath, '.jsonl');
-      let cwd = process.cwd();
+      let cwd = this.threadCwds.get(id) || process.cwd();
       let model: string | null = null;
       let thinkingLevel: string | null = null;
       let createdAt = mtime;
@@ -166,7 +222,7 @@ export class SessionManager {
               explicitTitle = entry.title.trim();
             }
             if (typeof entry.id === 'string') id = entry.id;
-            if (typeof entry.cwd === 'string') cwd = entry.cwd;
+            if (typeof entry.cwd === 'string' && !this.threadCwds.has(id)) cwd = entry.cwd;
             if (typeof entry.timestamp === 'string') {
               const parsedTime = Date.parse(entry.timestamp);
               if (!isNaN(parsedTime)) createdAt = parsedTime;
@@ -192,6 +248,10 @@ export class SessionManager {
         } catch {
           // ignore broken lines
         }
+      }
+
+      if (this.threadCwds.has(id)) {
+        cwd = this.threadCwds.get(id)!;
       }
 
       let finalPreview = explicitTitle || firstUserPrompt;

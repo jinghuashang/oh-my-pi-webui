@@ -1,5 +1,5 @@
 /** Overview view: pinned archive group + workspace groups with collapse. */
-import { Archive, ChevronDown, ChevronRight, Eye, Plus } from 'lucide-react';
+import { Archive, ChevronDown, ChevronRight, Eye, Plus, Trash2 } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -34,6 +34,7 @@ interface Props {
   onOpenArchivedDetail: () => void;
   onOpenWorkspaceDetail: (cwd: string) => void;
   onCreateInWorkspace: (cwd: string) => void;
+  onDeleteWorkspace?: (cwd: string) => void;
   renderThreadRow: (thread: ThreadDto, archived: boolean) => React.ReactNode;
 }
 
@@ -46,6 +47,7 @@ export function WorkspaceOverview({
   onOpenArchivedDetail,
   onOpenWorkspaceDetail,
   onCreateInWorkspace,
+  onDeleteWorkspace,
   renderThreadRow,
 }: Props) {
   const { t } = useTranslation();
@@ -152,6 +154,17 @@ export function WorkspaceOverview({
                     title={t('View more')}
                   >
                     <Eye className="h-3.5 w-3.5" />
+                  </button>
+                )}
+                {onDeleteWorkspace && (
+                  <button
+                    type="button"
+                    className="cursor-pointer rounded p-0.5 text-muted-foreground hover:bg-destructive/10 hover:text-destructive transition-colors"
+                    onClick={() => onDeleteWorkspace(group.cwd)}
+                    aria-label={t('Delete project')}
+                    title={t('Delete project')}
+                  >
+                    <Trash2 className="h-3.5 w-3.5" />
                   </button>
                 )}
               </div>

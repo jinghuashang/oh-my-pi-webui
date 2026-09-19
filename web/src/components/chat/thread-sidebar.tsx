@@ -8,6 +8,7 @@ import { FolderOpen, FolderPlus, GitBranch, PanelLeftClose, Puzzle, RefreshCw, S
 import { CreateProjectDialog } from './sidebar/create-project-dialog';
 import { OmpUpdateDialog } from './sidebar/omp-update-dialog';
 import { WebuiUpdateDialog } from './sidebar/webui-update-dialog';
+import { DeleteProjectDialog } from './sidebar/delete-project-dialog';
 import { useNavigate, useRouterState } from '@tanstack/react-router';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useTranslation } from 'react-i18next';
@@ -104,6 +105,7 @@ export function ThreadSidebar() {
   const [webuiDialogOpen, setWebuiDialogOpen] = useState(false);
   const [deleteTargetId, setDeleteTargetId] = useState<string | null>(null);
   const [graphTargetId, setGraphTargetId] = useState<string | null>(null);
+  const [deleteProjectTarget, setDeleteProjectTarget] = useState<string | null>(null);
 
   const updateQuery = useQuery(ompUpdateCheckUpdateOptions());
   const updateData = updateQuery.data;
@@ -569,6 +571,7 @@ export function ThreadSidebar() {
             onOpenArchivedDetail={openArchivedDetail}
             onOpenWorkspaceDetail={openWorkspaceDetail}
             onCreateInWorkspace={(cwd) => createThread.mutate({ body: { cwd } })}
+            onDeleteWorkspace={(cwd) => setDeleteProjectTarget(cwd)}
             renderThreadRow={renderThreadRow}
           />
         ) : (
@@ -670,6 +673,12 @@ export function ThreadSidebar() {
       <OmpUpdateDialog
         open={updateDialogOpen}
         onClose={() => setUpdateDialogOpen(false)}
+      />
+
+      <DeleteProjectDialog
+        open={deleteProjectTarget !== null}
+        workspacePath={deleteProjectTarget}
+        onClose={() => setDeleteProjectTarget(null)}
       />
 
       <RenameDialog

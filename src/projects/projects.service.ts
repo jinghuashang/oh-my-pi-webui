@@ -12,6 +12,7 @@ import {
   CloneProjectDto,
   CreateProjectDto,
   CreateProjectResponseDto,
+  DeleteProjectResponseDto,
   ProjectItemDto,
   ProjectsListResponseDto,
 } from './dto/projects.dto';
@@ -35,8 +36,22 @@ export class ProjectsService {
   getProjectsBaseDir(): string {
     const explicit = this.configService.get<string>('WEBUI_PROJECTS_DIR')?.trim();
     if (explicit) return path.resolve(explicit);
+    // 1. If running in container with mounted /workspaces or OMP_CWD
+    const ompCwd = this.configService.get<string>('OMP_CWD')?.trim() || process.env.OMP_CWD?.trim();
+    if (ompCwd && fs.existsSync(ompCwd) && fs.statSync(ompCwd).isDirectory()) {
+      return path.resolve(ompCwd);
+    }
+    if (fs.existsSync('/workspaces') && fs.statSync('/workspaces').isDirectory()) {
+      return '/workspaces';
+    }
 
-    // If local ./data exists, project directories are placed under data/projects
+    // 2. If local ./workspaces exists
+    const localWorkspaces = path.join(process.cwd(), 'workspaces');
+    if (fs.existsSync(localWorkspaces) && fs.statSync(localWorkspaces).isDirectory()) {
+      return localWorkspaces;
+    }
+
+    // 3. If local ./data exists, project directories are placed under data/projects
     const localData = path.join(process.cwd(), 'data');
     if (fs.existsSync(localData)) {
       return path.join(localData, 'projects');
@@ -148,8 +163,10 @@ export class ProjectsService {
     }
 
     // 2. Register workspace root in FilesService so file operations, terminal and diff work immediately
+    // 2. Register workspace root in FilesService as an explicitly trusted root
     try {
-      this.filesService.addWorkspaceRoot(projectDir);
+      this.filesService.addAllowedRoot(projectDir);
+      this.filesService.addWorkspaceRoot(projectDir, true);
     } catch (e) {
       this.logger.warn(`Could not add ${projectDir} as dynamic workspace root: ${String(e)}`);
     }
@@ -291,8 +308,10 @@ export class ProjectsService {
     }
 
     // Register workspace root in FilesService
+    // Register workspace root in FilesService as an explicitly trusted root
     try {
-      this.filesService.addWorkspaceRoot(projectDir);
+      this.filesService.addAllowedRoot(projectDir);
+      this.filesService.addWorkspaceRoot(projectDir, true);
     } catch (e) {
       this.logger.warn(`Could not add ${projectDir} as dynamic workspace root: ${String(e)}`);
     }
@@ -324,6 +343,61 @@ export class ProjectsService {
       path: projectDir,
       threadId,
       isGit: true,
+    };
+  }
+
+  /**
+   * Deletes a project from data/projects (or /workspaces).
+   * If deleteDirectory is true, completely removes the physical directory from disk.
+   */
+  async deleteProject(
+    projectName: string,
+    deleteDirectory = false,
+  ): Promise<DeleteProjectResponseDto> {
+    const rawName = projectName.trim();
+    if (rawName.includes('/') || rawName.includes('\\') || rawName.includes('..')) {
+      throw BusinessException.badRequest(
+        ErrorCode.files.nameInvalid,
+        'Project name cannot contain path separators or parent directory references',
+      );
+    }
+    const sanitizedName = rawName.replace(/[\x00-\x1f\x7f<>:"|?*]/g, '').trim();
+    if (!sanitizedName) {
+      throw BusinessException.badRequest(
+        ErrorCode.files.nameRequired,
+        'Project name is required',
+      );
+    }
+
+    const baseDir = this.getProjectsBaseDir();
+    const projectDir = path.join(baseDir, sanitizedName);
+
+    let deletedDir = false;
+    if (fs.existsSync(projectDir)) {
+      if (deleteDirectory) {
+        try {
+          await fs.promises.rm(projectDir, { recursive: true, force: true });
+          deletedDir = true;
+          this.logger.log(`Deleted project directory on disk: ${projectDir}`);
+        } catch (err) {
+          this.logger.error(`Failed to delete project directory ${projectDir}: ${String(err)}`);
+          throw BusinessException.badRequest(
+            ErrorCode.files.operationFailed,
+            `Failed to remove project directory: ${String(err)}`,
+          );
+        }
+      }
+    }
+
+    // Unregister root from FilesService
+    try {
+      this.filesService.removeWorkspaceRoot(projectDir);
+    } catch {}
+
+    return {
+      name: sanitizedName,
+      deletedDirectory: deletedDir,
+      success: true,
     };
   }
 }

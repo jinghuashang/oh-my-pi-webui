@@ -1,9 +1,10 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Query } from '@nestjs/common';
 import {
   ApiBearerAuth,
   ApiCreatedResponse,
   ApiOkResponse,
   ApiOperation,
+  ApiQuery,
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
@@ -12,6 +13,7 @@ import {
   CloneProjectDto,
   CreateProjectDto,
   CreateProjectResponseDto,
+  DeleteProjectResponseDto,
   ProjectsListResponseDto,
 } from './dto/projects.dto';
 import { ProjectsService } from './projects.service';
@@ -61,5 +63,30 @@ export class ProjectsController {
     @Body() body: CloneProjectDto,
   ): Promise<CreateProjectResponseDto> {
     return this.projectsService.cloneProject(body);
+  }
+
+  /**
+   * Deletes a project from data/projects (or /workspaces).
+   * Optionally removes the local directory on disk.
+   */
+  @Delete(':name')
+  @ApiOperation({
+    summary: 'Delete a project and optionally remove its local directory from disk',
+  })
+  @ApiQuery({
+    name: 'deleteDirectory',
+    required: false,
+    type: Boolean,
+    description: 'Whether to permanently remove the project directory from disk',
+  })
+  @ApiOkResponse({ type: DeleteProjectResponseDto })
+  async deleteProject(
+    @Param('name') name: string,
+    @Query('deleteDirectory') deleteDirectory?: string,
+  ): Promise<DeleteProjectResponseDto> {
+    return this.projectsService.deleteProject(
+      name,
+      deleteDirectory === 'true' || deleteDirectory === '1',
+    );
   }
 }

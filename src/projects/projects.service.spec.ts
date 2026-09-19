@@ -11,7 +11,7 @@ import { ProjectsService } from './projects.service';
 describe('ProjectsService', () => {
   let service: ProjectsService;
   let tempBaseDir: string;
-  let mockFilesService: { addWorkspaceRoot: Mock };
+  let mockFilesService: { addWorkspaceRoot: Mock; addAllowedRoot: Mock; removeWorkspaceRoot: Mock };
   let mockThreadsService: {
     startThread: Mock;
     startTurn: Mock;
@@ -21,6 +21,8 @@ describe('ProjectsService', () => {
     tempBaseDir = await fs.promises.mkdtemp(path.join(os.tmpdir(), 'omp-projects-test-'));
     mockFilesService = {
       addWorkspaceRoot: vi.fn(),
+      addAllowedRoot: vi.fn(),
+      removeWorkspaceRoot: vi.fn(),
     };
     mockThreadsService = {
       startThread: vi.fn().mockResolvedValue({
@@ -72,7 +74,7 @@ describe('ProjectsService', () => {
     expect(fs.existsSync(result.path)).toBe(true);
     expect(fs.existsSync(path.join(result.path, '.git'))).toBe(true);
 
-    expect(mockFilesService.addWorkspaceRoot).toHaveBeenCalledWith(result.path);
+    expect(mockFilesService.addWorkspaceRoot).toHaveBeenCalledWith(result.path, true);
     expect(mockThreadsService.startThread).toHaveBeenCalledWith({
       cwd: result.path,
       model: undefined,
@@ -122,7 +124,7 @@ describe('ProjectsService', () => {
 
     expect(result.name).toBe('existing-repo');
     expect(result.path).toBe(existingFolder);
-    expect(mockFilesService.addWorkspaceRoot).toHaveBeenCalledWith(existingFolder);
+    expect(mockFilesService.addWorkspaceRoot).toHaveBeenCalledWith(existingFolder, true);
     expect(mockThreadsService.startThread).toHaveBeenCalledWith({
       cwd: existingFolder,
       model: undefined,
@@ -131,5 +133,27 @@ describe('ProjectsService', () => {
       threadId: 'thread-test-123',
       input: [{ type: 'text', text: 'Review the existing codebase', text_elements: [] }],
     });
+  });
+
+  it('deletes project and removes directory when deleteDirectory is true', async () => {
+    const projectFolder = path.join(tempBaseDir, 'to-delete');
+    await fs.promises.mkdir(projectFolder, { recursive: true });
+    await fs.promises.writeFile(path.join(projectFolder, 'file.txt'), 'hello');
+
+    const res = await service.deleteProject('to-delete', true);
+    expect(res.success).toBe(true);
+    expect(res.deletedDirectory).toBe(true);
+    expect(fs.existsSync(projectFolder)).toBe(false);
+    expect(mockFilesService.removeWorkspaceRoot).toHaveBeenCalledWith(projectFolder);
+  });
+
+  it('deletes project without removing directory when deleteDirectory is false', async () => {
+    const projectFolder = path.join(tempBaseDir, 'keep-folder');
+    await fs.promises.mkdir(projectFolder, { recursive: true });
+
+    const res = await service.deleteProject('keep-folder', false);
+    expect(res.success).toBe(true);
+    expect(res.deletedDirectory).toBe(false);
+    expect(fs.existsSync(projectFolder)).toBe(true);
   });
 });

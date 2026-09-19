@@ -78,3 +78,14 @@ export class CreateProjectResponseDto {
   @ApiProperty({ description: 'Whether a git repository was initialized in the project' })
   isGit!: boolean;
 }
+
+export class DeleteProjectResponseDto {
+  @ApiProperty({ description: 'Deleted project name' })
+  name!: string;
+
+  @ApiProperty({ description: 'Whether the local directory was removed from disk' })
+  deletedDirectory!: boolean;
+
+  @ApiProperty()
+  success!: boolean;
+}
