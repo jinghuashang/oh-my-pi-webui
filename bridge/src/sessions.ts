@@ -2,6 +2,20 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as os from 'os';
 import { SHELL_TOOL_NAMES, resultText, stripWallTimeTrailer } from './items.js';
+import { execFileSync } from 'child_process';
+
+function getOmpVersion(): string {
+  const bin = process.env.OMP_BIN || 'omp';
+  try {
+    const out = execFileSync(bin, ['--version'], { encoding: 'utf8', timeout: 3000 });
+    const match = out.match(/(\d+\.\d+\.\d+)/);
+    if (match) return `omp ${match[1]}`;
+    return out.trim() || 'omp';
+  } catch {
+    return 'omp';
+  }
+}
+const cachedOmpVersion = getOmpVersion();
 
 export interface ThreadMetadata {
   id: string;
@@ -275,7 +289,7 @@ export class SessionManager {
         status: { type: 'idle' },
         path: sessionPath,
         cwd,
-        cliVersion: 'omp 18.1.19',
+        cliVersion: cachedOmpVersion,
         historyMode: 'paginated',
         turns: [],
       };

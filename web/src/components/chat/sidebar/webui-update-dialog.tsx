@@ -219,16 +219,21 @@ export function WebuiUpdateDialog({ open, onClose }: Props) {
                 <Loader2 className="h-3.5 w-3.5 animate-spin text-primary" />
                 <span>{t('Checking for WebUI updates...')}</span>
               </div>
-            ) : updateData?.isDocker ? (
-              <div className="rounded-lg border border-blue-500/30 bg-blue-500/10 p-2.5 space-y-1.5">
+            ) : updateData?.isDocker && updateData?.hasUpdate ? (
+              <div className="rounded-lg border border-emerald-500/30 bg-emerald-500/10 p-2.5 space-y-1.5">
                 <div className="flex items-start gap-2">
-                  <Flame className="h-4 w-4 text-blue-500 shrink-0 mt-0.5" />
-                  <div className="text-xs text-blue-700 dark:text-blue-300 space-y-1 flex-1">
+                  <Flame className="h-4 w-4 text-emerald-500 shrink-0 mt-0.5" />
+                  <div className="text-xs text-emerald-700 dark:text-emerald-300 space-y-1 flex-1">
                     <p className="font-semibold">
-                      {t('Running in Docker container environment (Read-only filesystem)')}
+                      {t('Docker Container In-Place Update Available (Commit {{commit}})', { commit: updateData?.latestCommit })}
                     </p>
+                    {updateData.commitMessage && (
+                      <p className="text-[11px] font-mono text-muted-foreground line-clamp-2">
+                        {updateData.commitMessage}
+                      </p>
+                    )}
                     <p className="text-[11px] text-muted-foreground leading-relaxed">
-                      {t('In-place git pull is disabled inside the container. To update WebUI, run the docker compose command on your host machine.')}
+                      {t('WebUI will hot-patch container files via GitHub mirror and synchronize build overlay to persistent volume (./data/webui_overlay).')}
                     </p>
                   </div>
                 </div>

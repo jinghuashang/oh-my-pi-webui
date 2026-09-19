@@ -1292,5 +1292,10 @@
   "If checked, the physical folder and all files inside will be permanently deleted from disk.": "勾选后，该项目的物理文件夹及内部全部代码文件将从磁盘上永久删除。",
   "Warning: Physical files cannot be recovered once deleted!": "⚠️ 警告：物理文件一旦删除将无法恢复！",
   "Project \"{{name}}\" and local directory deleted successfully": "项目 \"{{name}}\" 及其本地目录已成功删除",
-  "Project \"{{name}}\" removed successfully": "项目 \"{{name}}\" 已成功从工作区移除"
+  "Project \"{{name}}\" removed successfully": "项目 \"{{name}}\" 已成功从工作区移除",
+  "Cannot delete project: {{count}} conversation(s) still active": "无法删除项目：该项目下仍有 {{count}} 个有效会话",
+  "To prevent accidental data loss, please delete all conversations under this project before removing the project.": "为防止数据意外丢失，必须先删除该项目下的全部会话后，方可执行项目删除。",
+  "All conversations under this project have been cleared. Ready to delete.": "该项目下的全部会话已清空，可以安全执行项目删除。",
+  "Docker Container In-Place Update Available (Commit {{commit}})": "Docker 容器在线热更新就绪（目标提交 {{commit}}）",
+  "WebUI will hot-patch container files via GitHub mirror and synchronize build overlay to persistent volume (./data/webui_overlay).": "WebUI 将通过 GitHub 镜像加速拉取代码归档，完成应用热更新并将编译层同步保存至数据持久卷（./data/webui_overlay），彻底解决重启或主机同步失效问题。"
 }

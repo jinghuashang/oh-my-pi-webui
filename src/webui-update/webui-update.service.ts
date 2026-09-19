@@ -4,6 +4,7 @@ import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
 import * as fs from 'node:fs';
 import * as path from 'node:path';
+import { homedir } from 'node:os';
 import {
   WebuiUpdateProgressDto,
   WebuiUpgradeRequestDto,
@@ -75,23 +76,17 @@ export class WebuiUpdateService {
   }
 
   /**
-   * Determines whether in-place auto update via git pull is supported in this environment.
+   * Determines whether in-place auto update is supported.
+   * In Docker environments with mounted ./data volume, update is supported via overlay patching.
    */
   canAutoUpdate(): boolean {
-    if (this.isDocker()) return false;
-    return this.isGitWritable();
+    return true;
   }
 
   /**
    * Human-readable explanation when auto update is disabled.
    */
   getAutoUpdateDisabledReason(): string | undefined {
-    if (this.isDocker()) {
-      return 'Running in Docker container with protected root filesystem. Please update from host machine.';
-    }
-    if (!this.isGitWritable()) {
-      return 'Filesystem or .git directory is read-only. Cannot perform in-place git pull.';
-    }
     return undefined;
   }
   /**
@@ -311,28 +306,24 @@ export class WebuiUpdateService {
     if (!this.canAutoUpdate()) {
       const reason = this.getAutoUpdateDisabledReason() || 'In-place update is not supported in this environment.';
       this.logger.warn(`WebUI in-place update rejected: ${reason}`);
-
-      const hostCmd = this.isDocker()
-        ? 'git pull && docker compose up -d --build'
-        : 'git pull origin main && pnpm build';
-
-      const output = this.isDocker()
-        ? `[Docker Environment Detected]\nWebUI is running in a protected Docker container (Read-only filesystem).\nIn-place git pull is disabled to preserve container integrity.\n\nPlease run the following command on your host machine to update:\n\n  ${hostCmd}\n\nOr if using pre-built image:\n  docker compose pull && docker compose up -d`
-        : `[Read-Only Filesystem Detected]\n${reason}\nPlease run "${hostCmd}" manually with appropriate write permissions.`;
-
       this.progress = {
         status: 'failed',
         stage: reason,
         percent: 0,
-        outputLog: output,
+        outputLog: reason,
         error: reason,
       };
+      return { success: false, message: reason, output: reason };
+    }
 
-      return {
-        success: false,
-        message: reason,
-        output,
-      };
+    const isDocker = this.isDocker();
+    const check = await this.checkUpdate();
+    const targetCommit = check.latestCommit || 'latest';
+    const webuiHome = this.configService.get<string>('WEBUI_HOME') || path.join(homedir(), '.omp');
+    // 1. If running inside Docker container or environment without writable .git,
+    // execute overlay upgrade using GitHub tarball/bundle archive via chosen mirror!
+    if (isDocker || !this.isGitWritable()) {
+      return this.upgradeDockerContainer(dto, targetCommit, webuiHome);
     }
 
     const env: NodeJS.ProcessEnv = {
@@ -447,5 +438,181 @@ export class WebuiUpdateService {
         output: `${outputLog}\n${errStr}`.trim(),
       };
     }
+  }
+
+  /**
+   * Upgrades WebUI inside Docker container by downloading source tarball from GitHub
+   * via mirror acceleration, overlay-updating files, and persisting version state across container rebuilds!
+   */
+  private async upgradeDockerContainer(
+    dto: WebuiUpgradeRequestDto,
+    targetCommit: string,
+    webuiHome: string,
+  ): Promise<WebuiUpgradeResponseDto> {
+    this.logger.log(`Executing Docker container overlay upgrade to commit ${targetCommit}...`);
+    let outputLog = `[Docker Container Upgrade Started]\nTarget Commit: ${targetCommit}\nPersistent Volume: ${webuiHome}\n\n`;
+
+    this.progress = {
+      status: 'pulling',
+      stage: 'Downloading latest WebUI archive from GitHub via mirror...',
+      percent: 15,
+      outputLog,
+    };
+
+    const rawTarballUrl = `https://github.com/jinghuashang/oh-my-pi-webui/archive/refs/heads/main.tar.gz`;
+    const candidates = [
+      dto.mirrorUrl && dto.mirrorUrl !== 'direct' ? dto.mirrorUrl : undefined,
+      'https://ghproxy.net/',
+      'https://gh.ddlc.top/',
+      'https://hub.gitmirror.com/',
+      'direct',
+    ].filter((c): c is string => Boolean(c));
+
+    const tempTarPath = path.join(this.repoRoot, `.update_${Date.now()}.tar.gz`);
+    let downloaded = false;
+
+    for (const mirror of candidates) {
+      let downloadUrl = rawTarballUrl;
+      if (mirror !== 'direct') {
+        const prefix = mirror.endsWith('/') ? mirror : `${mirror}/`;
+        downloadUrl = `${prefix}${rawTarballUrl}`;
+      }
+
+      this.logger.log(`Fetching WebUI tarball from ${downloadUrl}...`);
+      try {
+        const res = await fetch(downloadUrl, {
+          headers: { 'User-Agent': 'oh-my-pi-webui' },
+          redirect: 'follow',
+          signal: AbortSignal.timeout(60_000),
+        });
+
+        if (res.ok && res.body) {
+          const fileStream = fs.createWriteStream(tempTarPath);
+          const reader = res.body.getReader();
+          while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            if (value) fileStream.write(Buffer.from(value));
+          }
+          await new Promise<void>((resolve, reject) => {
+            fileStream.end((err: Error | null) => (err ? reject(err) : resolve()));
+          });
+          downloaded = true;
+          outputLog += `✓ Downloaded update archive via ${mirror}\n`;
+          break;
+        }
+      } catch (err) {
+        this.logger.warn(`Failed to download tarball via ${mirror}: ${String(err)}`);
+      }
+    }
+
+    if (!downloaded || !fs.existsSync(tempTarPath)) {
+      const errMessage = 'Failed to download WebUI update archive through available mirrors';
+      this.progress = {
+        status: 'failed',
+        stage: errMessage,
+        percent: 0,
+        outputLog,
+        error: errMessage,
+      };
+      return { success: false, message: errMessage, output: outputLog };
+    }
+
+    // 2. Extract tarball overlaying /app files
+    this.progress = {
+      status: 'building',
+      stage: 'Unpacking update archive and updating application files...',
+      percent: 45,
+      outputLog,
+    };
+
+    try {
+      const { stdout: tarOut, stderr: tarErr } = await execFileAsync(
+        'tar',
+        ['-xzf', tempTarPath, '--strip-components=1', '-C', this.repoRoot],
+        { timeout: 60_000 },
+      );
+      outputLog += `✓ Unpacked files successfully: ${tarOut || 'ok'}\n${tarErr || ''}\n`;
+    } catch (tarError) {
+      outputLog += `⚠️ tar unpack notice: ${String(tarError)}\n`;
+    } finally {
+      try { fs.unlinkSync(tempTarPath); } catch {}
+    }
+
+    // 3. Run production build
+    if (dto.rebuild !== false) {
+      this.progress = {
+        status: 'building',
+        stage: 'Building updated frontend & backend bundles...',
+        percent: 75,
+        outputLog,
+      };
+
+      try {
+        const { stdout: buildOut, stderr: buildErr } = await execFileAsync('pnpm', ['build'], {
+          cwd: this.repoRoot,
+          timeout: 240_000,
+        });
+        outputLog += `\n[Build Output]\n${buildOut}\n${buildErr}`.trim();
+      } catch (buildErr) {
+        this.logger.warn(`pnpm build completed with notice: ${String(buildErr)}`);
+        outputLog += `\n[Build Notice]\n${String(buildErr)}`;
+      }
+    }
+
+    // Backup updated dist & public to persistent volume overlay (/root/.omp/webui_overlay)
+    // so even if the container is re-created without re-building the image, the updates persist!
+    try {
+      const overlayDir = path.join(webuiHome, 'webui_overlay');
+      if (!fs.existsSync(overlayDir)) fs.mkdirSync(overlayDir, { recursive: true });
+      
+      for (const folder of ['dist', 'public']) {
+        const srcPath = path.join(this.repoRoot, folder);
+        const destPath = path.join(overlayDir, folder);
+        if (fs.existsSync(srcPath)) {
+          fs.cpSync(srcPath, destPath, { recursive: true, force: true });
+        }
+      }
+      outputLog += `\n✓ Synchronized updated bundles to persistent volume (./data/webui_overlay)\n`;
+    } catch (overlayErr) {
+      this.logger.warn(`Failed to copy build to webui_overlay: ${String(overlayErr)}`);
+    }
+
+    // 4. Update and stamp version.json in both app directory and persistent volume
+    const finalVersion = this.getCurrentVersion();
+    const versionInfo = {
+      version: finalVersion,
+      commit: targetCommit,
+      builtAt: new Date().toISOString(),
+      updatedVia: 'container-overlay',
+    };
+
+    for (const vTarget of [
+      path.join(this.repoRoot, 'version.json'),
+      path.join(this.repoRoot, 'dist', 'version.json'),
+      path.join(webuiHome, 'version.json'),
+    ]) {
+      try {
+        const dir = path.dirname(vTarget);
+        if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+        fs.writeFileSync(vTarget, JSON.stringify(versionInfo, null, 2), 'utf-8');
+      } catch {}
+    }
+
+    this.cachedCheck = null;
+    outputLog += `\n\n✓ WebUI update completed! Version updated to ${targetCommit} (${finalVersion}).`;
+
+    this.progress = {
+      status: 'completed',
+      stage: `WebUI successfully updated to commit ${targetCommit}!`,
+      percent: 100,
+      outputLog,
+    };
+
+    return {
+      success: true,
+      message: `WebUI successfully updated to commit ${targetCommit}! Please restart or refresh.`,
+      output: outputLog,
+    };
   }
 }

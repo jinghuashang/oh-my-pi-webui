@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
-import { AlertTriangle, FolderX, Loader2, Trash2 } from 'lucide-react';
+import { AlertTriangle, FolderX, Info, Loader2, MessageSquare, Trash2 } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -19,6 +19,7 @@ import {
   filesGetRootsQueryKey,
   projectsDeleteProjectMutation,
   projectsListProjectsQueryKey,
+  threadsListOverviewOptions,
   threadsListOverviewQueryKey,
 } from '@/generated/api/@tanstack/react-query.gen';
 
@@ -63,7 +64,19 @@ function DeleteProjectContent({
 
   const [deleteDirectory, setDeleteDirectory] = useState(false);
 
-  // Derive simple project name from folder path
+  // Query overview threads to find conversations in this workspace
+  const overviewQuery = useQuery(threadsListOverviewOptions({ query: { limit: 100 } }));
+  const threadsInProject = (overviewQuery.data?.data ?? []).filter((row) => {
+    const cwd = row.thread?.cwd;
+    if (!cwd) return false;
+    const normalizedCwd = cwd.replace(/\\/g, '/').toLowerCase();
+    const normalizedTarget = workspacePath.replace(/\\/g, '/').toLowerCase();
+    return (
+      normalizedCwd === normalizedTarget ||
+      normalizedCwd.startsWith(normalizedTarget.endsWith('/') ? normalizedTarget : `${normalizedTarget}/`)
+    );
+  });
+  const hasRemainingThreads = threadsInProject.length > 0;
   const name =
     workspaceName ||
     workspacePath.replace(/\\/g, '/').split('/').filter(Boolean).pop() ||
@@ -135,6 +148,39 @@ function DeleteProjectContent({
           </div>
         </div>
 
+        {/* Remaining Threads Warning / Blocker */}
+        {hasRemainingThreads ? (
+          <div className="rounded-xl border border-amber-500/30 bg-amber-500/10 p-3 space-y-2">
+            <div className="flex items-start gap-2 text-amber-700 dark:text-amber-300">
+              <AlertTriangle className="h-4 w-4 shrink-0 mt-0.5" />
+              <div className="text-xs space-y-1">
+                <p className="font-semibold">
+                  {t('Cannot delete project: {{count}} conversation(s) still active', {
+                    count: threadsInProject.length,
+                  })}
+                </p>
+                <p className="text-[11px] text-muted-foreground leading-relaxed">
+                  {t('To prevent accidental data loss, please delete all conversations under this project before removing the project.')}
+                </p>
+              </div>
+            </div>
+            <div className="rounded-lg bg-background/60 p-2 space-y-1 max-h-24 overflow-y-auto border border-amber-500/20">
+              {threadsInProject.slice(0, 5).map((tRow) => (
+                <div key={tRow.thread.id} className="flex items-center gap-1.5 text-[11px] font-mono text-foreground truncate">
+                  <MessageSquare className="h-3 w-3 shrink-0 text-muted-foreground" />
+                  <span className="truncate">{tRow.thread.preview || tRow.thread.id}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        ) : (
+          <div className="rounded-lg border border-emerald-500/20 bg-emerald-500/5 p-2.5 flex items-center gap-2">
+            <Info className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" />
+            <span className="text-[11px] text-emerald-700 dark:text-emerald-300">
+              {t('All conversations under this project have been cleared. Ready to delete.')}
+            </span>
+          </div>
+        )}
         {/* Delete Local Directory Checkbox */}
         <div className="rounded-xl border border-destructive/20 bg-destructive/5 p-3 space-y-2">
           <label className="flex items-start gap-2.5 cursor-pointer">
@@ -178,7 +224,7 @@ function DeleteProjectContent({
           variant="destructive"
           size="sm"
           onClick={handleDelete}
-          disabled={deleteMutation.isPending}
+          disabled={deleteMutation.isPending || hasRemainingThreads}
           className="gap-1.5"
         >
           {deleteMutation.isPending ? (

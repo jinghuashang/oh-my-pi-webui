@@ -5,7 +5,20 @@ echo "========================================================"
 echo "          Starting Oh My Pi WebUI (omp-webui)           "
 echo "========================================================"
 
-# 1. Check and auto-install official omp binary if missing
+# 1. Check and restore persistent omp binary from /root/.omp/bin if present
+mkdir -p /root/.omp/bin /root/.omp/agent /workspaces /app/logs
+
+if [ -f "/root/.omp/bin/omp" ]; then
+  chmod +x /root/.omp/bin/omp
+  PERSISTENT_VER=$(/root/.omp/bin/omp --version 2>/dev/null || echo '')
+  if [ -n "$PERSISTENT_VER" ]; then
+    echo "[omp-webui] 📦 Found persisted OMP binary in data volume: $PERSISTENT_VER"
+    cp -f /root/.omp/bin/omp /usr/local/bin/omp
+    chmod +x /usr/local/bin/omp
+  fi
+fi
+
+# If omp binary missing in PATH, install from official source
 if ! command -v omp >/dev/null 2>&1; then
   echo "[omp-webui] ⚠️ omp binary not found in PATH, auto-installing from official repository..."
   if curl -fsSL https://omp.sh/install | PI_INSTALL_DIR=/usr/local/bin sh; then
@@ -15,15 +28,25 @@ if ! command -v omp >/dev/null 2>&1; then
   fi
 fi
 
-# Print active OMP version
+# Always sync active /usr/local/bin/omp back to persistent /root/.omp/bin/omp
 if command -v omp >/dev/null 2>&1; then
-  echo "[omp-webui] ✓ OMP engine ready: $(omp --version 2>/dev/null || echo 'installed')"
+  cp -f "$(which omp)" /root/.omp/bin/omp 2>/dev/null || true
+  chmod +x /root/.omp/bin/omp 2>/dev/null || true
+  echo "[omp-webui] ✓ OMP engine ready: $(omp --version 2>/dev/null || echo 'installed') (persisted in ./data/bin/omp)"
 else
   echo "[omp-webui] ⚠️ OMP command could not be verified."
 fi
 
-# 2. Ensure data, workspaces and logs directories exist
-mkdir -p /root/.omp/agent /workspaces /app/logs
+# 2. Restore persistent WebUI version/build overlay from /root/.omp/webui_overlay if present
+if [ -d "/root/.omp/webui_overlay" ]; then
+  echo "[omp-webui] 📦 Found persisted WebUI build overlay in data volume. Restoring..."
+  cp -rf /root/.omp/webui_overlay/* /app/ 2>/dev/null || true
+fi
+
+if [ -f "/root/.omp/version.json" ]; then
+  cp -f /root/.omp/version.json /app/version.json 2>/dev/null || true
+  cp -f /root/.omp/version.json /app/dist/version.json 2>/dev/null || true
+fi
 
 # 3. Auto-initialize default omp configuration if config.yml is missing
 CONFIG_FILE="/root/.omp/agent/config.yml"

@@ -7,13 +7,26 @@ import { TurnItemTracker } from './items.js';
 import * as os from 'os';
 import * as fs from 'fs';
 import * as path from 'path';
-import { spawn, execFile } from 'child_process';
+import { spawn, execFile, execFileSync } from 'child_process';
 
+function getOmpVersionString(): string {
+  const bin = process.env.OMP_BIN || 'omp';
+  try {
+    const out = execFileSync(bin, ['--version'], { encoding: 'utf8', timeout: 3000 });
+    const match = out.match(/(\d+\.\d+\.\d+)/);
+    if (match) return `omp ${match[1]}`;
+    return out.trim() || 'omp';
+  } catch {
+    return 'omp';
+  }
+}
+
+const currentOmpVersion = getOmpVersionString();
 const args = process.argv.slice(2);
 
 // Handle CLI subcommands
 if (args.includes('--version') || args.includes('-v')) {
-  process.stdout.write('omp-webui-bridge (omp 18.1.19)\n');
+  process.stdout.write(`omp-webui-bridge (${currentOmpVersion})\n`);
   process.exit(0);
 }
 
@@ -433,7 +446,7 @@ async function main() {
           status: { type: 'idle' },
           path: sessionFile,
           cwd,
-          cliVersion: 'omp 18.1.19',
+          cliVersion: currentOmpVersion,
           historyMode: 'paginated',
           turns: [],
         };
@@ -477,7 +490,7 @@ async function main() {
           status: { type: 'idle' },
           path: sessionPath,
           cwd: sessionManager.getSessionCwd(threadId) || meta?.cwd || process.cwd(),
-          cliVersion: 'omp 18.1.19',
+          cliVersion: currentOmpVersion,
           historyMode: 'paginated',
           turns: [],
         };
@@ -512,7 +525,7 @@ async function main() {
           status: { type: 'idle' },
           path: sessionPath,
           cwd: sessionManager.getSessionCwd(threadId) || meta?.cwd || process.cwd(),
-          cliVersion: 'omp 18.1.19',
+          cliVersion: currentOmpVersion,
           historyMode: 'paginated',
           turns: [],
         };

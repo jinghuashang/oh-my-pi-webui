@@ -219,6 +219,23 @@ export class OmpUpdateService {
       try {
         if (fs.existsSync(backupPath)) fs.unlinkSync(backupPath);
       } catch {}
+
+      // If running with WEBUI_HOME or persistent volume (/root/.omp), persist updated binary
+      try {
+        const webuiHome = this.configService.get<string>('WEBUI_HOME') || path.join(homedir(), '.omp');
+        const persistentBinDir = path.join(webuiHome, 'bin');
+        if (!fs.existsSync(persistentBinDir)) {
+          fs.mkdirSync(persistentBinDir, { recursive: true });
+        }
+        const persistentTarget = path.join(persistentBinDir, path.basename(targetPath));
+        fs.copyFileSync(targetPath, persistentTarget);
+        if (process.platform !== 'win32') {
+          fs.chmodSync(persistentTarget, 0o755);
+        }
+        this.logger.log(`Persisted updated OMP binary to ${persistentTarget} across container rebuilds`);
+      } catch (persistErr) {
+        this.logger.warn(`Could not copy updated binary to persistent volume: ${String(persistErr)}`);
+      }
     } catch (err) {
       if (fs.existsSync(backupPath) && !fs.existsSync(targetPath)) {
         try { fs.renameSync(backupPath, targetPath); } catch {}

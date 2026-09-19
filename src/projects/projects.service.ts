@@ -372,6 +372,33 @@ export class ProjectsService {
     const baseDir = this.getProjectsBaseDir();
     const projectDir = path.join(baseDir, sanitizedName);
 
+    // 1. Check if there are active or archived threads under this project/workspace
+    try {
+      const overview = await this.threadsService.listOverview({ limit: 100 });
+      const activeThreadsInProject = overview.data.filter((row) => {
+        const cwd = row.thread?.cwd;
+        if (!cwd) return false;
+        const normalizedCwd = path.resolve(cwd).toLowerCase();
+        const normalizedProject = path.resolve(projectDir).toLowerCase();
+        return (
+          normalizedCwd === normalizedProject ||
+          normalizedCwd.startsWith(normalizedProject + path.sep.toLowerCase())
+        );
+      });
+
+      if (activeThreadsInProject.length > 0) {
+        throw BusinessException.badRequest(
+          ErrorCode.threads.deleteTopologyConflict,
+          `Cannot delete project: please delete all ${activeThreadsInProject.length} conversation(s) inside this project first.`,
+        );
+      }
+    } catch (err) {
+      if (err instanceof BusinessException) {
+        throw err;
+      }
+      this.logger.warn(`Could not verify threads before project delete: ${String(err)}`);
+    }
+
     let deletedDir = false;
     if (fs.existsSync(projectDir)) {
       if (deleteDirectory) {
