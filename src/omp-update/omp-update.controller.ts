@@ -89,6 +89,16 @@ export class OmpUpdateController {
   getProgress(): OmpUpdateProgressDto {
     return this.ompUpdateService.getProgress();
   }
+
+  /**
+   * Cancels and aborts an in-progress OMP update task.
+   */
+  @Post('cancel')
+  @ApiOperation({ summary: 'Cancel in-progress OMP update download or installation' })
+  @ApiOkResponse({ type: Object })
+  cancelUpgrade(): { success: boolean; message: string } {
+    return this.ompUpdateService.cancelUpgrade();
+  }
   /**
    * Triggers `omp update` command to upgrade the OMP CLI.
    */

@@ -12,6 +12,7 @@ import {
   Plus,
   RefreshCw,
   Sparkles,
+  Square,
   Terminal,
   Zap,
 } from 'lucide-react';
@@ -30,11 +31,13 @@ import { Progress } from '@/components/ui/progress';
 import { cn } from '@/lib/utils';
 import {
   ompUpdateAddCustomMirrorMutation,
+  ompUpdateCancelUpgradeMutation,
   ompUpdateCheckUpdateOptions,
   ompUpdateCheckUpdateQueryKey,
   ompUpdateGetMirrorsOptions,
   ompUpdateGetMirrorsQueryKey,
   ompUpdateGetProgressOptions,
+  ompUpdateGetProgressQueryKey,
   ompUpdateUpgradeMutation,
 } from '@/generated/api/@tanstack/react-query.gen';
 import { showSnackbar } from '@/stores/snackbar-store';
@@ -109,9 +112,30 @@ export function OmpUpdateDialog({ open, onClose }: Props) {
   // Real-time progress polling query while upgrading
   const progressQuery = useQuery({
     ...ompUpdateGetProgressOptions(),
-    refetchInterval: upgradeMutation.isPending ? 400 : false,
-    enabled: upgradeMutation.isPending,
+    refetchInterval: (query) => {
+      const st = query.state.data?.status;
+      return upgradeMutation.isPending || st === 'downloading' || st === 'installing' ? 400 : false;
+    },
   });
+
+  // Cancel in-progress upgrade mutation
+  const cancelMutation = useMutation({
+    ...ompUpdateCancelUpgradeMutation(),
+    onSuccess: (data) => {
+      const msg = typeof (data as Record<string, unknown>)?.message === 'string' ? ((data as Record<string, unknown>).message as string) : t('Update cancelled');
+      showSnackbar(msg, 'info');
+      void queryClient.invalidateQueries({ queryKey: ompUpdateGetProgressQueryKey() });
+      upgradeMutation.reset();
+    },
+    onError: (err) => {
+      showSnackbar(getApiErrorMessage(err), 'error');
+    },
+  });
+
+  const isRunning =
+    upgradeMutation.isPending ||
+    progressQuery.data?.status === 'downloading' ||
+    progressQuery.data?.status === 'installing';
 
   // Add custom mirror mutation
   const addCustomMirrorMutation = useMutation({
@@ -382,7 +406,7 @@ export function OmpUpdateDialog({ open, onClose }: Props) {
           </div>
 
           {/* Real-time Download Progress Card */}
-          {upgradeMutation.isPending && (
+          {isRunning && (
             <div className="rounded-xl border border-primary/20 bg-primary/5 p-3.5 space-y-2">
               <div className="flex items-center justify-between text-xs">
                 <div className="flex items-center gap-1.5 font-medium text-foreground">
@@ -391,13 +415,26 @@ export function OmpUpdateDialog({ open, onClose }: Props) {
                     {progressQuery.data?.stage || t('Downloading update...')}
                   </span>
                 </div>
-                {progressQuery.data?.speedFormatted && (
-                  <span className="font-mono text-[11px] text-emerald-600 dark:text-emerald-400 font-semibold">
-                    {progressQuery.data.speedFormatted}
-                  </span>
-                )}
+                <div className="flex items-center gap-2">
+                  {progressQuery.data?.speedFormatted && (
+                    <span className="font-mono text-[11px] text-emerald-600 dark:text-emerald-400 font-semibold">
+                      {progressQuery.data.speedFormatted}
+                    </span>
+                  )}
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => cancelMutation.mutate({})}
+                    disabled={cancelMutation.isPending}
+                    className="h-6 px-1.5 text-[11px] text-destructive hover:bg-destructive/10 hover:text-destructive gap-1"
+                    title={t('Cancel update')}
+                  >
+                    <Square className="h-3 w-3 fill-current" />
+                    <span>{t('Cancel')}</span>
+                  </Button>
+                </div>
               </div>
-
               <Progress value={progressQuery.data?.percent || 0} className="h-2" />
 
               <div className="flex items-center justify-between text-[10px] text-muted-foreground font-mono">
@@ -450,8 +487,7 @@ export function OmpUpdateDialog({ open, onClose }: Props) {
                     },
                   })
                 }
-                disabled={upgradeMutation.isPending}
-                className="gap-1.5 text-xs bg-emerald-600 hover:bg-emerald-700 text-white"
+                disabled={isRunning}
               >
                 {upgradeMutation.isPending ? (
                   <Loader2 className="h-3.5 w-3.5 animate-spin" />

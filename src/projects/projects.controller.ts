@@ -10,6 +10,7 @@ import {
 } from '@nestjs/swagger';
 import { ApiErrorResponseDto } from '../common/dto/api-responses.dto';
 import {
+  CloneProgressDto,
   CloneProjectDto,
   CreateProjectDto,
   CreateProjectResponseDto,
@@ -63,6 +64,30 @@ export class ProjectsController {
     @Body() body: CloneProjectDto,
   ): Promise<CreateProjectResponseDto> {
     return this.projectsService.cloneProject(body);
+  }
+
+  /**
+   * Gets real-time git clone progress and stdout/stderr output log.
+   */
+  @Get('clone/progress')
+  @ApiOperation({
+    summary: 'Get real-time git clone progress percentage and stdout/stderr logs',
+  })
+  @ApiOkResponse({ type: CloneProgressDto })
+  getCloneProgress(): CloneProgressDto {
+    return this.projectsService.getCloneProgress();
+  }
+
+  /**
+   * Cancels and aborts an in-progress git clone task and cleans up partial directories.
+   */
+  @Post('clone/cancel')
+  @ApiOperation({
+    summary: 'Cancel and abort an in-progress git clone task',
+  })
+  @ApiOkResponse({ type: Object })
+  cancelClone(): { success: boolean; message: string } {
+    return this.projectsService.cancelClone();
   }
 
   /**

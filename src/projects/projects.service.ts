@@ -9,6 +9,7 @@ import { ErrorCode } from '../common/error-codes';
 import { FilesService } from '../files/files.service';
 import { ThreadsService } from '../threads/threads.service';
 import {
+  CloneProgressDto,
   CloneProjectDto,
   CreateProjectDto,
   CreateProjectResponseDto,
@@ -22,6 +23,14 @@ const execFileAsync = promisify(execFile);
 @Injectable()
 export class ProjectsService {
   private readonly logger = new Logger(ProjectsService.name);
+  private activeCloneProcess: { kill: (signal?: NodeJS.Signals) => void } | null = null;
+  private activeCloneTargetDir: string | null = null;
+  private cloneProgress: CloneProgressDto = {
+    status: 'idle',
+    stage: '',
+    percent: 0,
+    outputLog: '',
+  };
 
   constructor(
     private readonly configService: ConfigService,
@@ -29,6 +38,46 @@ export class ProjectsService {
     private readonly threadsService: ThreadsService,
   ) {}
 
+  getCloneProgress(): CloneProgressDto {
+    return this.cloneProgress;
+  }
+
+  /**
+   * Cancels and aborts an in-progress git clone task, kills process and removes partial files.
+   */
+  cancelClone(): { success: boolean; message: string } {
+    if (this.cloneProgress.status !== 'cloning' || !this.activeCloneProcess) {
+      return { success: false, message: 'No active git clone task to cancel.' };
+    }
+
+    this.logger.log('Cancelling active git clone task...');
+    try {
+      this.activeCloneProcess.kill('SIGTERM');
+    } catch {}
+    this.activeCloneProcess = null;
+
+    const targetDir = this.activeCloneTargetDir;
+    this.activeCloneTargetDir = null;
+
+    if (targetDir && fs.existsSync(targetDir)) {
+      try {
+        fs.rmSync(targetDir, { recursive: true, force: true });
+        this.logger.log(`Cleaned up partial cloned directory: ${targetDir}`);
+      } catch (err) {
+        this.logger.warn(`Could not remove partial directory ${targetDir}: ${String(err)}`);
+      }
+    }
+
+    this.cloneProgress = {
+      status: 'cancelled',
+      stage: 'Git clone was cancelled by user.',
+      percent: 0,
+      outputLog: `${this.cloneProgress.outputLog}\n[Cancelled by user]`.trim(),
+      error: 'Cancelled by user',
+    };
+
+    return { success: true, message: 'Git clone task has been cancelled.' };
+  }
   /**
    * Resolves the base directory where project folders are created.
    * Prioritizes ./data/projects under current workspace or WEBUI_HOME/projects.
@@ -265,8 +314,13 @@ export class ProjectsService {
     const alreadyExists = fs.existsSync(projectDir);
 
     if (!alreadyExists) {
-      // Execute git clone
-      const args = ['clone'];
+      // If another clone is running, cancel it first to prevent conflicts
+      if (this.cloneProgress.status === 'cloning') {
+        this.cancelClone();
+      }
+
+      // Execute git clone with real-time progress and output tracking
+      const args = ['clone', '--progress'];
       if (dto.shallow !== false) {
         args.push('--depth', '1');
       }
@@ -276,31 +330,90 @@ export class ProjectsService {
       args.push(normalizedUrl, projectDir);
 
       this.logger.log(`Cloning repository from ${normalizedUrl} into ${projectDir}...`);
+      this.activeCloneTargetDir = projectDir;
+      this.cloneProgress = {
+        status: 'cloning',
+        stage: `Cloning ${normalizedUrl}...`,
+        percent: 5,
+        outputLog: `> git ${args.join(' ')}\n`,
+        url: normalizedUrl,
+        targetDir: projectDir,
+      };
+
       try {
-        await execFileAsync('git', args, {
+        const child = execFile('git', args, {
           timeout: 180_000,
           env: {
             ...process.env,
             GIT_TERMINAL_PROMPT: '0',
           },
         });
+        this.activeCloneProcess = child;
+
+        const parseProgress = (chunk: string) => {
+          this.cloneProgress.outputLog += chunk;
+          // Parse typical git clone progress: Receiving objects:  45% (120/266)
+          const match = chunk.match(/Receiving objects:\s+(\d+)%/);
+          if (match) {
+            const pct = parseInt(match[1], 10);
+            this.cloneProgress.percent = Math.min(95, Math.max(10, pct));
+            this.cloneProgress.stage = `Receiving objects: ${pct}%`;
+          } else if (chunk.includes('Resolving deltas:')) {
+            const deltaMatch = chunk.match(/Resolving deltas:\s+(\d+)%/);
+            if (deltaMatch) {
+              const pct = parseInt(deltaMatch[1], 10);
+              this.cloneProgress.percent = Math.min(98, 90 + Math.round(pct * 0.08));
+              this.cloneProgress.stage = `Resolving deltas: ${pct}%`;
+            }
+          } else if (chunk.includes('Cloning into')) {
+            this.cloneProgress.percent = 10;
+            this.cloneProgress.stage = 'Connecting and cloning repository...';
+          }
+        };
+
+        child.stdout?.on('data', (d) => parseProgress(d.toString()));
+        child.stderr?.on('data', (d) => parseProgress(d.toString()));
+
+        await new Promise<void>((resolve, reject) => {
+          child.on('close', (code) => {
+            if (code === 0) resolve();
+            else reject(new Error(`git clone exited with code ${code}`));
+          });
+          child.on('error', reject);
+        });
+
+        this.activeCloneProcess = null;
+        this.activeCloneTargetDir = null;
+        this.cloneProgress.status = 'completed';
+        this.cloneProgress.percent = 100;
+        this.cloneProgress.stage = 'Repository cloned successfully!';
       } catch (err) {
-        // Clean up partial directory on clone failure
+        const isCancelled = this.cloneProgress.status === 'cancelled';
+        this.activeCloneProcess = null;
+        this.activeCloneTargetDir = null;
+
+        // Clean up partial directory on clone failure if not already cleaned
         if (fs.existsSync(projectDir)) {
           try {
             await fs.promises.rm(projectDir, { recursive: true, force: true });
           } catch {}
         }
-        let stderr = '';
-        if (err && typeof err === 'object' && 'stderr' in err && typeof err.stderr === 'string') {
-          stderr = err.stderr;
-        } else {
-          stderr = String(err);
+
+        if (isCancelled) {
+          throw BusinessException.badRequest(
+            ErrorCode.git.commandFailed,
+            'Git clone operation was cancelled by user.',
+          );
         }
-        this.logger.error(`Git clone failed for ${normalizedUrl}: ${stderr}`);
+
+        this.cloneProgress.status = 'failed';
+        this.cloneProgress.error = String(err);
+        this.cloneProgress.stage = 'Git clone failed.';
+
+        this.logger.error(`Git clone failed for ${normalizedUrl}: ${this.cloneProgress.outputLog}`);
         throw BusinessException.badRequest(
           ErrorCode.git.commandFailed,
-          `Failed to clone repository: ${stderr.trim()}`,
+          `Failed to clone repository: ${this.cloneProgress.outputLog.slice(-400).trim() || String(err)}`,
         );
       }
     } else {

@@ -2317,6 +2317,37 @@ export type CloneProjectDto = {
     model?: string;
 };
 
+export type CloneProgressDto = {
+    /**
+     * Current status of the git clone process
+     */
+    status: 'idle' | 'cloning' | 'completed' | 'failed' | 'cancelled';
+    /**
+     * Current descriptive stage or activity
+     */
+    stage: string;
+    /**
+     * Completion percentage from 0 to 100
+     */
+    percent: number;
+    /**
+     * Cumulative git stdout/stderr execution log
+     */
+    outputLog: string;
+    /**
+     * Repository URL being cloned
+     */
+    url?: string;
+    /**
+     * Target directory where repo is being cloned
+     */
+    targetDir?: string;
+    /**
+     * Error message if failed or cancelled
+     */
+    error?: string;
+};
+
 export type DeleteProjectResponseDto = {
     /**
      * Deleted project name
@@ -5039,6 +5070,46 @@ export type ProjectsCloneProjectResponses = {
 
 export type ProjectsCloneProjectResponse = ProjectsCloneProjectResponses[keyof ProjectsCloneProjectResponses];
 
+export type ProjectsGetCloneProgressData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/projects/clone/progress';
+};
+
+export type ProjectsGetCloneProgressErrors = {
+    401: ApiErrorResponseDto;
+};
+
+export type ProjectsGetCloneProgressError = ProjectsGetCloneProgressErrors[keyof ProjectsGetCloneProgressErrors];
+
+export type ProjectsGetCloneProgressResponses = {
+    200: CloneProgressDto;
+};
+
+export type ProjectsGetCloneProgressResponse = ProjectsGetCloneProgressResponses[keyof ProjectsGetCloneProgressResponses];
+
+export type ProjectsCancelCloneData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/projects/clone/cancel';
+};
+
+export type ProjectsCancelCloneErrors = {
+    401: ApiErrorResponseDto;
+};
+
+export type ProjectsCancelCloneError = ProjectsCancelCloneErrors[keyof ProjectsCancelCloneErrors];
+
+export type ProjectsCancelCloneResponses = {
+    200: {
+        [key: string]: unknown;
+    };
+};
+
+export type ProjectsCancelCloneResponse = ProjectsCancelCloneResponses[keyof ProjectsCancelCloneResponses];
+
 export type ProjectsDeleteProjectData = {
     body?: never;
     path: {
@@ -5169,6 +5240,27 @@ export type OmpUpdateGetProgressResponses = {
 
 export type OmpUpdateGetProgressResponse = OmpUpdateGetProgressResponses[keyof OmpUpdateGetProgressResponses];
 
+export type OmpUpdateCancelUpgradeData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/omp/update/cancel';
+};
+
+export type OmpUpdateCancelUpgradeErrors = {
+    401: ApiErrorResponseDto;
+};
+
+export type OmpUpdateCancelUpgradeError = OmpUpdateCancelUpgradeErrors[keyof OmpUpdateCancelUpgradeErrors];
+
+export type OmpUpdateCancelUpgradeResponses = {
+    200: {
+        [key: string]: unknown;
+    };
+};
+
+export type OmpUpdateCancelUpgradeResponse = OmpUpdateCancelUpgradeResponses[keyof OmpUpdateCancelUpgradeResponses];
+
 export type OmpUpdateUpgradeData = {
     body: OmpUpgradeRequestDto;
     path?: never;
@@ -5249,6 +5341,27 @@ export type WebuiUpdateGetProgressResponses = {
 };
 
 export type WebuiUpdateGetProgressResponse = WebuiUpdateGetProgressResponses[keyof WebuiUpdateGetProgressResponses];
+
+export type WebuiUpdateCancelUpgradeData = {
+    body?: never;
+    path?: never;
+    query?: never;
+    url: '/api/webui/update/cancel';
+};
+
+export type WebuiUpdateCancelUpgradeErrors = {
+    401: ApiErrorResponseDto;
+};
+
+export type WebuiUpdateCancelUpgradeError = WebuiUpdateCancelUpgradeErrors[keyof WebuiUpdateCancelUpgradeErrors];
+
+export type WebuiUpdateCancelUpgradeResponses = {
+    200: {
+        [key: string]: unknown;
+    };
+};
+
+export type WebuiUpdateCancelUpgradeResponse = WebuiUpdateCancelUpgradeResponses[keyof WebuiUpdateCancelUpgradeResponses];
 
 export type WebuiUpdateUpgradeData = {
     body: WebuiUpgradeRequestDto;

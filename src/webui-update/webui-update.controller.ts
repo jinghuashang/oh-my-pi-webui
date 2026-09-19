@@ -60,6 +60,16 @@ export class WebuiUpdateController {
     return this.webuiUpdateService.getProgress();
   }
 
+
+  /**
+   * Cancels and aborts an in-progress WebUI update task.
+   */
+  @Post('cancel')
+  @ApiOperation({ summary: 'Cancel in-progress WebUI update pull or build' })
+  @ApiOkResponse({ type: Object })
+  cancelUpgrade(): { success: boolean; message: string } {
+    return this.webuiUpdateService.cancelUpgrade();
+  }
   /**
    * Pulls latest WebUI updates from remote git repository.
    */

@@ -47,6 +47,8 @@ export function buildMirrorDownloadUrl(rawUrl: string, mirrorUrl?: string): stri
 export class OmpUpdateService {
   private readonly logger = new Logger(OmpUpdateService.name);
   private cachedCheck: { result: OmpVersionResponseDto; expiresAt: number } | null = null;
+  private abortController: AbortController | null = null;
+  private activeChildProcess: { kill: (signal?: NodeJS.Signals) => void } | null = null;
   private progress: OmpUpdateProgressDto = {
     status: 'idle',
     stage: '',
@@ -70,6 +72,37 @@ export class OmpUpdateService {
     return this.progress;
   }
 
+  /**
+   * Aborts an in-progress OMP update task and resets progress state.
+   */
+  cancelUpgrade(): { success: boolean; message: string } {
+    if (this.progress.status !== 'downloading' && this.progress.status !== 'installing') {
+      return { success: false, message: 'No active OMP update task to cancel.' };
+    }
+
+    this.logger.log('Cancelling active OMP update task...');
+    if (this.abortController) {
+      this.abortController.abort();
+      this.abortController = null;
+    }
+    if (this.activeChildProcess) {
+      try {
+        this.activeChildProcess.kill('SIGTERM');
+      } catch {}
+      this.activeChildProcess = null;
+    }
+
+    this.progress = {
+      status: 'failed',
+      stage: 'Update cancelled by user.',
+      percent: 0,
+      downloadedBytes: 0,
+      totalBytes: 0,
+      error: 'Cancelled by user',
+    };
+
+    return { success: true, message: 'OMP update task has been cancelled.' };
+  }
   /**
    * Computes the release asset binary name based on operating system and architecture.
    */
@@ -131,10 +164,11 @@ export class OmpUpdateService {
       downloadedBytes: 0,
       totalBytes: 0,
     };
-
+    const signal = this.abortController?.signal;
     const res = await fetch(downloadUrl, {
       headers: { 'User-Agent': 'oh-my-pi-webui' },
       redirect: 'follow',
+      signal,
     });
 
     if (!res.ok || !res.body) {
@@ -157,12 +191,15 @@ export class OmpUpdateService {
     const reader = res.body.getReader();
 
     while (true) {
+      if (signal?.aborted) {
+        fileStream.destroy();
+        try { if (fs.existsSync(tempPath)) fs.unlinkSync(tempPath); } catch {}
+        throw new Error('Download aborted by user.');
+      }
       const { done, value } = await reader.read();
       if (done) break;
       if (value) {
-        downloadedBytes += value.byteLength;
         fileStream.write(Buffer.from(value));
-
         const now = Date.now();
         const elapsed = now - lastSampleTime;
         if (elapsed >= 250 || downloadedBytes === totalBytes) {
@@ -524,6 +561,13 @@ export class OmpUpdateService {
    * Executes `omp update` command to upgrade the CLI binary with optional mirror/proxy support.
    */
   async upgrade(dto: OmpUpgradeRequestDto): Promise<OmpUpgradeResponseDto> {
+    // If another update is currently running, cancel the old one first to avoid race condition!
+    if (this.progress.status === 'downloading' || this.progress.status === 'installing') {
+      this.logger.warn('Previous update is still running, aborting it before starting new update...');
+      this.cancelUpgrade();
+    }
+
+    this.abortController = new AbortController();
     const check = await this.checkUpdate();
     const targetBinary = await this.resolveBinaryPath();
     const binaryName = this.resolveBinaryName();
@@ -572,6 +616,7 @@ export class OmpUpdateService {
     }
 
     if (successfulUrl) {
+      this.abortController = null;
       this.cachedCheck = null;
       const newVersion = await this.getCurrentVersion();
       return {
@@ -603,10 +648,24 @@ export class OmpUpdateService {
     );
 
     try {
-      const { stdout, stderr } = await execFileAsync(this.ompBin, args, {
+      const child = execFile(this.ompBin, args, {
         timeout: 180_000,
         env,
       });
+      this.activeChildProcess = child;
+      const { stdout, stderr } = await new Promise<{ stdout: string; stderr: string }>((resolve, reject) => {
+        let out = '';
+        let err = '';
+        child.stdout?.on('data', (d) => (out += d));
+        child.stderr?.on('data', (d) => (err += d));
+        child.on('close', (code) => {
+          if (code === 0) resolve({ stdout: out, stderr: err });
+          else reject(new Error(err || `Process exited with code ${code}`));
+        });
+        child.on('error', reject);
+      });
+      this.activeChildProcess = null;
+      this.abortController = null;
 
       const output = `${stdout}\n${stderr}`.trim();
       this.cachedCheck = null;
@@ -618,6 +677,8 @@ export class OmpUpdateService {
         output,
       };
     } catch (err) {
+      this.activeChildProcess = null;
+      this.abortController = null;
       let output = '';
       if (err && typeof err === 'object' && 'stderr' in err && typeof err.stderr === 'string') {
         output = err.stderr;

@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from '@tanstack/react-router';
 import { useTranslation } from 'react-i18next';
-import { FolderDown, FolderGit2, FolderPlus, GitBranch, GitFork, Loader2, Sparkles } from 'lucide-react';
+import { FolderDown, FolderGit2, FolderPlus, GitBranch, GitFork, Loader2, Sparkles, Square, Terminal } from 'lucide-react';
 import {
   Dialog,
   DialogContent,
@@ -20,11 +20,15 @@ import { cn } from '@/lib/utils';
 import { showSnackbar } from '@/stores/snackbar-store';
 import { getApiErrorMessage } from '@/lib/api-error';
 import {
+  projectsCancelCloneMutation,
   projectsCloneProjectMutation,
   projectsCreateProjectMutation,
+  projectsGetCloneProgressOptions,
+  projectsGetCloneProgressQueryKey,
   projectsListProjectsOptions,
   threadsListOverviewOptions,
 } from '@/generated/api/@tanstack/react-query.gen';
+import { Progress } from '@/components/ui/progress';
 interface Props {
   open: boolean;
   onClose: () => void;
@@ -93,6 +97,33 @@ function CreateProjectContent({ onClose }: { onClose: () => void }) {
     },
   });
 
+  // Real-time git clone progress polling query
+  const cloneProgressQuery = useQuery({
+    ...projectsGetCloneProgressOptions(),
+    refetchInterval: (query) => {
+      const st = query.state.data?.status;
+      return cloneMutation.isPending || st === 'cloning' ? 400 : false;
+    },
+  });
+
+  // Cancel in-progress git clone mutation
+  const cancelCloneMutation = useMutation({
+    ...projectsCancelCloneMutation(),
+    onSuccess: (data) => {
+      const msg = typeof (data as Record<string, unknown>)?.message === 'string'
+        ? ((data as Record<string, unknown>).message as string)
+        : t('Git clone cancelled');
+      showSnackbar(msg, 'info');
+      void queryClient.invalidateQueries({ queryKey: projectsGetCloneProgressQueryKey() });
+      cloneMutation.reset();
+    },
+    onError: (err) => {
+      showSnackbar(getApiErrorMessage(err), 'error');
+    },
+  });
+
+  const isCloning = cloneMutation.isPending || cloneProgressQuery.data?.status === 'cloning';
+
   const handleGitUrlChange = (val: string) => {
     setGitUrl(val);
     if (!gitNameTouched) {
@@ -138,7 +169,6 @@ function CreateProjectContent({ onClose }: { onClose: () => void }) {
     }
   };
 
-  const isPending = createMutation.isPending || cloneMutation.isPending;
   return (
     <DialogContent className="max-w-md">
       <form onSubmit={handleSubmit} className="space-y-4">
@@ -337,35 +367,87 @@ function CreateProjectContent({ onClose }: { onClose: () => void }) {
                 className="text-xs leading-relaxed"
               />
             </div>
+
+            {/* Real-time Git Clone Progress Card & Output Log */}
+            {isCloning && (
+              <div className="rounded-xl border border-primary/20 bg-primary/5 p-3.5 space-y-2.5">
+                <div className="flex items-center justify-between text-xs">
+                  <div className="flex items-center gap-1.5 font-medium text-foreground">
+                    <Loader2 className="h-3.5 w-3.5 animate-spin text-primary" />
+                    <span className="truncate">
+                      {cloneProgressQuery.data?.stage || t('Cloning repository from GitHub...')}
+                    </span>
+                  </div>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => cancelCloneMutation.mutate({})}
+                    disabled={cancelCloneMutation.isPending}
+                    className="h-6 px-1.5 text-[11px] text-destructive hover:bg-destructive/10 hover:text-destructive gap-1"
+                    title={t('Cancel clone')}
+                  >
+                    <Square className="h-3 w-3 fill-current" />
+                    <span>{t('Cancel')}</span>
+                  </Button>
+                </div>
+
+                <Progress value={cloneProgressQuery.data?.percent || 10} className="h-2" />
+
+                <div className="flex items-center justify-between text-[10px] text-muted-foreground font-mono">
+                  <span className="truncate">{cloneProgressQuery.data?.url || gitUrl}</span>
+                  <span>{cloneProgressQuery.data?.percent || 0}%</span>
+                </div>
+
+                {cloneProgressQuery.data?.outputLog && (
+                  <div className="space-y-1 pt-1">
+                    <div className="flex items-center gap-1 text-[10px] font-medium text-muted-foreground">
+                      <Terminal className="h-3 w-3" />
+                      <span>{t('Clone Output Log')}:</span>
+                    </div>
+                    <pre className="max-h-28 overflow-auto rounded-md bg-black/90 p-2 font-mono text-[10px] text-emerald-400 whitespace-pre-wrap leading-tight">
+                      {cloneProgressQuery.data.outputLog}
+                    </pre>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         )}
         <DialogFooter className="pt-2">
-          <Button type="button" variant="outline" size="sm" onClick={onClose}>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={onClose}
+            disabled={isCloning}
+          >
             {t('Cancel')}
           </Button>
           <Button
             type="submit"
             size="sm"
             disabled={
-              isPending ||
+              createMutation.isPending ||
+              isCloning ||
               (tab === 'blank' ? !name.trim() : !gitUrl.trim())
             }
             className="gap-1.5"
           >
-            {isPending ? (
+            {createMutation.isPending || isCloning ? (
               <Loader2 className="h-3.5 w-3.5 animate-spin" />
             ) : tab === 'blank' ? (
               <FolderPlus className="h-3.5 w-3.5" />
             ) : (
               <FolderDown className="h-3.5 w-3.5" />
             )}
-            {isPending
-              ? cloneMutation.isPending
+            {createMutation.isPending
+              ? t('Creating...')
+              : isCloning
                 ? t('Cloning repository from GitHub...')
-                : t('Creating...')
-              : tab === 'blank'
-                ? t('Create Project & Start')
-                : t('Clone & Start Project')}
+                : tab === 'blank'
+                  ? t('Create Project & Start')
+                  : t('Clone & Start Project')}
           </Button>
         </DialogFooter>
       </form>

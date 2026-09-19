@@ -89,3 +89,29 @@ export class DeleteProjectResponseDto {
   @ApiProperty()
   success!: boolean;
 }
+
+export class CloneProgressDto {
+  @ApiProperty({
+    description: 'Current status of the git clone process',
+    enum: ['idle', 'cloning', 'completed', 'failed', 'cancelled'],
+  })
+  status!: 'idle' | 'cloning' | 'completed' | 'failed' | 'cancelled';
+
+  @ApiProperty({ description: 'Current descriptive stage or activity' })
+  stage!: string;
+
+  @ApiProperty({ description: 'Completion percentage from 0 to 100' })
+  percent!: number;
+
+  @ApiProperty({ description: 'Cumulative git stdout/stderr execution log' })
+  outputLog!: string;
+
+  @ApiPropertyOptional({ description: 'Repository URL being cloned' })
+  url?: string;
+
+  @ApiPropertyOptional({ description: 'Target directory where repo is being cloned' })
+  targetDir?: string;
+
+  @ApiPropertyOptional({ description: 'Error message if failed or cancelled' })
+  error?: string;
+}

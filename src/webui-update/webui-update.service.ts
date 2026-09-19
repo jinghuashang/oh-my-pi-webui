@@ -20,13 +20,14 @@ const execFileAsync = promisify(execFile);
 export class WebuiUpdateService {
   private readonly logger = new Logger(WebuiUpdateService.name);
   private cachedCheck: { result: WebuiVersionResponseDto; expiresAt: number } | null = null;
+  private abortController: AbortController | null = null;
+  private activeChildProcess: { kill: (signal?: NodeJS.Signals) => void } | null = null;
   private progress: WebuiUpdateProgressDto = {
     status: 'idle',
     stage: '',
     percent: 0,
     outputLog: '',
   };
-
   constructor(
     private readonly configService: ConfigService,
     private readonly ompUpdateService: OmpUpdateService,
@@ -41,6 +42,36 @@ export class WebuiUpdateService {
     return this.progress;
   }
 
+  /**
+   * Cancels and aborts an in-progress WebUI update task and kills child processes.
+   */
+  cancelUpgrade(): { success: boolean; message: string } {
+    if (this.progress.status !== 'pulling' && this.progress.status !== 'building') {
+      return { success: false, message: 'No active WebUI update task to cancel.' };
+    }
+
+    this.logger.log('Cancelling active WebUI update task...');
+    if (this.abortController) {
+      this.abortController.abort();
+      this.abortController = null;
+    }
+    if (this.activeChildProcess) {
+      try {
+        this.activeChildProcess.kill('SIGTERM');
+      } catch {}
+      this.activeChildProcess = null;
+    }
+
+    this.progress = {
+      status: 'failed',
+      stage: 'Update cancelled by user.',
+      percent: 0,
+      outputLog: `${this.progress.outputLog}\n[Cancelled by user]`.trim(),
+      error: 'Cancelled by user',
+    };
+
+    return { success: true, message: 'WebUI update task has been cancelled.' };
+  }
   /**
    * Detects whether the process is running inside a Docker or containerized environment.
    */
@@ -315,9 +346,14 @@ export class WebuiUpdateService {
       };
       return { success: false, message: reason, output: reason };
     }
+    if (this.progress.status === 'pulling' || this.progress.status === 'building') {
+      this.logger.warn('Previous WebUI update task is still running, aborting it before starting new update...');
+      this.cancelUpgrade();
+    }
 
-    const isDocker = this.isDocker();
+    this.abortController = new AbortController();
     const check = await this.checkUpdate();
+    const isDocker = this.isDocker();
     const targetCommit = check.latestCommit || 'latest';
     const webuiHome = this.configService.get<string>('WEBUI_HOME') || path.join(homedir(), '.omp');
     // 1. If running inside Docker container or environment without writable .git,
@@ -483,13 +519,18 @@ export class WebuiUpdateService {
         const res = await fetch(downloadUrl, {
           headers: { 'User-Agent': 'oh-my-pi-webui' },
           redirect: 'follow',
-          signal: AbortSignal.timeout(60_000),
+          signal: this.abortController ? this.abortController.signal : AbortSignal.timeout(60_000),
         });
 
         if (res.ok && res.body) {
           const fileStream = fs.createWriteStream(tempTarPath);
           const reader = res.body.getReader();
           while (true) {
+            if (this.abortController?.signal.aborted) {
+              fileStream.destroy();
+              try { if (fs.existsSync(tempTarPath)) fs.unlinkSync(tempTarPath); } catch {}
+              throw new Error('WebUI update download aborted by user.');
+            }
             const { done, value } = await reader.read();
             if (done) break;
             if (value) fileStream.write(Buffer.from(value));
@@ -502,6 +543,9 @@ export class WebuiUpdateService {
           break;
         }
       } catch (err) {
+        if (this.abortController?.signal.aborted) {
+          throw err;
+        }
         this.logger.warn(`Failed to download tarball via ${mirror}: ${String(err)}`);
       }
     }
