@@ -43,7 +43,22 @@ async function bootstrap() {
         route.bodyLimit = 2 * 1024 * 1024;
       }
     });
-
+  // Hook preParsing to gracefully handle empty JSON bodies for POST/DELETE/PATCH without throwing FST_ERR_CTP_EMPTY_JSON_BODY
+  app
+    .getHttpAdapter()
+    .getInstance()
+    .addHook('preParsing', async (request, reply, payload) => {
+      const contentType = request.headers['content-type'] || '';
+      if (contentType.includes('application/json')) {
+        const contentLength = request.headers['content-length'];
+        if (contentLength === '0' || contentLength === undefined) {
+          // If body is empty or 0 bytes, supply empty object JSON Buffer and update header
+          request.headers['content-length'] = '2';
+          return Readable.from([Buffer.from('{}')]);
+        }
+      }
+      return payload;
+    });
   const settingsService = app.get(SettingsService);
   const uploadMaxBytes = settingsService.getNumberSetting(
     FILES_SETTING_KEYS.uploadMaxBytes,

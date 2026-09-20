@@ -18,16 +18,52 @@ if [ -f "/root/.omp/bin/omp" ]; then
   fi
 fi
 
-# If omp binary missing in PATH, install from official source
+# If omp binary missing in PATH, install from official source with mirror fallback
 if ! command -v omp >/dev/null 2>&1; then
-  echo "[omp-webui] ⚠️ omp binary not found in PATH, auto-installing from official repository..."
-  if curl -fsSL https://omp.sh/install | PI_INSTALL_DIR=/usr/local/bin sh; then
+  echo "[omp-webui] ⚠️ omp binary not found in PATH, installing..."
+  INSTALLED=0
+  for MIRROR_PREFIX in "" "https://ghproxy.net/" "https://gh.ddlc.top/"; do
+    if [ -n "$MIRROR_PREFIX" ]; then
+      echo "[omp-webui] 🔄 Trying installation with mirror: ${MIRROR_PREFIX}..."
+      if curl -fsSL "${MIRROR_PREFIX}https://omp.sh/install" | PI_INSTALL_DIR=/usr/local/bin sh 2>/dev/null; then
+        INSTALLED=1
+        break
+      fi
+    else
+      if curl -fsSL https://omp.sh/install | PI_INSTALL_DIR=/usr/local/bin sh 2>/dev/null; then
+        INSTALLED=1
+        break
+      fi
+    fi
+  done
+
+  # Fallback: direct binary download from releases via mirror if script fails
+  if [ "$INSTALLED" -eq 0 ]; then
+    ARCH=$(uname -m)
+    case "$ARCH" in
+      x86_64|amd64) OMP_ARCH="x64" ;;
+      aarch64|arm64) OMP_ARCH="arm64" ;;
+      *) OMP_ARCH="x64" ;;
+    esac
+    for DL_MIRROR in "https://ghproxy.net/" "https://gh.ddlc.top/" "https://hub.gitmirror.com/"; do
+      echo "[omp-webui] ⬇️ Downloading OMP release binary via ${DL_MIRROR}..."
+      if curl -fsSL -o /usr/local/bin/omp "${DL_MIRROR}https://github.com/can1357/oh-my-pi/releases/latest/download/omp-linux-${OMP_ARCH}" 2>/dev/null; then
+        chmod +x /usr/local/bin/omp
+        if /usr/local/bin/omp --version >/dev/null 2>&1; then
+          INSTALLED=1
+          echo "[omp-webui] ✓ Successfully installed official OMP binary via mirror!"
+          break
+        fi
+      fi
+    done
+  fi
+
+  if [ "$INSTALLED" -eq 1 ]; then
     echo "[omp-webui] ✓ Successfully auto-installed official omp engine!"
   else
-    echo "[omp-webui] ✗ Failed to auto-install omp from omp.sh. Please check your network or mount omp from host."
+    echo "[omp-webui] ✗ Failed to auto-install omp. Please check network or mount binary to ./data/bin/omp."
   fi
 fi
-
 # Always sync active /usr/local/bin/omp back to persistent /root/.omp/bin/omp
 if command -v omp >/dev/null 2>&1; then
   cp -f "$(which omp)" /root/.omp/bin/omp 2>/dev/null || true

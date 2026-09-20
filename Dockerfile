@@ -40,18 +40,18 @@ FROM node:22-bookworm-slim AS runner
 
 WORKDIR /app
 
-# Install runtime utilities for omp and shell operations
+# Install runtime utilities for omp, shell operations, and build toolchain
 RUN apt-get update && apt-get install -y --no-install-recommends \
     ca-certificates \
     curl \
     git \
     procps \
     openssh-client \
+    && corepack enable && corepack prepare pnpm@10.18.3 --activate \
     && rm -rf /var/lib/apt/lists/*
-
-# Install official Oh My Pi (omp) binary to /usr/local/bin
-RUN curl -fsSL https://omp.sh/install | PI_INSTALL_DIR=/usr/local/bin sh \
-    && omp --version
+# Install official Oh My Pi (omp) binary to /usr/local/bin (with fallback if GitHub API rate-limited)
+RUN (curl -fsSL https://omp.sh/install | PI_INSTALL_DIR=/usr/local/bin sh || true) \
+    && (omp --version || echo "omp will be verified and initialized on entrypoint startup")
 
 # Default environment configuration
 ENV NODE_ENV=production \

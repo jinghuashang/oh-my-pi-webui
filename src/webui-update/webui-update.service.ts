@@ -614,9 +614,10 @@ export class WebuiUpdateService {
     };
 
     try {
+      // Use --overwrite to replace existing files (e.g. version.json) cleanly without EEXIST errors!
       const { stdout: tarOut, stderr: tarErr } = await execFileAsync(
         'tar',
-        ['-xzf', tempTarPath, '--strip-components=1', '-C', this.repoRoot],
+        ['-xzf', tempTarPath, '--overwrite', '--strip-components=1', '-C', this.repoRoot],
         { timeout: 60_000 },
       );
       outputLog += `✓ Unpacked files successfully: ${tarOut || 'ok'}\n${tarErr || ''}\n`;
@@ -635,14 +636,51 @@ export class WebuiUpdateService {
         outputLog,
       };
 
+      const env: NodeJS.ProcessEnv = {
+        ...process.env,
+        CI: 'true',
+        PATH: `/app/node_modules/.bin:/usr/local/bin:/usr/bin:/bin:${process.env.PATH || ''}`,
+      };
+      if (this.networkProxy) {
+        env.HTTPS_PROXY = this.networkProxy;
+        env.HTTP_PROXY = this.networkProxy;
+        env.ALL_PROXY = this.networkProxy;
+      }
+      // Check whether pnpm or corepack is available
+      let buildCmd = 'pnpm';
+      let installArgs = ['install'];
+      let buildArgs = ['build'];
       try {
-        const { stdout: buildOut, stderr: buildErr } = await execFileAsync('pnpm', ['build'], {
+        await execFileAsync('pnpm', ['--version'], { env });
+      } catch {
+        try {
+          await execFileAsync('corepack', ['enable'], { env });
+          await execFileAsync('corepack', ['prepare', 'pnpm@10.18.3', '--activate'], { env });
+        } catch {
+          buildCmd = 'npm';
+          installArgs = ['install', '--include=dev'];
+          buildArgs = ['run', 'build'];
+        }
+      }
+
+      try {
+        this.logger.log(`Ensuring build dependencies via ${buildCmd} ${installArgs.join(' ')}...`);
+        const { stdout: instOut, stderr: instErr } = await execFileAsync(buildCmd, installArgs, {
+          cwd: this.repoRoot,
+          timeout: 180_000,
+          env,
+        });
+        outputLog += `\n[Install Output]\n${instOut || 'ok'}\n${instErr || ''}`.trim();
+
+        this.logger.log(`Executing ${buildCmd} ${buildArgs.join(' ')} after tarball unpack...`);
+        const { stdout: buildOut, stderr: buildErr } = await execFileAsync(buildCmd, buildArgs, {
           cwd: this.repoRoot,
           timeout: 240_000,
+          env,
         });
         outputLog += `\n[Build Output]\n${buildOut}\n${buildErr}`.trim();
       } catch (buildErr) {
-        this.logger.warn(`pnpm build completed with notice: ${String(buildErr)}`);
+        this.logger.warn(`${buildCmd} build notice: ${String(buildErr)}`);
         outputLog += `\n[Build Notice]\n${String(buildErr)}`;
       }
     }
