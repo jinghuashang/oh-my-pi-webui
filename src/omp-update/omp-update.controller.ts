@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Param,
+  Patch,
   Post,
   Query,
 } from '@nestjs/common';
@@ -19,6 +20,7 @@ import {
 import { ApiErrorResponseDto } from '../common/dto/api-responses.dto';
 import {
   AddCustomMirrorDto,
+  EditCustomMirrorDto,
   OmpMirrorsResponseDto,
   OmpUpdateProgressDto,
   OmpUpgradeRequestDto,
@@ -53,6 +55,19 @@ export class OmpUpdateController {
   @ApiCreatedResponse({ type: UpdateMirrorDto })
   addCustomMirror(@Body() body: AddCustomMirrorDto): UpdateMirrorDto {
     return this.ompUpdateService.addCustomMirror(body);
+  }
+
+  /**
+   * Updates a user-defined custom update mirror or proxy.
+   */
+  @Patch('mirrors/custom/:id')
+  @ApiOperation({ summary: 'Update an existing custom OMP update mirror' })
+  @ApiOkResponse({ type: UpdateMirrorDto })
+  editCustomMirror(
+    @Param('id') id: string,
+    @Body() body: EditCustomMirrorDto,
+  ): UpdateMirrorDto {
+    return this.ompUpdateService.editCustomMirror(id, body);
   }
 
   /**

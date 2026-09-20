@@ -38,6 +38,11 @@ export class ProjectsService {
     private readonly threadsService: ThreadsService,
   ) {}
 
+  private get networkProxy(): string | undefined {
+    const proxy = this.configService.get<string>('WEBUI_NETWORK_PROXY')?.trim();
+    return proxy || process.env.HTTPS_PROXY || process.env.HTTP_PROXY || process.env.ALL_PROXY || undefined;
+  }
+
   getCloneProgress(): CloneProgressDto {
     return this.cloneProgress;
   }
@@ -346,6 +351,11 @@ export class ProjectsService {
           env: {
             ...process.env,
             GIT_TERMINAL_PROMPT: '0',
+            ...(this.networkProxy ? {
+              HTTPS_PROXY: this.networkProxy,
+              HTTP_PROXY: this.networkProxy,
+              ALL_PROXY: this.networkProxy,
+            } : {}),
           },
         });
         this.activeCloneProcess = child;

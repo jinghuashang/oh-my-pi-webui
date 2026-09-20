@@ -1303,5 +1303,11 @@
   "Cloning repository from GitHub...": "正在从 GitHub 克隆项目代码...",
   "Clone Output Log": "克隆控制台实时日志",
   "Cancel clone": "取消克隆",
-  "Git clone cancelled": "Git 克隆任务已成功打断并清理未完成文件"
+  "Git clone cancelled": "Git 克隆任务已成功打断并清理未完成文件",
+  "Edit Custom Mirror": "编辑自定义镜像",
+  "Custom mirror updated": "自定义镜像已更新",
+  "Custom mirror deleted": "自定义镜像已删除",
+  "Edit mirror": "编辑镜像",
+  "Delete mirror": "删除镜像",
+  "Global network proxy address (e.g. http://127.0.0.1:7890 or socks5://127.0.0.1:7890) applied to Git clones, MCP store downloads, and OMP/WebUI updates.": "全局网络代理地址（例如 http://127.0.0.1:7890 或 socks5://127.0.0.1:7890），自动应用于 Git 项目拉取、MCP 商店下载以及 OMP 与 WebUI 更新。"
 }

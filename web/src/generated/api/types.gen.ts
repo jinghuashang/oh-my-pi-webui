@@ -2414,6 +2414,17 @@ export type AddCustomMirrorDto = {
     url: string;
 };
 
+export type EditCustomMirrorDto = {
+    /**
+     * New mirror display label
+     */
+    name?: string;
+    /**
+     * New mirror base URL or proxy address
+     */
+    url?: string;
+};
+
 export type OmpVersionResponseDto = {
     /**
      * Currently installed omp version
@@ -5198,6 +5209,27 @@ export type OmpUpdateDeleteCustomMirrorResponses = {
 };
 
 export type OmpUpdateDeleteCustomMirrorResponse = OmpUpdateDeleteCustomMirrorResponses[keyof OmpUpdateDeleteCustomMirrorResponses];
+
+export type OmpUpdateEditCustomMirrorData = {
+    body: EditCustomMirrorDto;
+    path: {
+        id: string;
+    };
+    query?: never;
+    url: '/api/omp/update/mirrors/custom/{id}';
+};
+
+export type OmpUpdateEditCustomMirrorErrors = {
+    401: ApiErrorResponseDto;
+};
+
+export type OmpUpdateEditCustomMirrorError = OmpUpdateEditCustomMirrorErrors[keyof OmpUpdateEditCustomMirrorErrors];
+
+export type OmpUpdateEditCustomMirrorResponses = {
+    200: UpdateMirrorDto;
+};
+
+export type OmpUpdateEditCustomMirrorResponse = OmpUpdateEditCustomMirrorResponses[keyof OmpUpdateEditCustomMirrorResponses];
 
 export type OmpUpdateCheckUpdateData = {
     body?: never;

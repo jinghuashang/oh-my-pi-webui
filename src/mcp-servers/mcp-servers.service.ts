@@ -314,6 +314,11 @@ export function recursivelyApplyMirror(obj: unknown, mirrorUrl: string): unknown
 export class McpServersService {
   private readonly logger = new Logger(McpServersService.name);
 
+  private get networkProxy(): string | undefined {
+    const proxy = this.configService.get<string>('WEBUI_NETWORK_PROXY')?.trim();
+    return proxy || process.env.HTTPS_PROXY || process.env.HTTP_PROXY || process.env.ALL_PROXY || undefined;
+  }
+
   constructor(
     private readonly ompService: OmpService,
     private readonly configService: ConfigService,
@@ -416,10 +421,27 @@ export class McpServersService {
       throw BusinessException.badRequest(ErrorCode.files.nameRequired, 'Server name is required');
     }
 
-    const processedConfig = (dto.mirrorUrl && dto.mirrorUrl !== 'direct')
+    let processedConfig = (dto.mirrorUrl && dto.mirrorUrl !== 'direct')
       ? (recursivelyApplyMirror(dto.config, dto.mirrorUrl) as Record<string, unknown>)
-      : dto.config;
+      : { ...dto.config };
 
+    // If a global network proxy is configured, inject it into MCP server environment if stdio
+    const proxy = this.networkProxy;
+    if (proxy && typeof processedConfig === 'object' && processedConfig !== null) {
+      const isStdio = !('type' in processedConfig) || processedConfig.type === 'stdio';
+      if (isStdio) {
+        const env = ((processedConfig as Record<string, unknown>).env as Record<string, string>) || {};
+        processedConfig = {
+          ...processedConfig,
+          env: {
+            ...env,
+            HTTPS_PROXY: env.HTTPS_PROXY || proxy,
+            HTTP_PROXY: env.HTTP_PROXY || proxy,
+            ALL_PROXY: env.ALL_PROXY || proxy,
+          },
+        };
+      }
+    }
     const data = this.readMcpConfigFile();
     data.mcpServers[trimmedName] = processedConfig;
     data.disabledServers = data.disabledServers.filter((s) => s !== trimmedName);

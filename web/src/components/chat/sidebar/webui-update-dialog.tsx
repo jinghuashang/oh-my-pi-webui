@@ -5,6 +5,7 @@ import {
   CheckCircle2,
   Copy,
   Download,
+  Edit2,
   ExternalLink,
   Flame,
   Gauge,
@@ -16,6 +17,7 @@ import {
   Sparkles,
   Square,
   Terminal,
+  Trash2,
   Zap,
 } from 'lucide-react';
 import {
@@ -33,6 +35,8 @@ import { Progress } from '@/components/ui/progress';
 import { cn } from '@/lib/utils';
 import {
   ompUpdateAddCustomMirrorMutation,
+  ompUpdateDeleteCustomMirrorMutation,
+  ompUpdateEditCustomMirrorMutation,
   webuiUpdateCancelUpgradeMutation,
   webuiUpdateCheckUpdateOptions,
   webuiUpdateCheckUpdateQueryKey,
@@ -58,6 +62,7 @@ export function WebuiUpdateDialog({ open, onClose }: Props) {
   const [outputLog, setOutputLog] = useState<string | null>(null);
   const [selectedMirrorId, setSelectedMirrorId] = useState<string>('auto');
   const [customOpen, setCustomOpen] = useState(false);
+  const [editingCustomId, setEditingCustomId] = useState<string | null>(null);
   const [customName, setCustomName] = useState('');
   const [customUrl, setCustomUrl] = useState('');
   const [cmdTab, setCmdTab] = useState<'git' | 'docker'>('git');
@@ -155,6 +160,7 @@ export function WebuiUpdateDialog({ open, onClose }: Props) {
       showSnackbar(t('Custom mirror added'), 'success');
       setSelectedMirrorId(data.id);
       setCustomOpen(false);
+      setEditingCustomId(null);
       setCustomName('');
       setCustomUrl('');
       void queryClient.invalidateQueries({ queryKey: webuiUpdateGetMirrorsQueryKey() });
@@ -164,6 +170,33 @@ export function WebuiUpdateDialog({ open, onClose }: Props) {
     },
   });
 
+  // Edit custom mirror mutation
+  const editCustomMirrorMutation = useMutation({
+    ...ompUpdateEditCustomMirrorMutation(),
+    onSuccess: () => {
+      showSnackbar(t('Custom mirror updated'), 'success');
+      setCustomOpen(false);
+      setEditingCustomId(null);
+      setCustomName('');
+      setCustomUrl('');
+      void queryClient.invalidateQueries({ queryKey: webuiUpdateGetMirrorsQueryKey() });
+    },
+    onError: (err) => {
+      showSnackbar(getApiErrorMessage(err), 'error');
+    },
+  });
+
+  // Delete custom mirror mutation
+  const deleteCustomMirrorMutation = useMutation({
+    ...ompUpdateDeleteCustomMirrorMutation(),
+    onSuccess: () => {
+      showSnackbar(t('Custom mirror deleted'), 'info');
+      void queryClient.invalidateQueries({ queryKey: webuiUpdateGetMirrorsQueryKey() });
+    },
+    onError: (err) => {
+      showSnackbar(getApiErrorMessage(err), 'error');
+    },
+  });
   const handleCopyCommand = async (cmd: string) => {
     await copyTextToClipboard(cmd);
     showSnackbar(t('Command copied to clipboard'), 'success');
@@ -178,16 +211,40 @@ export function WebuiUpdateDialog({ open, onClose }: Props) {
     showSnackbar(t('Update status refreshed'), 'info');
   };
 
-  const handleAddCustomSubmit = (e: React.FormEvent) => {
+  const handleAddOrEditCustomSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     const trimmedUrl = customUrl.trim();
     if (!trimmedUrl) return;
-    addCustomMirrorMutation.mutate({
-      body: {
-        name: customName.trim() || trimmedUrl,
-        url: trimmedUrl,
-      },
-    });
+    if (editingCustomId) {
+      editCustomMirrorMutation.mutate({
+        path: { id: editingCustomId },
+        body: {
+          name: customName.trim() || trimmedUrl,
+          url: trimmedUrl,
+        },
+      });
+    } else {
+      addCustomMirrorMutation.mutate({
+        body: {
+          name: customName.trim() || trimmedUrl,
+          url: trimmedUrl,
+        },
+      });
+    }
+  };
+
+  const handleStartEditMirror = (e: React.MouseEvent, m: { id: string; name: string; url: string }) => {
+    e.stopPropagation();
+    setEditingCustomId(m.id);
+    setCustomName(m.name);
+    setCustomUrl(m.url);
+    setCustomOpen(true);
+  };
+
+  const handleDeleteMirror = (e: React.MouseEvent, id: string) => {
+    e.stopPropagation();
+    if (selectedMirrorId === id) setSelectedMirrorId('auto');
+    deleteCustomMirrorMutation.mutate({ path: { id } });
   };
 
   return (
@@ -347,7 +404,13 @@ export function WebuiUpdateDialog({ open, onClose }: Props) {
 
             {/* Custom Mirror Inline Input Form */}
             {customOpen && (
-              <form onSubmit={handleAddCustomSubmit} className="rounded-lg border bg-muted/30 p-2.5 space-y-2">
+              <form onSubmit={handleAddOrEditCustomSubmit} className="rounded-lg border bg-muted/30 p-2.5 space-y-2">
+                <div className="flex items-center justify-between text-xs font-semibold text-foreground pb-0.5">
+                  <span>{editingCustomId ? t('Edit Custom Mirror') : t('Add Custom Mirror')}</span>
+                  {editingCustomId && (
+                    <span className="text-[10px] text-muted-foreground font-mono">ID: {editingCustomId}</span>
+                  )}
+                </div>
                 <div className="grid grid-cols-2 gap-2">
                   <Input
                     value={customName}
@@ -368,7 +431,12 @@ export function WebuiUpdateDialog({ open, onClose }: Props) {
                     type="button"
                     variant="ghost"
                     size="sm"
-                    onClick={() => setCustomOpen(false)}
+                    onClick={() => {
+                      setCustomOpen(false);
+                      setEditingCustomId(null);
+                      setCustomName('');
+                      setCustomUrl('');
+                    }}
                     className="h-6 text-xs px-2"
                   >
                     {t('Cancel')}
@@ -376,11 +444,13 @@ export function WebuiUpdateDialog({ open, onClose }: Props) {
                   <Button
                     type="submit"
                     size="sm"
-                    disabled={!customUrl.trim() || addCustomMirrorMutation.isPending}
+                    disabled={!customUrl.trim() || addCustomMirrorMutation.isPending || editCustomMirrorMutation.isPending}
                     className="h-6 text-xs px-2"
                   >
-                    {addCustomMirrorMutation.isPending && <Loader2 className="h-3 w-3 animate-spin mr-1" />}
-                    {t('Add')}
+                    {(addCustomMirrorMutation.isPending || editCustomMirrorMutation.isPending) && (
+                      <Loader2 className="h-3 w-3 animate-spin mr-1" />
+                    )}
+                    {editingCustomId ? t('Save') : t('Add')}
                   </Button>
                 </div>
               </form>
@@ -410,12 +480,11 @@ export function WebuiUpdateDialog({ open, onClose }: Props) {
 
               {/* Individual Mirrors */}
               {mirrors.map((m) => (
-                <button
+                <div
                   key={m.id}
-                  type="button"
                   onClick={() => setSelectedMirrorId(m.id)}
                   className={cn(
-                    'flex items-center gap-1.5 rounded-lg border px-2.5 py-1 text-xs transition-colors',
+                    'group flex items-center gap-1.5 rounded-lg border px-2 py-1 text-xs transition-colors cursor-pointer',
                     selectedMirrorId === m.id
                       ? 'border-primary bg-primary/10 font-semibold text-primary shadow-xs'
                       : 'border-border text-muted-foreground hover:bg-muted',
@@ -436,7 +505,28 @@ export function WebuiUpdateDialog({ open, onClose }: Props) {
                   ) : m.latencyMs === -1 ? (
                     <span className="font-mono text-[10px] text-muted-foreground/60">timeout</span>
                   ) : null}
-                </button>
+
+                  {m.isCustom && (
+                    <div className="flex items-center gap-0.5 ml-1 opacity-70 group-hover:opacity-100 transition-opacity">
+                      <button
+                        type="button"
+                        onClick={(e) => handleStartEditMirror(e, m)}
+                        className="p-0.5 rounded hover:bg-muted hover:text-foreground"
+                        title={t('Edit mirror')}
+                      >
+                        <Edit2 className="h-3 w-3" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={(e) => handleDeleteMirror(e, m.id)}
+                        className="p-0.5 rounded hover:bg-destructive/10 hover:text-destructive"
+                        title={t('Delete mirror')}
+                      >
+                        <Trash2 className="h-3 w-3" />
+                      </button>
+                    </div>
+                  )}
+                </div>
               ))}
             </div>
           </div>

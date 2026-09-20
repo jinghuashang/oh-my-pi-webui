@@ -62,6 +62,7 @@ export const GENERAL_SETTING_KEYS = {
   onlyofficeJwtSecret: 'general.onlyofficeJwtSecret',
   onlyofficeSaveMaxBytes: 'general.onlyofficeSaveMaxBytes',
   publicBaseUrl: 'general.publicBaseUrl',
+  networkProxy: 'general.networkProxy',
 } as const;
 
 export const TERMINAL_SETTING_DEFAULTS = {
@@ -76,6 +77,7 @@ export const GENERAL_SETTING_DEFAULTS = {
   onlyofficeJwtSecret: '',
   onlyofficeSaveMaxBytes: 104_857_600,
   publicBaseUrl: '',
+  networkProxy: '',
 } as const;
 
 const DEFAULT_UPLOAD_MAX_BYTES = 104_857_600; // 100 MB
@@ -133,6 +135,15 @@ export const SETTINGS_DEFINITIONS = [
     description:
       'Public base URL of this WebUI instance (e.g. https://codex.example.com). Used to build document URLs reachable by OnlyOffice. Auto-detected from request headers when empty.',
     defaultValue: GENERAL_SETTING_DEFAULTS.publicBaseUrl,
+  },
+  {
+    key: GENERAL_SETTING_KEYS.networkProxy,
+    type: 'string',
+    category: 'general',
+    description:
+      'Global network proxy address (e.g. http://127.0.0.1:7890 or socks5://127.0.0.1:7890) applied to Git clones, MCP store downloads, and OMP/WebUI updates.',
+    defaultValue: GENERAL_SETTING_DEFAULTS.networkProxy,
+    envKey: 'WEBUI_NETWORK_PROXY',
   },
   {
     key: TERMINAL_SETTING_KEYS.maxSessions,

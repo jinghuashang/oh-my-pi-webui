@@ -7,6 +7,7 @@ import * as path from 'node:path';
 import { homedir } from 'node:os';
 import {
   AddCustomMirrorDto,
+  EditCustomMirrorDto,
   OmpMirrorsResponseDto,
   OmpUpdateProgressDto,
   OmpUpgradeRequestDto,
@@ -56,11 +57,17 @@ export class OmpUpdateService {
     downloadedBytes: 0,
     totalBytes: 0,
   };
-  constructor(private readonly configService: ConfigService) {}
+
+  private get networkProxy(): string | undefined {
+    const proxy = this.configService.get<string>('WEBUI_NETWORK_PROXY')?.trim();
+    return proxy || process.env.HTTPS_PROXY || process.env.HTTP_PROXY || process.env.ALL_PROXY || undefined;
+  }
 
   private get ompBin(): string {
     return this.configService.get<string>('OMP_BIN') || 'omp';
   }
+
+  constructor(private readonly configService: ConfigService) {}
 
   private get customMirrorsFile(): string {
     const webuiHome = this.configService.get<string>('WEBUI_HOME')?.trim();
@@ -199,23 +206,27 @@ export class OmpUpdateService {
       const { done, value } = await reader.read();
       if (done) break;
       if (value) {
+        downloadedBytes += value.byteLength;
         fileStream.write(Buffer.from(value));
+
         const now = Date.now();
         const elapsed = now - lastSampleTime;
-        if (elapsed >= 250 || downloadedBytes === totalBytes) {
+        if (elapsed >= 150 || (totalBytes > 0 && downloadedBytes >= totalBytes)) {
           const speedBytesPerSec = ((downloadedBytes - lastSampleBytes) / (elapsed || 1)) * 1000;
           const speedMb = speedBytesPerSec / (1024 * 1024);
-          const percent = totalBytes > 0 ? Math.min(100, Math.round((downloadedBytes / totalBytes) * 100)) : 0;
+          const percent = totalBytes > 0
+            ? Math.min(99, Math.round((downloadedBytes / totalBytes) * 100))
+            : Math.min(95, Math.round((downloadedBytes / (30 * 1024 * 1024)) * 95));
 
           this.progress = {
             status: 'downloading',
-            stage: `Downloading binary... (${(downloadedBytes / 1024 / 1024).toFixed(1)} MB / ${totalFormatted || '...'})`,
+            stage: `Downloading binary... (${(downloadedBytes / 1024 / 1024).toFixed(1)} MB / ${totalFormatted || 'streaming...'})`,
             percent,
             speedFormatted: `${speedMb.toFixed(2)} MB/s`,
             downloadedBytes,
-            totalBytes,
+            totalBytes: totalBytes > 0 ? totalBytes : downloadedBytes,
             downloadedFormatted: `${(downloadedBytes / 1024 / 1024).toFixed(1)} MB`,
-            totalFormatted,
+            totalFormatted: totalFormatted || `${(downloadedBytes / 1024 / 1024).toFixed(1)} MB`,
           };
 
           lastSampleTime = now;
@@ -330,6 +341,25 @@ export class OmpUpdateService {
     custom.push(newMirror);
     this.saveCustomMirrors(custom);
     return newMirror;
+  }
+
+  /**
+   * Updates an existing user-defined custom mirror.
+   */
+  editCustomMirror(id: string, dto: EditCustomMirrorDto): UpdateMirrorDto {
+    const custom = this.loadCustomMirrors();
+    const target = custom.find((m) => m.id === id);
+    if (!target) {
+      throw new Error(`Custom mirror with id "${id}" not found`);
+    }
+    if (dto.name && dto.name.trim()) {
+      target.name = dto.name.trim();
+    }
+    if (dto.url && dto.url.trim()) {
+      target.url = dto.url.trim();
+    }
+    this.saveCustomMirrors(custom);
+    return target;
   }
 
   /**
@@ -637,6 +667,12 @@ export class OmpUpdateService {
     }
 
     const env: NodeJS.ProcessEnv = { ...process.env };
+    const configuredProxy = this.networkProxy;
+    if (configuredProxy) {
+      env.HTTPS_PROXY = configuredProxy;
+      env.HTTP_PROXY = configuredProxy;
+      env.ALL_PROXY = configuredProxy;
+    }
     if (dto.mirrorUrl && (dto.mirrorUrl.startsWith('http://') || dto.mirrorUrl.startsWith('socks'))) {
       env.HTTPS_PROXY = dto.mirrorUrl;
       env.HTTP_PROXY = dto.mirrorUrl;

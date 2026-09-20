@@ -28,10 +28,16 @@ export class WebuiUpdateService {
     percent: 0,
     outputLog: '',
   };
+
   constructor(
     private readonly configService: ConfigService,
     private readonly ompUpdateService: OmpUpdateService,
   ) {}
+
+  private get networkProxy(): string | undefined {
+    const proxy = this.configService.get<string>('WEBUI_NETWORK_PROXY')?.trim();
+    return proxy || process.env.HTTPS_PROXY || process.env.HTTP_PROXY || process.env.ALL_PROXY || undefined;
+  }
 
   private get repoRoot(): string {
     return process.cwd();
@@ -346,6 +352,29 @@ export class WebuiUpdateService {
       };
       return { success: false, message: reason, output: reason };
     }
+
+    const env: NodeJS.ProcessEnv = {
+      ...process.env,
+      GIT_TERMINAL_PROMPT: '0',
+    };
+    const configuredProxy = this.networkProxy;
+    if (configuredProxy) {
+      env.HTTPS_PROXY = configuredProxy;
+      env.HTTP_PROXY = configuredProxy;
+      env.ALL_PROXY = configuredProxy;
+    }
+    let pullTarget = 'origin';
+    if (dto.mirrorUrl && dto.mirrorUrl !== 'direct') {
+      const isProxy = dto.mirrorUrl.startsWith('http://') || dto.mirrorUrl.startsWith('socks');
+      if (isProxy) {
+        env.HTTPS_PROXY = dto.mirrorUrl;
+        env.HTTP_PROXY = dto.mirrorUrl;
+        env.ALL_PROXY = dto.mirrorUrl;
+      } else {
+        const prefix = dto.mirrorUrl.endsWith('/') ? dto.mirrorUrl : `${dto.mirrorUrl}/`;
+        pullTarget = `${prefix}https://github.com/jinghuashang/oh-my-pi-webui.git`;
+      }
+    }
     if (this.progress.status === 'pulling' || this.progress.status === 'building') {
       this.logger.warn('Previous WebUI update task is still running, aborting it before starting new update...');
       this.cancelUpgrade();
@@ -360,23 +389,6 @@ export class WebuiUpdateService {
     // execute overlay upgrade using GitHub tarball/bundle archive via chosen mirror!
     if (isDocker || !this.isGitWritable()) {
       return this.upgradeDockerContainer(dto, targetCommit, webuiHome);
-    }
-
-    const env: NodeJS.ProcessEnv = {
-      ...process.env,
-      GIT_TERMINAL_PROMPT: '0',
-    };
-    let pullTarget = 'origin';
-    if (dto.mirrorUrl && dto.mirrorUrl !== 'direct') {
-      const isProxy = dto.mirrorUrl.startsWith('http://') || dto.mirrorUrl.startsWith('socks');
-      if (isProxy) {
-        env.HTTPS_PROXY = dto.mirrorUrl;
-        env.HTTP_PROXY = dto.mirrorUrl;
-        env.ALL_PROXY = dto.mirrorUrl;
-      } else {
-        const prefix = dto.mirrorUrl.endsWith('/') ? dto.mirrorUrl : `${dto.mirrorUrl}/`;
-        pullTarget = `${prefix}https://github.com/jinghuashang/oh-my-pi-webui.git`;
-      }
     }
     this.logger.log(`Pulling WebUI updates from ${pullTarget}...`);
     this.progress = {
@@ -523,8 +535,15 @@ export class WebuiUpdateService {
         });
 
         if (res.ok && res.body) {
+          const totalBytes = parseInt(res.headers.get('content-length') || '0', 10);
+          const totalFormatted = totalBytes > 0 ? `${(totalBytes / 1024 / 1024).toFixed(1)} MB` : undefined;
           const fileStream = fs.createWriteStream(tempTarPath);
           const reader = res.body.getReader();
+          let downloadedBytes = 0;
+          const startTime = Date.now();
+          let lastSampleTime = startTime;
+          let lastSampleBytes = 0;
+
           while (true) {
             if (this.abortController?.signal.aborted) {
               fileStream.destroy();
@@ -533,7 +552,31 @@ export class WebuiUpdateService {
             }
             const { done, value } = await reader.read();
             if (done) break;
-            if (value) fileStream.write(Buffer.from(value));
+            if (value) {
+              downloadedBytes += value.byteLength;
+              fileStream.write(Buffer.from(value));
+
+              const now = Date.now();
+              const elapsed = now - lastSampleTime;
+              if (elapsed >= 150 || (totalBytes > 0 && downloadedBytes >= totalBytes)) {
+                const speedBytesPerSec = ((downloadedBytes - lastSampleBytes) / (elapsed || 1)) * 1000;
+                const speedMb = speedBytesPerSec / (1024 * 1024);
+                const percent = totalBytes > 0
+                  ? Math.min(40, Math.round(15 + (downloadedBytes / totalBytes) * 25))
+                  : Math.min(40, Math.round(15 + (downloadedBytes / (15 * 1024 * 1024)) * 25));
+
+                this.progress = {
+                  status: 'pulling',
+                  stage: `Downloading WebUI archive... (${(downloadedBytes / 1024 / 1024).toFixed(1)} MB / ${totalFormatted || 'streaming...'})`,
+                  percent,
+                  speedFormatted: `${speedMb.toFixed(2)} MB/s`,
+                  outputLog,
+                };
+
+                lastSampleTime = now;
+                lastSampleBytes = downloadedBytes;
+              }
+            }
           }
           await new Promise<void>((resolve, reject) => {
             fileStream.end((err: Error | null) => (err ? reject(err) : resolve()));

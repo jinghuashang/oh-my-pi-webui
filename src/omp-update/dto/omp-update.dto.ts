@@ -54,6 +54,14 @@ export class AddCustomMirrorDto {
   url!: string;
 }
 
+export class EditCustomMirrorDto {
+  @ApiPropertyOptional({ description: 'New mirror display label' })
+  name?: string;
+
+  @ApiPropertyOptional({ description: 'New mirror base URL or proxy address' })
+  url?: string;
+}
+
 export class OmpMirrorsResponseDto {
   @ApiProperty({ type: [UpdateMirrorDto] })
   mirrors!: UpdateMirrorDto[];
